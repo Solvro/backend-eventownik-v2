@@ -55,4 +55,34 @@ export default class ParticipantsController {
     await participant.delete();
     return { message: `Participant successfully deleted.` };
   }
+
+  /**
+   * Attach email to participant
+   */
+  async attachEmail({ params, request, response }: HttpContext) {
+    const participant = await Participant.findOrFail(params.id);
+
+    const emailId = request.input('email_id') as number;
+
+    const pivotData = request.only(['send_at', 'send_by', 'status']) as {
+      send_at?: string;
+      send_by?: string;
+      status?: string;
+    };
+
+    await participant.related('emails').attach({ [emailId]: pivotData });
+    return response.status(201).send({ message: 'Email successfully attached.' });
+  }
+
+  /**
+   * Detach email from participant
+   */
+  async detachEmail({ params, request, response }: HttpContext) {
+    const participant = await Participant.findOrFail(params.id);
+
+    const emailId = request.input('email_id') as number;
+
+    await participant.related('emails').detach([emailId]);
+    return response.status(200).send({ message: 'Email successfully detached.' });
+  }
 }

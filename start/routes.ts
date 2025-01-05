@@ -15,6 +15,7 @@ const PermissionsController = () =>
   import("#controllers/permissions_controller");
 const AdminsController = () => import("#controllers/admins_controller");
 const OrganizersController = () => import("#controllers/organizers_controller");
+const EmailsController = () => import("#controllers/emails_controller");
 
 router.get("/swagger", async () => {
   return AutoSwagger.default.docs(router.toJSON(), swagger);
@@ -33,6 +34,7 @@ router
         router.resource("events", EventController);
         router.resource("events/:eventId/organizers", OrganizersController);
         router.resource("blocks", BlocksController);
+        router.resource("emails", EmailsController);
       })
       .use(middleware.auth());
 
