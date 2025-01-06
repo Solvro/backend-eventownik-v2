@@ -1,88 +1,120 @@
 import { HttpContext } from '@adonisjs/core/http'
 import Email from '#models/email'
+// import Event from '#models/event'
 import { emailsStoreValidator, emailsUpdateValidator } from '#validators/emails'
 
 export default class EmailsController {
   /**
-   * Display a list of resource
+   * List emails for a specific event
    */
-  async index({ response }: HttpContext) {
-    const emails = await Email.query().preload('participants', async (query) => {
-      await query.pivotColumns(['send_at', 'send_by', 'status']);
-    });
-    return response.status(200).send(emails);
+  async index({ params, response }: HttpContext) {
+    const eventId = Number(params.id)
+
+    const emails = await Email.query()
+      .where('event_id', eventId)
+      .preload('participants', async (query) => {
+        await query.pivotColumns(['status'])
+      })
+
+    const emailSummaries = emails.map((email) => ({
+      id: email.id,
+      name: email.name,
+      pending: email.participants.filter((p) => p.$extras.pivot_status === 'pending').length,
+      sent: email.participants.filter((p) => p.$extras.pivot_status === 'sent').length,
+      failed: email.participants.filter((p) => p.$extras.pivot_status === 'failed').length,
+    }))
+
+    return response.status(200).send(emailSummaries)
   }
 
   /**
-   * Handle form submission for the create action
+   * Create an email for a specific event
    */
-  async store({ request, response }: HttpContext) {
-    const data = await emailsStoreValidator.validate(request.all());
-    const email = await Email.create(data);
-    return response.status(201).send(email);
+  async store({ params, request, response }: HttpContext) {
+    const eventId = Number(params.id)
+
+    const data = await emailsStoreValidator.validate(request.all())
+
+    if (data.trigger) {
+      const validTriggers = ['participant_registered', 'form_filled', 'attribute_changed']
+      if (!validTriggers.includes(data.trigger)) {
+        return response.status(400).send({ message: 'Invalid trigger provided.' })
+      }
+
+      if (
+        (data.trigger === 'form_filled' || data.trigger === 'attribute_changed') &&
+        !data.triggerValue
+      ) {
+        return response
+          .status(400)
+          .send({ message: 'Trigger value is required for the selected trigger.' })
+      }
+    }
+
+    const email = await Email.create({ ...data, eventId })
+
+    return response.status(201).send(email)
   }
 
   /**
-   * Show individual record
+   * Show a specific email for an event
    */
   async show({ params, response }: HttpContext) {
-    const emailId = Number(params.id);
+    const eventId = Number(params.id)
+    const emailId = Number(params.email_id)
+
     const email = await Email.query()
       .where('id', emailId)
-      .preload('participants')
-      .firstOrFail();
+      .where('event_id', eventId)
+      .preload('participants', async (query) => {
+        await query.pivotColumns(['status'])
+      })
+      .firstOrFail()
 
-    return response.status(200).send(email);
+    return response.status(200).send(email)
   }
 
   /**
-   * Edit individual record
+   * Update an email for a specific event
    */
   async update({ params, request, response }: HttpContext) {
-    const data = await emailsUpdateValidator.validate(request.all());
-    const email = await Email.findOrFail(params.id);
-    email.merge(data);
-    await email.save();
-    return response.status(200).send({ message: 'Email successfully updated.', email });
+    const emailId = Number(params.email_id)
+
+    const data = await emailsUpdateValidator.validate(request.all())
+
+    if (data.trigger) {
+      const validTriggers = ['participant_registered', 'form_filled', 'attribute_changed']
+      if (!validTriggers.includes(data.trigger)) {
+        return response.status(400).send({ message: 'Invalid trigger provided.' })
+      }
+
+      if (
+        (data.trigger === 'form_filled' || data.trigger === 'attribute_changed') &&
+        !data.triggerValue
+      ) {
+        return response
+          .status(400)
+          .send({ message: 'Trigger value is required for the selected trigger.' })
+      }
+    }
+
+    const email = await Email.findOrFail(emailId)
+    email.merge(data)
+    await email.save()
+
+    return response.status(200).send({ message: 'Email successfully updated.', email })
   }
 
   /**
-   * Delete record
+   * Delete an email for a specific event
    */
   async destroy({ params, response }: HttpContext) {
-    const email = await Email.findOrFail(params.id);
-    await email.related('participants').detach();
-    await email.delete();
-    return response.status(200).send({ message: 'Email successfully deleted.' });
-  }
+    const emailId = Number(params.email_id)
 
-  /**
-   * Attach a participant to an email
-   */
-  async attachParticipant({ params, request, response }: HttpContext) {
-    const email = await Email.findOrFail(params.id);
+    const email = await Email.findOrFail(emailId)
+    await email.related('participants').detach()
+    await email.delete()
 
-    const participantId = request.input('participant_id') as number;
-
-    const pivotData = request.only(['send_at', 'send_by', 'status']) as {
-      send_at?: string;
-      send_by?: string;
-      status?: string;
-    };
-
-    await email.related('participants').attach({ [participantId]: pivotData });
-    return response.status(201).send({ message: 'Participant successfully attached.' });
-  }
-
-  /**
-   * Detach a participant from an email
-   */
-  async detachParticipant({ params, request, response }: HttpContext) {
-    const email = await Email.findOrFail(params.id);
-
-    const participantId = request.input('participant_id') as number;
-
-    await email.related('participants').detach([participantId]);
-    return response.status(200).send({ message: 'Participant successfully detached.' });
+    return response.status(200).send({ message: 'Email successfully deleted.' })
   }
 }
