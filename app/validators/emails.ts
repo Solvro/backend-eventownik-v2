@@ -6,7 +6,11 @@ export const emailsStoreValidator = vine.compile(
     name: vine.string(),
     content: vine.string(),
     trigger: vine.enum(['participant_registered', 'form_filled', 'attribute_changed']),
-    triggerValue: vine.string().optional(),
+    triggerValue: vine
+      .string()
+      .optional()
+      .requiredWhen('trigger', '=', 'form_filled')
+      .requiredWhen('trigger', '=', 'attribute_changed')
   })
 );
 
@@ -16,6 +20,10 @@ export const emailsUpdateValidator = vine.compile(
     name: vine.string().optional(),
     content: vine.string().optional(),
     trigger: vine.enum(['participant_registered', 'form_filled', 'attribute_changed']).optional(),
-    triggerValue: vine.string().optional(),
+    triggerValue: vine
+      .string()
+      .optional()
+      .requiredWhen('trigger', '=', 'form_filled')
+      .requiredWhen('trigger', '=', 'attribute_changed')
   })
 );

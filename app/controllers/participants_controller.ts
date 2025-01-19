@@ -57,32 +57,22 @@ export default class ParticipantsController {
   }
 
   /**
-   * Attach email to participant
+   * Attach and send email to participant
    */
-  async attachEmail({ params, request, response }: HttpContext) {
+  async sendEmail({ params, request, response }: HttpContext) {
     const participant = await Participant.findOrFail(params.id);
 
     const emailId = request.input('email_id') as number;
-
     const pivotData = request.only(['send_at', 'send_by', 'status']) as {
       send_at?: string;
       send_by?: string;
       status?: string;
     };
 
+    // const email = await Email.findOrFail(emailId);
+
     await participant.related('emails').attach({ [emailId]: pivotData });
-    return response.status(201).send({ message: 'Email successfully attached.' });
-  }
 
-  /**
-   * Detach email from participant
-   */
-  async detachEmail({ params, request, response }: HttpContext) {
-    const participant = await Participant.findOrFail(params.id);
-
-    const emailId = request.input('email_id') as number;
-
-    await participant.related('emails').detach([emailId]);
-    return response.status(200).send({ message: 'Email successfully detached.' });
+    return response.status(201).send({ message: 'Email successfully sent' });
   }
 }
