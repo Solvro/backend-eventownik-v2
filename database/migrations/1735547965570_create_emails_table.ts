@@ -15,7 +15,7 @@ export default class EmailsSchema extends BaseSchema {
       table.text("name").notNullable();
       table.text("content").notNullable();
       table.text("trigger").notNullable();
-      table.text("trigger_value").notNullable();
+      table.text("trigger_value").nullable();
       table.timestamps();
     });
   }

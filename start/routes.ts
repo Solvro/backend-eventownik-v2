@@ -34,7 +34,7 @@ router
         router.resource("events", EventController);
         router.resource("events/:eventId/organizers", OrganizersController);
         router.resource("blocks", BlocksController);
-        router.resource("emails", EmailsController);
+        router.resource("events/:event_id/emails", EmailsController);
       })
       .use(middleware.auth());
 
@@ -47,3 +47,4 @@ router
       .prefix("auth");
   })
   .prefix("api/v1");
+  
