@@ -5,6 +5,7 @@ import type { BelongsTo, ManyToMany } from "@adonisjs/lucid/types/relations";
 
 import Email from "#models/email";
 import Event from "#models/event";
+import ParticipantAttribute from "#models/participant_attribute";
 
 export default class Participant extends BaseModel {
   @column({ isPrimary: true })
@@ -36,4 +37,7 @@ export default class Participant extends BaseModel {
     pivotColumns: ["send_at", "send_by", "status"],
   })
   declare emails: ManyToMany<typeof Email>;
+
+  @hasMany(() => ParticipantAttribute)
+  declare participant_attributes: HasMany<typeof ParticipantAttribute>;
 }
