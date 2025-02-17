@@ -23,6 +23,9 @@ export default class Participant extends BaseModel {
   @column()
   declare lastName: string;
 
+  @column()
+  declare slug: string;
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime;
 
@@ -40,4 +43,9 @@ export default class Participant extends BaseModel {
 
   @hasMany(() => ParticipantAttribute)
   declare participant_attributes: HasMany<typeof ParticipantAttribute>;
+
+  @beforeCreate()
+  static async generateSlug(participant: Participant) {
+    participant.slug = v4();
+  }
 }
