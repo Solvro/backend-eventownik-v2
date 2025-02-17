@@ -29,6 +29,12 @@ export default class Attribute extends BaseModel {
   @column()
   declare rootBlockId: number | null
 
+  @column()
+  declare showInList: boolean
+
+  @column()
+  declare showInForm: boolean
+
   @belongsTo(() => Event, {
     foreignKey: 'eventId',
   })
