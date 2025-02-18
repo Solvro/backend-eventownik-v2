@@ -1,6 +1,8 @@
 import { HttpContext } from "@adonisjs/core/http";
 
 import Participant from "#models/participant";
+import ParticipantAttribute from "#models/participant_attribute";
+import { participantAttributesStoreValidator } from "#validators/participant_attributes";
 import {
   participantsStoreValidator,
   participantsUpdateValidator,
@@ -16,23 +18,34 @@ export default class ParticipantsController {
   const limit = request.input('limit', 10); 
   const participants = await Participant.query()
     .where('event_id', params.event_id)
-    .preload("participant_attributes", (query) => {
+    .preload('participant_attributes', (query) => {
       query
         .select('id', 'attribute_id', 'value', 'participant_id')
         .preload('attribute', (attributeQuery) => { 
           attributeQuery
           .select('name')
-          .where("show_in_list", true); 
+          .where('show_in_list', true); 
         });
     })
     .paginate(page, limit);
-return participants;
 
-  }
+  return participants;
+}
 
   async store({ request, response }: HttpContext) {
-    const data = await participantsStoreValidator.validate(request.all());
-    const participant = await Participant.create(data);
+    const participant_data = await participantsStoreValidator.validate(request.all());
+    const participant = await Participant.create(participant_data);
+    const participantAttributes = request.body()['participant_attributes'];
+    for (const attribute of participantAttributes ){
+      const attribute_data = await participantAttributesStoreValidator.validate(
+      {"participantId": participant.id,
+       "attributeId": attribute['attributeId'],
+        "value": attribute['value']
+      }
+    );
+    await ParticipantAttribute.create(attribute_data);
+    }
+    
     return response.status(201).send(participant);
   }
 
