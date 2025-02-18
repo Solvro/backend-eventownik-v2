@@ -11,9 +11,23 @@ export default class ParticipantsController {
    * @index
    * @tag participants
    */
-  async index(): Promise<Participant[]> {
-    const participants = await Participant.all();
-    return participants;
+  async index({ params, request }: HttpContext) {
+  const page = request.input('page', 1); 
+  const limit = request.input('limit', 10); 
+  const participants = await Participant.query()
+    .where('event_id', params.event_id)
+    .preload("participant_attributes", (query) => {
+      query
+        .select('id', 'attribute_id', 'value', 'participant_id')
+        .preload('attribute', (attributeQuery) => { 
+          attributeQuery
+          .select('name')
+          .where("show_in_list", true); 
+        });
+    })
+    .paginate(page, limit);
+return participants;
+
   }
 
   async store({ request, response }: HttpContext) {
