@@ -1,7 +1,11 @@
-import { HttpContext } from '@adonisjs/core/http'
-import Email from '#models/email'
-import Event from '#models/event'
-import { emailsStoreValidator, emailsUpdateValidator } from '#validators/emails'
+import { HttpContext } from "@adonisjs/core/http";
+
+import Email from "#models/email";
+import Event from "#models/event";
+import {
+  emailsStoreValidator,
+  emailsUpdateValidator,
+} from "#validators/emails";
 
 export default class EmailsController {
   /**
@@ -14,35 +18,35 @@ export default class EmailsController {
   async index({ params, response }: HttpContext) {
     const eventId = Number(params.event_id);
 
-    const emails = await Email.query().where('event_id', eventId);
+    const emails = await Email.query().where("event_id", eventId);
 
     const emailSummaries = await Promise.all(
       emails.map(async (email) => {
         const pendingCount = await email
-          .related('participants')
+          .related("participants")
           .query()
-          .wherePivot('status', 'pending')
-          .count('* as total');
+          .wherePivot("status", "pending")
+          .count("* as total");
 
         const sentCount = await email
-          .related('participants')
+          .related("participants")
           .query()
-          .wherePivot('status', 'sent')
-          .count('* as total');
+          .wherePivot("status", "sent")
+          .count("* as total");
 
         const failedCount = await email
-          .related('participants')
+          .related("participants")
           .query()
-          .wherePivot('status', 'failed')
-          .count('* as total');
+          .wherePivot("status", "failed")
+          .count("* as total");
 
         return {
           email,
-          pending: Number(pendingCount[0]?.$extras?.total || 0),
-          sent: Number(sentCount[0]?.$extras?.total || 0),
-          failed: Number(failedCount[0]?.$extras?.total || 0),
+          pending: Number(pendingCount[0]?.$extras?.total ?? 0),
+          sent: Number(sentCount[0]?.$extras?.total ?? 0),
+          failed: Number(failedCount[0]?.$extras?.total ?? 0),
         };
-      })
+      }),
     );
 
     return response.status(200).send(emailSummaries);
@@ -57,10 +61,14 @@ export default class EmailsController {
    * @responseBody 404 - {"message": "Email not found"}
    */
   async show({ params, response }: HttpContext) {
-      const emailId = Number.parseInt(String(params.id));
-      const event = await Event.findOrFail(params.event_id);
-      const email = await event.related('emails').query().where('id', emailId).firstOrFail();
-      return response.status(200).send(email);
+    const emailId = Number.parseInt(String(params.id));
+    const event = await Event.findOrFail(params.event_id);
+    const email = await event
+      .related("emails")
+      .query()
+      .where("id", emailId)
+      .firstOrFail();
+    return response.status(200).send(email);
   }
 
   /**
@@ -74,10 +82,10 @@ export default class EmailsController {
    */
   async store({ params, request, response }: HttpContext) {
     const eventId = Number(params.event_id);
-      const event = await Event.findOrFail(eventId);
-      const data = await emailsStoreValidator.validate(request.all());
-      const email = await event.related('emails').create(data);
-      return response.status(201).send(email);
+    const event = await Event.findOrFail(eventId);
+    const data = await emailsStoreValidator.validate(request.all());
+    const email = await event.related("emails").create(data);
+    return response.status(201).send(email);
   }
 
   /**
@@ -107,8 +115,10 @@ export default class EmailsController {
   async destroy({ params, response }: HttpContext) {
     const emailId = Number(params.id);
     const email = await Email.findOrFail(emailId);
-    await email.related('participants').detach();
+    await email.related("participants").detach();
     await email.delete();
-    return response.status(200).send({ message: 'Email successfully deleted.' });
+    return response
+      .status(200)
+      .send({ message: "Email successfully deleted." });
   }
 }
