@@ -93,7 +93,7 @@ export default class ParticipantsController {
    * @show
    * @tag participants
    */
-  async show({ params, response }: HttpContext) {
+  async show({ params }: HttpContext) {
     const participant = await Participant.query()
     .where('id',params.id)
     .preload('participant_emails', (query) => {
@@ -104,7 +104,6 @@ export default class ParticipantsController {
         .where('event_id', params.event_id)
       })
     })
-    console.log(participant[0].participant_emails);
     const participantJson = participant.map((participant) => {
       return {
         id: participant.id,
