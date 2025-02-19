@@ -130,7 +130,7 @@ export default class ParticipantsController {
     })
 
 
-    return participantJson;
+    return participantJson[0];
   }
 
   /**
