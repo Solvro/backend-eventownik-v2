@@ -47,7 +47,7 @@ components:
           example: "johndoe@example.com"
           format: "email"
         type:
-          $ref: "#/components/schemas/\"organizer\""
+          $ref: '#/components/schemas/"organizer"'
           example: "organizer"
           enum:
             - "organizer"
@@ -949,7 +949,7 @@ paths:
         404:
           content:
             text/plain:
-              example: "{ message: \"Row not found\", \"name\": \"Exception\", status: 404},"
+              example: '{ message: "Row not found", "name": "Exception", status: 404},'
           description: "Returns **404** (Not Found) as **text/plain**"
       security:
         - BearerAuth:
@@ -1168,7 +1168,7 @@ paths:
         404:
           content:
             text/plain:
-              example: "{ message: \"Row not found\", \"name\": \"Exception\", status: 404},"
+              example: '{ message: "Row not found", "name": "Exception", status: 404},'
           description: "Returns **404** (Not Found) as **text/plain**"
       security:
         - BearerAuth:

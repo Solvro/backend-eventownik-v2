@@ -1,12 +1,11 @@
-import { inject } from "@adonisjs/core";
-import type { HttpContext } from "@adonisjs/core/http";
-
 import Admin from "#models/admin";
 import { AdminService } from "#services/admin_service";
 import {
   createAdminValidator,
   updateAdminValidator,
 } from "#validators/admin_validators";
+import { inject } from "@adonisjs/core";
+import type { HttpContext } from "@adonisjs/core/http";
 
 @inject()
 export default class AdminsController {
@@ -20,7 +19,12 @@ export default class AdminsController {
    * @tag admins
    * @responseBody 200 - <Admin[]>
    */
-  async index() {
+  async index({ response, auth }: HttpContext) {
+    const admin = auth.getUserOrFail();
+    if (admin.type !== "superadmin") {
+      return response.unauthorized();
+    }
+
     return await Admin.query().preload("events").preload("permissions");
   }
 
@@ -31,7 +35,12 @@ export default class AdminsController {
    * @tag admins
    * @requestBody <createAdminValidator>
    */
-  async store({ request, response }: HttpContext) {
+  async store({ request, response, auth }: HttpContext) {
+    const admin = auth.getUserOrFail();
+    if (admin.type !== "superadmin") {
+      return response.unauthorized();
+    }
+
     const newAdminData = await createAdminValidator.validate(request.body());
 
     const newAdmin = await this.adminService.createAdmin(newAdminData);
@@ -49,7 +58,12 @@ export default class AdminsController {
    * @responseBody 200 - <Admin>
    * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    */
-  async show({ params }: HttpContext) {
+  async show({ params, response, auth }: HttpContext) {
+    const admin = auth.getUserOrFail();
+    if (admin.type !== "superadmin") {
+      return response.unauthorized();
+    }
+
     return await Admin.query()
       .where("id", +params.id)
       .preload("events")
@@ -65,7 +79,11 @@ export default class AdminsController {
    * @responseBody 200 - <Admin>
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
-  async update({ params, request }: HttpContext) {
+  async update({ params, request, response, auth }: HttpContext) {
+    if (auth.getUserOrFail().type !== "superadmin") {
+      return response.unauthorized();
+    }
+
     const adminUpdates = await updateAdminValidator.validate(request.body());
 
     const admin = await Admin.findOrFail(params.id);
@@ -89,7 +107,11 @@ export default class AdminsController {
    * @tag admins
    * @responseBody 204 - {}
    */
-  async destroy({ params, response }: HttpContext) {
+  async destroy({ params, response, auth }: HttpContext) {
+    if (auth.getUserOrFail().type !== "superadmin") {
+      return response.unauthorized();
+    }
+
     await this.adminService.deleteAdmin(+params.id);
     return response.noContent();
   }

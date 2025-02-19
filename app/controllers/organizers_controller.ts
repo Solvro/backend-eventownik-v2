@@ -1,12 +1,11 @@
-import { inject } from "@adonisjs/core";
-import { HttpContext } from "@adonisjs/core/http";
-
 import Admin from "#models/admin";
 import { OrganizerService } from "#services/organizer_service";
 import {
   addOrganizerValidator,
   updateOrganizerPermissionsValidator,
 } from "#validators/organizer";
+import { inject } from "@adonisjs/core";
+import { HttpContext } from "@adonisjs/core/http";
 
 @inject()
 export default class OrganizersController {

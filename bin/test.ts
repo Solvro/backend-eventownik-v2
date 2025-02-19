@@ -1,8 +1,6 @@
-import "reflect-metadata";
-
-import { configure, processCLIArgs, run } from "@japa/runner";
-
 import { Ignitor, prettyPrintError } from "@adonisjs/core";
+import { configure, processCLIArgs, run } from "@japa/runner";
+import "reflect-metadata";
 
 /*
 |--------------------------------------------------------------------------

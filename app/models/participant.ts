@@ -1,10 +1,8 @@
-import { DateTime } from "luxon";
-
-import { BaseModel, belongsTo, column, manyToMany } from "@adonisjs/lucid/orm";
-import type { BelongsTo, ManyToMany } from "@adonisjs/lucid/types/relations";
-
 import Email from "#models/email";
 import Event from "#models/event";
+import { BaseModel, belongsTo, column, manyToMany } from "@adonisjs/lucid/orm";
+import type { BelongsTo, ManyToMany } from "@adonisjs/lucid/types/relations";
+import { DateTime } from "luxon";
 
 export default class Participant extends BaseModel {
   @column({ isPrimary: true })

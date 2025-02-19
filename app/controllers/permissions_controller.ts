@@ -1,10 +1,9 @@
-import type { HttpContext } from "@adonisjs/core/http";
-
 import Permission from "#models/permission";
 import {
   createPermissionValidator,
   updatePermissionValidator,
 } from "#validators/permission_validators";
+import type { HttpContext } from "@adonisjs/core/http";
 
 export default class PermissionsController {
   /**
@@ -14,7 +13,11 @@ export default class PermissionsController {
    * @tag permissions
    * @responseBody 200 - <Permission[]>
    */
-  async index() {
+  async index({ response, auth }: HttpContext) {
+    if (auth.getUserOrFail().type !== "superadmin") {
+      response.unauthorized();
+    }
+
     return await Permission.all();
   }
 
@@ -25,7 +28,11 @@ export default class PermissionsController {
    * @tag permissions
    * @requestBody <createPermissionValidator>
    */
-  async store({ request, response }: HttpContext) {
+  async store({ request, response, auth }: HttpContext) {
+    if (auth.getUserOrFail().type !== "superadmin") {
+      response.unauthorized();
+    }
+
     const newPermissionData = await createPermissionValidator.validate(
       request.body(),
     );
@@ -45,7 +52,11 @@ export default class PermissionsController {
    * @responseBody 200 - <Permission>
    * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    */
-  async show({ params }: HttpContext) {
+  async show({ params, response, auth }: HttpContext) {
+    if (auth.getUserOrFail().type !== "superadmin") {
+      response.unauthorized();
+    }
+
     return Permission.findOrFail(params.id);
   }
 
@@ -58,7 +69,11 @@ export default class PermissionsController {
    * @responseBody 200 - <Permission>
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
-  async update({ params, request }: HttpContext) {
+  async update({ params, request, response, auth }: HttpContext) {
+    if (auth.getUserOrFail().type !== "superadmin") {
+      response.unauthorized();
+    }
+
     const permissionUpdates = await updatePermissionValidator.validate(
       request.body(),
     );
@@ -76,7 +91,11 @@ export default class PermissionsController {
    * @tag permissions
    * @responseBody 204 - {}
    */
-  async destroy({ params, response }: HttpContext) {
+  async destroy({ params, response, auth }: HttpContext) {
+    if (auth.getUserOrFail().type !== "superadmin") {
+      response.unauthorized();
+    }
+
     const permissionToDelete = await Permission.findOrFail(params.id);
     await permissionToDelete.delete();
     return response.noContent();

@@ -1,13 +1,11 @@
-import { DateTime } from "luxon";
-
+import Event from "#models/event";
 import { DbAccessTokensProvider } from "@adonisjs/auth/access_tokens";
 import { withAuthFinder } from "@adonisjs/auth/mixins/lucid";
 import { compose } from "@adonisjs/core/helpers";
 import hash from "@adonisjs/core/services/hash";
 import { BaseModel, column, manyToMany } from "@adonisjs/lucid/orm";
 import type { ManyToMany } from "@adonisjs/lucid/types/relations";
-
-import Event from "#models/event";
+import { DateTime } from "luxon";
 
 import Permission from "./permission.js";
 

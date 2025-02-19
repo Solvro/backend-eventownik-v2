@@ -1,11 +1,17 @@
+import string from "@adonisjs/core/helpers/string";
+import {
+  BaseModel,
+  afterCreate,
+  belongsTo,
+  column,
+  hasMany,
+} from "@adonisjs/lucid/orm";
+import type { BelongsTo, HasMany } from "@adonisjs/lucid/types/relations";
 import { DateTime } from "luxon";
 
-import { BaseModel, afterCreate, belongsTo, column, hasMany } from "@adonisjs/lucid/orm";
-import type { HasMany, BelongsTo } from "@adonisjs/lucid/types/relations";
-
+import Admin from "./admin.js";
 import Participant from "./participant.js";
-import string from '@adonisjs/core/helpers/string'
-import Admin from './admin.js';
+
 // import Form from './Form.ts';
 
 export default class Event extends BaseModel {

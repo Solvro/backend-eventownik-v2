@@ -1,8 +1,6 @@
-import AutoSwagger from "adonis-autoswagger";
-
-import router from "@adonisjs/core/services/router";
-
 import swagger from "#config/swagger";
+import router from "@adonisjs/core/services/router";
+import AutoSwagger from "adonis-autoswagger";
 
 import { middleware } from "./kernel.js";
 
@@ -25,15 +23,16 @@ router.get("/docs", async () => {
 
 router
   .group(() => {
-
-    router.group(()=>{
-      router.resource("participants", ParticipantsController).apiOnly();
-      router.resource("permissions", PermissionsController);
-      router.resource("admins", AdminsController);
-      router.resource("events", EventController);
-      router.resource("events/:eventId/organizers", OrganizersController);
-      router.resource("blocks", BlocksController);
-    }).use(middleware.auth())
+    router
+      .group(() => {
+        router.resource("participants", ParticipantsController).apiOnly();
+        router.resource("permissions", PermissionsController);
+        router.resource("admins", AdminsController);
+        router.resource("events", EventController);
+        router.resource("events/:eventId/organizers", OrganizersController);
+        router.resource("blocks", BlocksController);
+      })
+      .use(middleware.auth());
 
     router
       .group(() => {

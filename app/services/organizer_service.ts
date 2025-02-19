@@ -1,7 +1,6 @@
-import { inject } from "@adonisjs/core";
-
 import Admin from "#models/admin";
 import { createAdminValidator } from "#validators/admin_validators";
+import { inject } from "@adonisjs/core";
 
 import { AdminService } from "./admin_service.js";
 
