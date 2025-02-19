@@ -65,8 +65,6 @@ export default class ParticipantsController {
           }
         }
       })
-
-
     }
   })
   return participantsJson;
@@ -74,6 +72,7 @@ export default class ParticipantsController {
 
   async store({ request, response }: HttpContext) {
     const participant_data = await participantsStoreValidator.validate(request.all());
+    const participant_attributes = await participantAttributesStoreValidator.validate(request.all());
     const participant = await Participant.create(participant_data);
     // participant.related('participant_attributes').createMany(request.body()['participant_attributes']);
     const participantAttributes = request.body()['participant_attributes'];
@@ -88,6 +87,7 @@ export default class ParticipantsController {
     await ParticipantAttribute.create(attribute_data);
     }
 
+    participant.related('participant_attributes').createMany(participant_attributes.participantAttributes);
     return response.status(201).send(participant);
   }
 
