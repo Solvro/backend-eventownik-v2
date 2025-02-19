@@ -1,13 +1,11 @@
 import { HttpContext } from "@adonisjs/core/http";
 
 import Participant from "#models/participant";
-import ParticipantAttribute from "#models/participant_attribute";
 import { participantAttributesStoreValidator } from "#validators/participant_attributes";
 import {
   participantsStoreValidator,
   participantsUpdateValidator,
 } from "#validators/participants";
-
 
 export default class ParticipantsController {
   /**
@@ -95,8 +93,44 @@ export default class ParticipantsController {
    * @show
    * @tag participants
    */
-  async show({ params }: HttpContext) {
-    return await Participant.findOrFail(params.id);
+  async show({ params, response }: HttpContext) {
+    const participant = await Participant.query()
+    .where('id',params.id)
+    .preload('participant_emails', (query) => {
+      query
+      .where('status', 'sent')
+      .preload('email', (emailQuery) => {
+        emailQuery
+        .where('event_id', params.event_id)
+      })
+    })
+    console.log(participant[0].participant_emails);
+    const participantJson = participant.map((participant) => {
+      return {
+        id: participant.id,
+        email: participant.email,
+        firstName: participant.firstName,
+        lastName: participant.lastName,
+        slug: participant.slug,
+        createdAt: participant.createdAt,
+        updatedAt: participant.updatedAt,
+        emails : participant.participant_emails.map((participant_email: any) => {
+          return {
+            id: participant_email.email.id,
+            name: participant_email.email.name,
+            content: participant_email.email.content,
+            participantEmails: {
+              status: participant_email.status,
+              sendBy: participant_email.sendBy,
+              sendAt: participant_email.sendAt,
+            }
+          }
+        })
+      }
+    })
+
+
+    return participantJson;
   }
 
   /**

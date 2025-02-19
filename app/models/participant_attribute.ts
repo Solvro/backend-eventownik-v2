@@ -22,12 +22,12 @@ export default class ParticipantAttribute extends BaseModel {
   @belongsTo(() => Participant, {
     foreignKey: 'participantId',
   })
-  public participant!: BelongsTo<typeof Participant>
+  declare participant: BelongsTo<typeof Participant>
 
   @belongsTo(() => Attribute, {
     foreignKey: 'attributeId',
   })
-  public attribute!: BelongsTo<typeof Attribute>
+  declare attribute: BelongsTo<typeof Attribute>
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
