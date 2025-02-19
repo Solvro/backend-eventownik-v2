@@ -7,7 +7,6 @@ export const registerAdminValidator = vine.compile(
       .email()
       .unique(
         async (db, value) =>
-          // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
           !(await db.from("admins").where("email", value).first()),
       ),
     password: vine.string().minLength(8),

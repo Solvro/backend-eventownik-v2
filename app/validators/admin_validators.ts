@@ -9,7 +9,6 @@ export const adminSchema = vine.object({
     .email()
     .unique(
       async (db, value) =>
-        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
         !(await db.from("admins").where("email", value).first()),
     ),
   type: vine.enum(["organizer", "superadmin"]).optional(),
