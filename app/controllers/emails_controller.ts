@@ -7,7 +7,7 @@ export default class EmailsController {
   /**
    * @index
    * @operationId listEmails
-   * @description List emails for a specific event.
+   * @description Retrieve a list of emails for a specific event, along with their sending status.
    * @tag emails
    * @responseBody 200 - [{"id": 1, "name": "Email Name", "pending": 5, "sent": 10, "failed": 2}]
    */
@@ -52,7 +52,7 @@ export default class EmailsController {
   /**
    * @show
    * @operationId getEmail
-   * @description Show a specific email for a specific event.
+   * @description Retrieve details of a specific email linked to an event.
    * @tag emails
    * @responseBody 200 - {"id": 1, "name": "Email Name", "content": "Email Content", "trigger": "participant_registered"}
    * @responseBody 404 - {"message": "Email not found"}
@@ -71,7 +71,7 @@ export default class EmailsController {
   /**
    * @store
    * @operationId createEmail
-   * @description Create an email for a specific event.
+   * @description Create a new email associated with a specific event.
    * @tag emails
    * @requestBody <emailsStoreValidator>
    * @responseBody 201 - {"id": 1, "name": "Email Name", "content": "Email Content", "trigger": "participant_registered"}
@@ -92,10 +92,10 @@ export default class EmailsController {
   /**
    * @update
    * @operationId updateEmail
-   * @description Update an email for a specific event.
+   * @description Update an existing email associated with a specific event and return the updated email.
    * @tag emails
    * @requestBody <emailsUpdateValidator>
-   * @responseBody 200 - {"message": "Email successfully updated.", "email": {"id": 1, "name": "Updated Name"}}
+   * @responseBody 200 - {"id": 1, "name": "Updated Name", "content": "Updated Content", "trigger": "form_filled"}
    */
   async update({ params, request, response }: HttpContext) {
     const emailId = Number(params.id);
@@ -103,13 +103,13 @@ export default class EmailsController {
     const email = await Email.findOrFail(emailId);
     email.merge(data);
     await email.save();
-    return response.status(200).send({ message: 'Email successfully updated.', email });
+    return response.status(200).send(email);
   }
 
   /**
    * @destroy
    * @operationId deleteEmail
-   * @description Delete an email for a specific event.
+   * @description Remove an email associated with a specific event.
    * @tag emails
    * @responseBody 200 - {"message": "Email successfully deleted."}
    */
