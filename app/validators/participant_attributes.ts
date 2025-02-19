@@ -10,7 +10,7 @@ export const participantAttributesStoreValidator = vine.compile(
 
                 }
             )
-        )
+        ).optional()
     })
 )
 
