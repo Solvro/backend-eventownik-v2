@@ -11,11 +11,12 @@
 | templates.
 |
 */
+import { Bouncer } from "@adonisjs/bouncer";
+import { BouncerAbility } from "@adonisjs/bouncer/types";
+
 import Admin from "#models/admin";
 import Event from "#models/event";
 import Permission from "#models/permission";
-import { Bouncer } from "@adonisjs/bouncer";
-import { BouncerAbility } from "@adonisjs/bouncer/types";
 
 /**
  * Delete the following ability to start from

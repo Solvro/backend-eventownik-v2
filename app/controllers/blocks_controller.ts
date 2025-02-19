@@ -1,6 +1,7 @@
+import type { HttpContext } from "@adonisjs/core/http";
+
 import Block from "#models/block";
 import { createBlockValidator, updateBlockValidator } from "#validators/block";
-import type { HttpContext } from "@adonisjs/core/http";
 
 export default class BlocksController {
   async index({ request }: HttpContext) {

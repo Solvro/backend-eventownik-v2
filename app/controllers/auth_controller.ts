@@ -1,7 +1,9 @@
+import assert from "node:assert";
+
+import type { HttpContext } from "@adonisjs/core/http";
+
 import Admin from "#models/admin";
 import { loginValidator, registerAdminValidator } from "#validators/auth";
-import type { HttpContext } from "@adonisjs/core/http";
-import assert from "node:assert";
 
 export default class AuthController {
   /**

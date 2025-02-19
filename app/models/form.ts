@@ -1,8 +1,10 @@
 // import Attribute from "#models/attribute";
-import Event from "#models/event";
+import { DateTime } from "luxon";
+
 import { BaseModel, belongsTo, column } from "@adonisjs/lucid/orm";
 import type { BelongsTo } from "@adonisjs/lucid/types/relations";
-import { DateTime } from "luxon";
+
+import Event from "#models/event";
 
 export default class Form extends BaseModel {
   @column({ isPrimary: true })

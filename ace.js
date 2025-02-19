@@ -15,7 +15,6 @@
 | and then imports the "bin/console.ts" file.
 |
 */
-
 /**
  * Register hook to process TypeScript files using ts-node
  */

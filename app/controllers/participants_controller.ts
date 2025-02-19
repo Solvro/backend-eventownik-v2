@@ -1,9 +1,10 @@
+import { HttpContext } from "@adonisjs/core/http";
+
 import Participant from "#models/participant";
 import {
   participantsStoreValidator,
   participantsUpdateValidator,
 } from "#validators/participants";
-import { HttpContext } from "@adonisjs/core/http";
 
 export default class ParticipantsController {
   /**

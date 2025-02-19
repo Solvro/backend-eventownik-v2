@@ -1,6 +1,8 @@
-import Admin from "#models/admin";
-import testUtils from "@adonisjs/core/services/test_utils";
 import { test } from "@japa/runner";
+
+import testUtils from "@adonisjs/core/services/test_utils";
+
+import Admin from "#models/admin";
 
 test.group("Auth: Register", (group) => {
   // Run migrations in-memory and rollback after each test if necessary

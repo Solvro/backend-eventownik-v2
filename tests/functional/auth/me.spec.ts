@@ -1,7 +1,10 @@
-import Admin from "#models/admin";
-import testUtils from "@adonisjs/core/services/test_utils";
-import { test } from "@japa/runner";
 import nodeAssert from "node:assert";
+
+import { test } from "@japa/runner";
+
+import testUtils from "@adonisjs/core/services/test_utils";
+
+import Admin from "#models/admin";
 
 test.group("Auth: Me", (group) => {
   // Wrap each test in a DB transaction

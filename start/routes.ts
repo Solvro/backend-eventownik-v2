@@ -1,6 +1,8 @@
-import swagger from "#config/swagger";
-import router from "@adonisjs/core/services/router";
 import AutoSwagger from "adonis-autoswagger";
+
+import router from "@adonisjs/core/services/router";
+
+import swagger from "#config/swagger";
 
 import { middleware } from "./kernel.js";
 

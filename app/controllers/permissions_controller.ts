@@ -1,9 +1,10 @@
+import type { HttpContext } from "@adonisjs/core/http";
+
 import Permission from "#models/permission";
 import {
   createPermissionValidator,
   updatePermissionValidator,
 } from "#validators/permission_validators";
-import type { HttpContext } from "@adonisjs/core/http";
 
 export default class PermissionsController {
   /**
