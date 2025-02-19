@@ -7,7 +7,7 @@ export const registerAdminValidator = vine.compile(
       .email()
       .unique(
         async (db, value) =>
-          !(await db.from("admins").where("email", value).first()),
+          (await db.from("admins").where("email", value).first()) === null,
       ),
     password: vine.string().minLength(8),
     firstName: vine.string(),

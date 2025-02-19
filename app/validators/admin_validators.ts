@@ -9,7 +9,7 @@ export const adminSchema = vine.object({
     .email()
     .unique(
       async (db, value) =>
-        !(await db.from("admins").where("email", value).first()),
+        (await db.from("admins").where("email", value).first()) === null,
     ),
   type: vine.enum(["organizer", "superadmin"]).optional(),
   active: vine.boolean().optional(),

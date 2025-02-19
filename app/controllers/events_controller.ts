@@ -1,8 +1,9 @@
+import type { HttpContext } from "@adonisjs/core/http";
+import db from "@adonisjs/lucid/services/db";
+
 import Event from "#models/event";
 import Permission from "#models/permission";
 import { createEventValidator, updateEventValidator } from "#validators/event";
-import type { HttpContext } from "@adonisjs/core/http";
-import db from "@adonisjs/lucid/services/db";
 
 export default class EventController {
   /**
@@ -13,7 +14,7 @@ export default class EventController {
    * @tag event
    */
   public async index({ auth }: HttpContext) {
-    await auth.user!.preload("events");
+    await auth.user?.preload("events");
     return auth.user?.events;
   }
 
@@ -30,13 +31,13 @@ export default class EventController {
    */
   public async store({ request, response, auth }: HttpContext) {
     const data = await createEventValidator.validate(request.all());
-    const event = await Event.create({ ...data, organizerId: auth.user!.id });
+    const event = await Event.create({ ...data, organizerId: auth.user?.id });
     const permission = await Permission.query()
       .where("action", "manage")
       .where("subject", "all")
       .firstOrFail();
-    await auth
-      .user!.related("permissions")
+    await auth.user
+      ?.related("permissions")
       .attach({ [permission.id]: { event_id: event.id } });
     return response.created(event);
   }
@@ -78,7 +79,7 @@ export default class EventController {
    */
   public async destroy({ response, params, auth }: HttpContext) {
     const event = await Event.findOrFail(params.id);
-    if (auth.user!.id !== event.organizerId) {
+    if ((auth.user?.id ?? null) !== event.organizerId) {
       return response.unauthorized({
         message: "You don't have permissions to this actions",
       });

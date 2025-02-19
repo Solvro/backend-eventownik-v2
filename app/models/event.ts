@@ -1,3 +1,5 @@
+import { DateTime } from "luxon";
+
 import string from "@adonisjs/core/helpers/string";
 import {
   BaseModel,
@@ -7,7 +9,6 @@ import {
   hasMany,
 } from "@adonisjs/lucid/orm";
 import type { BelongsTo, HasMany } from "@adonisjs/lucid/types/relations";
-import { DateTime } from "luxon";
 
 import Admin from "./admin.js";
 import Participant from "./participant.js";
@@ -71,7 +72,7 @@ export default class Event extends BaseModel {
 
   @afterCreate()
   public static async generateSlug(event: Event) {
-    if (event.name && !event.slug) {
+    if (event.name && event.slug !== null) {
       event.slug = string.slug(`${event.name}-${event.id}`);
       await event.save();
     }
