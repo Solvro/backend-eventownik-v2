@@ -1,7 +1,8 @@
 import { HttpContext } from "@adonisjs/core/http";
 
 import Participant from "#models/participant";
-import { participantAttributesStoreValidator } from "#validators/participant_attributes";
+import ParticipantAttribute from "#models/participant_attribute";
+import { participantAttributesStoreValidator, participantAttributesUpdateValidator } from "#validators/participant_attributes";
 import {
   participantsStoreValidator,
   participantsUpdateValidator,
@@ -137,9 +138,21 @@ export default class ParticipantsController {
    * @tag participants
    */
   async update({ params, request }: HttpContext) {
-    const data = await participantsUpdateValidator.validate(request.all());
+    const participant_data = await participantsUpdateValidator.validate(request.all());
     const participant = await Participant.findOrFail(params.id);
-    participant.merge(data);
+    participant.merge(participant_data);
+
+    const participant_attributes = await participantAttributesUpdateValidator.validate(request.all());
+    if (participant_attributes.participantAttributes){
+      for (const participant_attribute of participant_attributes.participantAttributes){
+        const attribute = await ParticipantAttribute.findOrFail(participant_attribute.id);
+        console.log(attribute);
+        if (attribute.participantId == participant.id){
+          attribute.merge(participant_attribute);
+          await attribute.save();
+        }
+      }
+    }
     await participant.save();
     return { message: `Participant successfully updated.`, participant };
   }
