@@ -48,7 +48,7 @@
     "@adonisjs/lucid": "^21.3.0",
     "@outloud/adonis-autoswagger": "^1.8.7",
     "@vinejs/vine": "^2.1.0",
-    "adonis-autoswagger": "^3.64.0",
+    "adonis-autoswagger": "^3.66.0",
     "luxon": "^3.5.0",
     "pg": "^8.13.1",
     "reflect-metadata": "^0.2.2"

@@ -2,7 +2,7 @@ import vine from '@vinejs/vine';
 
 export const emailsStoreValidator = vine.compile(
   vine.object({
-    eventId: vine.number().optional(),
+    eventId: vine.number(),
     name: vine.string(),
     content: vine.string(),
     trigger: vine.enum(['participant_registered', 'form_filled', 'attribute_changed']),
