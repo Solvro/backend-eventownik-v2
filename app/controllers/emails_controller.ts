@@ -12,7 +12,7 @@ export default class EmailsController {
    * @responseBody 200 - [{"id": 1, "name": "Email Name", "pending": 5, "sent": 10, "failed": 2}]
    */
   async index({ params, response }: HttpContext) {
-    const eventId = Number.parseInt(String(params.event_id), 10);
+    const eventId = Number(params.event_id);
 
     const emails = await Email.query().where('event_id', eventId);
 
@@ -58,14 +58,10 @@ export default class EmailsController {
    * @responseBody 404 - {"message": "Email not found"}
    */
   async show({ params, response }: HttpContext) {
-    const emailId = Number.parseInt(String(params.id));
-    try {
+      const emailId = Number.parseInt(String(params.id));
       const event = await Event.findOrFail(params.event_id);
       const email = await event.related('emails').query().where('id', emailId).firstOrFail();
       return response.status(200).send(email);
-    } catch (error) {
-      return response.status(404).send({ message: 'Email not found' });
-    }
   }
 
   /**
@@ -79,14 +75,10 @@ export default class EmailsController {
    */
   async store({ params, request, response }: HttpContext) {
     const eventId = Number(params.event_id);
-    try {
       const event = await Event.findOrFail(eventId);
       const data = await emailsStoreValidator.validate(request.all());
       const email = await event.related('emails').create(data);
       return response.status(201).send(email);
-    } catch (error) {
-      return response.status(400).send({ message: 'Failed to create email' });
-    }
   }
 
   /**

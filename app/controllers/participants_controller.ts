@@ -16,10 +16,6 @@ export default class ParticipantsController {
     return participants;
   }
 
-  /**
-   * @store
-   * @tag participants
-   */
   async store({ request, response }: HttpContext) {
     const data = await participantsStoreValidator.validate(request.all());
     const participant = await Participant.create(data);

@@ -5,7 +5,7 @@ export const emailsStoreValidator = vine.compile(
     eventId: vine.number(),
     name: vine.string(),
     content: vine.string(),
-    trigger: vine.enum(['participant_registered', 'form_filled', 'attribute_changed']),
+    trigger: vine.enum(['participant_registered', 'participant_deleted', 'form_filled', 'attribute_changed']),
     triggerValue: vine
       .string()
       .optional()
