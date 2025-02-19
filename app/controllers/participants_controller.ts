@@ -8,34 +8,76 @@ import {
   participantsUpdateValidator,
 } from "#validators/participants";
 
+
 export default class ParticipantsController {
   /**
    * @index
    * @tag participants
    */
   async index({ params, request }: HttpContext) {
-  const page = request.input('page', 1); 
-  const limit = request.input('limit', 10); 
+  const page = request.input('page', 1);
+  const limit = request.input('limit', 10);
   const participants = await Participant.query()
     .where('event_id', params.event_id)
     .preload('participant_attributes', (query) => {
       query
         .select('id', 'attribute_id', 'value', 'participant_id')
-        .preload('attribute', (attributeQuery) => { 
+        .preload('attribute', (attributeQuery) => {
           attributeQuery
-          .select('name')
-          .where('show_in_list', true); 
+          .select('name', "slug")
+          .where('show_in_list', true);
         });
     })
     .paginate(page, limit);
+  const serialized_participants = participants.serialize({
+    fields: {
+      omit: ["eventId"]
+    },
+    relations:{
+      participant_attributes:{
+        fields: ["id","value"],
+        relations: {
+          attribute: {
+            fields: ["id", "name", "slug"]
+          }
+        }
+      }
+    }
+}
+);
+  const participantsJson = serialized_participants.data.map((participants) => {
+    return {
+      id: participants.id,
+      email: participants.email,
+      firstName: participants.firstName,
+      lastName: participants.lastName,
+      slug: participants.slug,
+      createdAt: participants.createdAt,
+      updatedAt: participants.updatedAt,
+      attributes: participants.participant_attributes.map((attribute: any) => {
+        return {
+          id: attribute.attribute.id,
+          name: attribute.attribute.name,
+          slug: attribute.attribute.slug,
+          participantAttributes: {
+            id: attribute.id,
+            value: attribute.value
+          }
+        }
+      })
 
-  return participants;
+
+    }
+  })
+  return participantsJson;
 }
 
   async store({ request, response }: HttpContext) {
     const participant_data = await participantsStoreValidator.validate(request.all());
     const participant = await Participant.create(participant_data);
+    // participant.related('participant_attributes').createMany(request.body()['participant_attributes']);
     const participantAttributes = request.body()['participant_attributes'];
+
     for (const attribute of participantAttributes ){
       const attribute_data = await participantAttributesStoreValidator.validate(
       {"participantId": participant.id,
@@ -45,7 +87,7 @@ export default class ParticipantsController {
     );
     await ParticipantAttribute.create(attribute_data);
     }
-    
+
     return response.status(201).send(participant);
   }
 
