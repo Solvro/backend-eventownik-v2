@@ -9,7 +9,7 @@ export default class EmailsController {
    * @operationId listEmails
    * @description Retrieve a list of emails for a specific event, along with their sending status.
    * @tag emails
-   * @responseBody 200 - [{"id": 1, "name": "Email Name", "pending": 5, "sent": 10, "failed": 2}]
+   * @responseBody 200 - [{\"email": {"id": 1, "eventId": 1, "name": "Welcome Email", "content": "Hello name, welcome to the event!", "trigger": "participant_registered", "triggerValue": null, "createdAt": "2025-02-19T10:58:37.602+00:00", "updatedAt": "2025-02-19T10:58:37.602+00:00"}, "pending": 0, "sent": 0, "failed": 0}]
    */
   async index({ params, response }: HttpContext) {
     const eventId = Number(params.event_id);
@@ -37,8 +37,7 @@ export default class EmailsController {
           .count('* as total');
 
         return {
-          id: email.id,
-          name: email.name,
+          email,
           pending: Number(pendingCount[0]?.$extras?.total || 0),
           sent: Number(sentCount[0]?.$extras?.total || 0),
           failed: Number(failedCount[0]?.$extras?.total || 0),
