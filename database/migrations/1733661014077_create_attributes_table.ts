@@ -9,6 +9,8 @@ export default class extends BaseSchema {
       table.string("name", 255);
       table.text("slug").nullable();
       table.integer("event_id").unsigned().references("events.id").nullable();
+      table.boolean("show_in_list").defaultTo(false);
+      table.boolean("show_in_form").defaultTo(false);
       table.json("options").nullable();
       table
         .enum(
