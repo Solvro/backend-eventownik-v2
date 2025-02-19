@@ -163,7 +163,9 @@ export default class ParticipantsController {
    */
   async destroy({ params }: HttpContext) {
     const participant = await Participant.findOrFail(params.id);
+    await ParticipantAttribute.query().where('participant_id', params.id).delete();
     await participant.delete();
+
     return { message: `Participant successfully deleted.` };
   }
 
