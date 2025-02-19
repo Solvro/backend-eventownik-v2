@@ -27,10 +27,10 @@ export default class Participant extends BaseModel {
   @column()
   declare slug: string;
 
-  @column.dateTime({ autoCreate: true })
+  @column.dateTime({ autoCreate: true, serialize: (value) => value.toFormat("yyyy-MM-dd HH:mm:ss") })
   declare createdAt: DateTime;
 
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  @column.dateTime({ autoCreate: true, serialize: (value) => value.toFormat("yyyy-MM-dd HH:mm:ss") })
   declare updatedAt: DateTime;
 
   @belongsTo(() => Event)
