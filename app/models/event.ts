@@ -4,16 +4,11 @@ import string from "@adonisjs/core/helpers/string";
 import {
   BaseModel,
   afterCreate,
-  belongsTo,
   column,
   hasMany,
   manyToMany,
 } from "@adonisjs/lucid/orm";
-import type {
-  BelongsTo,
-  HasMany,
-  ManyToMany,
-} from "@adonisjs/lucid/types/relations";
+import type { HasMany, ManyToMany } from "@adonisjs/lucid/types/relations";
 
 import Email from "#models/email";
 
