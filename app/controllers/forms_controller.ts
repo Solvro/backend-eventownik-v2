@@ -79,7 +79,6 @@ export default class FormsController {
     return await Form.query()
       .where("event_id", eventId)
       .where("id", formId)
-      .preload("attributes")
       .firstOrFail();
   }
 
@@ -87,10 +86,10 @@ export default class FormsController {
    * @update
    * @operationId updateForm
    * @description Updates form details
-   * @tag forms
    * @requestBody <updateFormValidator>
    * @responseBody 200 - <Form>
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
+   * @tag forms
    */
   public async update({ params, request, bouncer }: HttpContext) {
     const eventId = Number(params.eventId);
