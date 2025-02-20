@@ -8,11 +8,10 @@ export default class extends BaseSeeder {
       ["action", "subject"],
       [
         { action: "manage", subject: "all" },
-        { action: "update", subject: "event" },
-        { action: "delete", subject: "event" },
-        { action: "read", subject: "form" },
-        { action: "update", subject: "form" },
-        { action: "delete", subject: "form" },
+        { action: "manage", subject: "setting" },
+        { action: "manage", subject: "form" },
+        { action: "manage", subject: "participant" },
+        { action: "manage", subject: "email" },
       ],
     );
   }
