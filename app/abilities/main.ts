@@ -37,6 +37,7 @@ for (const availablePermission of availablePermissions) {
       }
 
       const superPermission = await Permission.one("manage", "all");
+
       const result = await admin
         .related("permissions")
         .query()

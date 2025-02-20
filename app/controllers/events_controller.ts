@@ -50,12 +50,16 @@ export default class EventController {
    * @responseBody 401 - Unauthorized access
    * @tag event
    */
-  public async show({ params, auth }: HttpContext) {
-    return await Event.query()
+  public async show({ params, auth, bouncer }: HttpContext) {
+    const event = await Event.query()
       .where("id", Number(params.id))
       .preload("permissions", (q) =>
         q.where("admin_permissions.admin_id", auth.user?.id ?? 0),
-      );
+      )
+      .first();
+
+    await bouncer.authorize("manage_event", event);
+    return event;
   }
 
   /**
@@ -71,8 +75,9 @@ export default class EventController {
    * @responseBody 422 - Validation failed
    * @tag event
    */
-  public async update({ params, request, response }: HttpContext) {
+  public async update({ params, request, response, bouncer }: HttpContext) {
     const event = await Event.findOrFail(params.id);
+    await bouncer.authorize("manage_settings", event);
     const data = await updateEventValidator.validate(request.all());
     event.merge(data);
     await event.save();
