@@ -52,5 +52,9 @@ router
         router.get("me", [AuthController, "me"]).use(middleware.auth());
       })
       .prefix("auth");
+    router
+      .group(() => {
+        router.resource(":event_id/participants/", ParticipantsController);
+      }).prefix("events");
   })
   .prefix("api/v1");
