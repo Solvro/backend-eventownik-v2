@@ -49,11 +49,12 @@ export default class FormsController {
 
     await form.save();
 
-    const attributeIds = data.attributeIds ?? [];
+    //waiting for attributes implementation
+    // const attributeIds = data.attributeIds ?? [];
 
-    if (attributeIds.length > 0) {
-      await form.related("attributes").sync(attributeIds);
-    }
+    // if (attributeIds.length > 0) {
+    //   await form.related("attributes").sync(attributeIds);
+    // }
 
     return form;
   }
@@ -100,8 +101,9 @@ export default class FormsController {
 
     await form.save();
 
-    const attributeIds = data.attributeIds ?? [];
-    await form.related("attributes").sync(attributeIds);
+    // waiting for attributes implementation
+    // const attributeIds = data.attributeIds ?? [];
+    // await form.related("attributes").sync(attributeIds);
 
     return form;
   }
