@@ -2,12 +2,9 @@ import { HttpContext } from "@adonisjs/core/http";
 
 import Participant from "#models/participant";
 import ParticipantAttribute from "#models/participant_attribute";
-import { participantAttributesStoreValidator, participantAttributesUpdateValidator } from "#validators/participant_attributes";
 import {
   participantsStoreValidator,
   participantsUpdateValidator,
-  participantsStoreValidatorSchema,
-  participantsUpdateValidatorSchema
 } from "#validators/participants";
 
 export default class ParticipantsController {
@@ -22,7 +19,7 @@ export default class ParticipantsController {
   const page = request.input('page', 1);
   const limit = request.input('limit', 10);
   const participants = await Participant.query()
-    .where('event_id', params.event_id)
+    .where('event_id', params.eventId)
     .preload('participant_attributes', (query) => {
       query
         .select('id', 'attribute_id', 'value', 'participant_id')
@@ -76,7 +73,7 @@ export default class ParticipantsController {
    * @tag participants
    * @summary Create a new participant
    * @description Create a new participant for specific event with optional attributes
-   * @requestBody <participantsStoreValidatoSchemar>
+   * @requestBody <participantsStoreValidator>
    * @responseBody 201 - <Participant>
    */
   async store({ request, response }: HttpContext) {
@@ -123,10 +120,10 @@ export default class ParticipantsController {
       .where('status', 'sent')
       .preload('email', (emailQuery) => {
         emailQuery
-        .where('event_id', params.event_id)
+        .where('event_id', params.eventId)
       })
     })
-    if (participant[0].eventId !== parseInt(params.event_id)){
+    if (participant[0].eventId !== parseInt(params.eventId)){
         return response.notFound("Participant not found.");
       }
     const participantJson = participant.map((participant) => {
@@ -160,16 +157,17 @@ export default class ParticipantsController {
    * @summary Update a participant
    * @description Update a participant for specific event with optional attributes
    * @responseBody 200 - <Participant>
-   * @requestBody <participantsUpdateValidatorSchema>
+   * @requestBody <participantsUpdateValidator>
    */
   async update({ params, request }: HttpContext) {
-    const participantData = await participantsUpdateValidator.validate(request.all());
     const participant = await Participant.findOrFail(params.id);
+    const participantData = await participantsUpdateValidator.validate(request.all());
+    const participantAttributes = participantData.participantAttributes;
+    delete participantData.participantAttributes;
     participant.merge(participantData);
 
-    const participantAttributes = await participantAttributesUpdateValidator.validate(request.all());
-    if (participantAttributes.participantAttributes){
-      for (const participantAttribute of participantAttributes.participantAttributes){
+    if (participantAttributes){
+      for (const participantAttribute of participantAttributes){
         const attribute = await ParticipantAttribute.findOrFail(participantAttribute.id);
         if (attribute.participantId === participant.id){
           attribute.merge(participantAttribute);
@@ -191,7 +189,7 @@ export default class ParticipantsController {
    */
   async destroy({ params, response }: HttpContext) {
     const participant = await Participant.findOrFail(params.id);
-    if (participant.eventId === parseInt(params.event_id)) {
+    if (participant.eventId === parseInt(params.eventId)) {
           await ParticipantAttribute.query().where('participant_id', params.id).delete();
           await participant.delete();
           return { message: `Participant successfully deleted.` };
