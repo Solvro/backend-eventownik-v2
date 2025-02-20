@@ -40,10 +40,10 @@ export default class Email extends BaseModel {
   // declare attributes: HasMany<typeof ParticipantAttribute>
 
   @hasMany(() => ParticipantEmail)
-  declare participant_emails: HasMany<typeof ParticipantEmail>;
+  declare participantEmails: HasMany<typeof ParticipantEmail>;
 
   @manyToMany(() => Participant, {
-    pivotTable: "participant_emails",
+    pivotTable: "participantEmails",
     pivotColumns: ["send_at", "send_by", "status"],
   })
   declare participants: ManyToMany<typeof Participant>;

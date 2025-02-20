@@ -110,11 +110,10 @@ export default class ParticipantsController {
    * @responseBody 404 - {"message" : "Participant not found."}
    */
   async show({ params, response }: HttpContext) {
-
-    const find_participant = await Participant.query()
+    const findParticipant = await Participant.query()
     .where('id',params.id)
-    if (find_participant.length == 0){
-      return response.status(404).send({ message: `Participant not found` });
+    if (findParticipant.length === 0){
+      return response.notFound("Participant not found.");
     }
 
     const participant = await Participant.query()
@@ -127,8 +126,8 @@ export default class ParticipantsController {
         .where('event_id', params.event_id)
       })
     })
-    if (participant[0].eventId != params.event_id){
-        return response.status(404).send({ message: `Participant not found` });
+    if (participant[0].eventId !== parseInt(params.event_id)){
+        return response.notFound("Participant not found.");
       }
     const participantJson = participant.map((participant) => {
       return {
@@ -164,17 +163,16 @@ export default class ParticipantsController {
    * @requestBody <participantsUpdateValidatorSchema>
    */
   async update({ params, request }: HttpContext) {
-    const participant_data = await participantsUpdateValidator.validate(request.all());
+    const participantData = await participantsUpdateValidator.validate(request.all());
     const participant = await Participant.findOrFail(params.id);
-    participant.merge(participant_data);
+    participant.merge(participantData);
 
-    const participant_attributes = await participantAttributesUpdateValidator.validate(request.all());
-    if (participant_attributes.participantAttributes){
-      for (const participant_attribute of participant_attributes.participantAttributes){
-        console.log(participant_attribute);
-        const attribute = await ParticipantAttribute.findOrFail(participant_attribute.id);
-        if (attribute.participantId == participant.id){
-          attribute.merge(participant_attribute);
+    const participantAttributes = await participantAttributesUpdateValidator.validate(request.all());
+    if (participantAttributes.participantAttributes){
+      for (const participantAttribute of participantAttributes.participantAttributes){
+        const attribute = await ParticipantAttribute.findOrFail(participantAttribute.id);
+        if (attribute.participantId === participant.id){
+          attribute.merge(participantAttribute);
           await attribute.save();
         }
       }
@@ -193,12 +191,12 @@ export default class ParticipantsController {
    */
   async destroy({ params, response }: HttpContext) {
     const participant = await Participant.findOrFail(params.id);
-    if (participant.eventId == params.event_id) {
+    if (participant.eventId === parseInt(params.event_id)) {
           await ParticipantAttribute.query().where('participant_id', params.id).delete();
           await participant.delete();
           return { message: `Participant successfully deleted.` };
     }
-    return response.status(404).send({ message: `Participant does not belong to this event.` });
+    return response.notFound("Participant not found.");
   }
 
   async attachEmail({ params, request, response }: HttpContext) {
