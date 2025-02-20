@@ -42,8 +42,20 @@ export default class EventController {
     return response.created(event);
   }
 
-  public async show({ params }: HttpContext) {
-    return await Event.findOrFail(params.id);
+  /**
+   * @show
+   * @operationId showEvent
+   * @description Shows one event with logged user permission
+   * @responseBody 201 - <Event>.with(permissions)
+   * @responseBody 401 - Unauthorized access
+   * @tag event
+   */
+  public async show({ params, auth }: HttpContext) {
+    return await Event.query()
+      .where("id", Number(params.id))
+      .preload("permissions", (q) =>
+        q.where("admin_permissions.admin_id", auth.user?.id ?? 0),
+      );
   }
 
   /**

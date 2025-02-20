@@ -7,13 +7,19 @@ import {
   belongsTo,
   column,
   hasMany,
+  manyToMany,
 } from "@adonisjs/lucid/orm";
-import type { BelongsTo, HasMany } from "@adonisjs/lucid/types/relations";
+import type {
+  BelongsTo,
+  HasMany,
+  ManyToMany,
+} from "@adonisjs/lucid/types/relations";
 
 import Email from "#models/email";
 
 import Admin from "./admin.js";
 import Participant from "./participant.js";
+import Permission from "./permission.js";
 
 // import Form from './Form.ts';
 
@@ -63,8 +69,19 @@ export default class Event extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime;
 
-  @belongsTo(() => Admin)
-  declare admin: BelongsTo<typeof Admin>;
+  @manyToMany(() => Admin, {
+    pivotTable: "admin_permissions",
+    pivotColumns: ["permission_id"],
+    pivotTimestamps: true,
+  })
+  declare admins: ManyToMany<typeof Admin>;
+
+  @manyToMany(() => Permission, {
+    pivotTable: "admin_permissions",
+    pivotColumns: ["admin_id"],
+    pivotTimestamps: true,
+  })
+  declare permissions: ManyToMany<typeof Permission>;
 
   // @belongsTo(() => Form)
   // public firstForm: BelongsTo<typeof Form>;
