@@ -2,9 +2,9 @@ import vine from "@vinejs/vine";
 import { DateTime } from "luxon";
 
 function DateTimeTransform(value: Date): DateTime {
-  const parsed = DateTime.fromISO(value.toISOString())
-  if(!parsed.isValid) {
-    throw new Error('Invalid date');
+  const parsed = DateTime.fromISO(value.toISOString());
+  if (!parsed.isValid) {
+    throw new Error("Invalid date");
   }
   return parsed;
 }
