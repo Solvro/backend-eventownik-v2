@@ -34,17 +34,17 @@ router
         router.resource("events", EventController);
         router.resource("events/:eventId/organizers", OrganizersController);
         router.resource("blocks", BlocksController);
-        router.resource("events/:event_id/emails", EmailsController);
+        router.resource("emails", EmailsController);
       })
       .use(middleware.auth());
-
-    router
-      .group(() => {
-        router.post("login", [AuthController, "login"]);
-        router.post("register", [AuthController, "register"]);
-        router.get("me", [AuthController, "me"]).use(middleware.auth());
-      })
-      .prefix("auth");
   })
-  .prefix("api/v1");
-  
+  .prefix("api/v1/events/:event_id");
+
+router
+  .group(() => {
+    router.post("login", [AuthController, "login"]);
+    router.post("register", [AuthController, "register"]);
+    router.get("me", [AuthController, "me"]).use(middleware.auth());
+  })
+  .prefix("api/v1/auth");
+    
