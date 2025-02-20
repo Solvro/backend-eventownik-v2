@@ -47,4 +47,3 @@ router
     router.get("me", [AuthController, "me"]).use(middleware.auth());
   })
   .prefix("api/v1/auth");
-    

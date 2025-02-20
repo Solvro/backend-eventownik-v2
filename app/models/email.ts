@@ -52,5 +52,4 @@ export default class Email extends BaseModel {
     sent_count: 0,
     failed_count: 0,
   };
-
 }

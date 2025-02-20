@@ -10,9 +10,10 @@ import {
 } from "@adonisjs/lucid/orm";
 import type { BelongsTo, HasMany } from "@adonisjs/lucid/types/relations";
 
+import Email from "#models/email";
+
 import Admin from "./admin.js";
 import Participant from "./participant.js";
-import Email from "#models/email";
 
 // import Form from './Form.ts';
 
