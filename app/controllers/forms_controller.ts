@@ -5,6 +5,13 @@ import Form from "#models/form";
 import { createFormValidator, updateFormValidator } from "#validators/form";
 
 export default class FormsController {
+  /**
+   * @index
+   * @operationId getForms
+   * @description Returns an array of event forms
+   * @tag forms
+   * @responseBody 200 - <Form[]>
+   */
   public async index({ params, request }: HttpContext) {
     const eventId = Number(params.eventId);
     const page = Number(request.input("page", 1));
@@ -15,7 +22,15 @@ export default class FormsController {
       .paginate(page, perPage);
   }
 
-  public async store({ params, request, response }: HttpContext) {
+  /**
+   * @store
+   * @operationId createForm
+   * @description Creates a form for the specified event
+   * @tag forms
+   * @requestBody <createFormValidator>
+   * @returnBody 201 - <Form>
+   */
+  public async store({ params, request }: HttpContext) {
     const eventId = Number(params.eventId);
     const data = await createFormValidator.validate(request.all());
     const form = new Form();
@@ -40,12 +55,17 @@ export default class FormsController {
       await form.related("attributes").sync(attributeIds);
     }
 
-    return response.created({
-      message: "Form created successfully",
-      form,
-    });
+    return form;
   }
 
+  /**
+   * @show
+   * @operationId getForm
+   * @description Returns a form
+   * @tag forms
+   * @responseBody 200 - <Form>
+   * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
+   */
   public async show({ params }: HttpContext) {
     const eventId = Number(params.eventId);
     const formId = Number(params.id);
@@ -57,7 +77,16 @@ export default class FormsController {
       .firstOrFail();
   }
 
-  public async update({ params, request, response }: HttpContext) {
+  /**
+   * @update
+   * @operationId updateForm
+   * @description Updates form details
+   * @tag forms
+   * @requestBody <updateFormValidator>
+   * @responseBody 200 - <Form>
+   * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
+   */
+  public async update({ params, request }: HttpContext) {
     const eventId = Number(params.eventId);
     const formId = Number(params.id);
 
@@ -68,14 +97,23 @@ export default class FormsController {
 
     const data = await updateFormValidator.validate(request.all());
     form.merge(data);
+
     await form.save();
 
     const attributeIds = data.attributeIds ?? [];
     await form.related("attributes").sync(attributeIds);
 
-    return response.ok({ message: "Form updated successfully", form });
+    return form;
   }
 
+  /**
+   * @destroy
+   * @operationId deleteForm
+   * @description Deletes a form
+   * @tag forms
+   * @responseBody 204 - {}
+   * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
+   */
   public async destroy({ params, response }: HttpContext) {
     const eventId = Number(params.eventId);
     const formId = Number(params.id);
@@ -86,6 +124,7 @@ export default class FormsController {
       .firstOrFail();
 
     await form.delete();
+
     return response.noContent();
   }
 }
