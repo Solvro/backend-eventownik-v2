@@ -52,10 +52,7 @@ export default class ParticipantsController {
     return { message: `Participant successfully deleted.` };
   }
 
-  /**
-   * Attach and send email to participant
-   */
-  async sendEmail({ params, request, response }: HttpContext) {
+  async attachEmail({ params, request, response }: HttpContext) {
     const participant = await Participant.findOrFail(params.id);
 
     const emailId = request.input('email_id') as number;
