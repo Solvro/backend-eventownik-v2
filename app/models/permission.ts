@@ -13,6 +13,14 @@ export default class Permission extends BaseModel {
   @column()
   declare subject: string;
 
+  static async one(action: string, subject: string): Promise<number | null> {
+    const permission = await Permission.query()
+      .where("action", action)
+      .where("subject", subject)
+      .first();
+    return permission?.id ?? null;
+  }
+
   @manyToMany(() => Admin, {
     pivotTable: "admin_permissions",
     pivotColumns: ["event_id"],

@@ -36,11 +36,16 @@ for (const availablePermission of availablePermissions) {
         return true;
       }
 
+      const superPermission = await Permission.one("manage", "all");
       const result = await admin
         .related("permissions")
         .query()
         .where("event_id", event.id)
-        .where("permission_id", availablePermission.id)
+        .where((query) =>
+          query
+            .where("permission_id", availablePermission.id)
+            .orWhere("permission_id", superPermission ?? 0),
+        )
         .first();
 
       return Boolean(result);
