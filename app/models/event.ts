@@ -79,7 +79,7 @@ export default class Event extends BaseModel {
       await event.save();
     }
   }
-  
+
   @hasMany(() => Email)
   declare emails: HasMany<typeof Email>;
 }
