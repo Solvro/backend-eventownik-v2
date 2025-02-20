@@ -6,7 +6,7 @@ import { createFormValidator, updateFormValidator } from "#validators/form";
 
 export default class FormsController {
   public async index({ params, request }: HttpContext) {
-    const eventId = Number(params.id);
+    const eventId = Number(params.eventId);
     const page = Number(request.input("page", 1));
     const perPage = Number(request.input("perPage", 10));
 
@@ -16,14 +16,14 @@ export default class FormsController {
   }
 
   public async store({ params, request, response }: HttpContext) {
-    const eventId = Number(params.id);
+    const eventId = Number(params.eventId);
     const data = await createFormValidator.validate(request.all());
     const form = new Form();
+
     form.merge({
       ...data,
       eventId,
     });
-    await form.save();
 
     if (form.name && form.id) {
       form.slug = string.slug(`${form.name}${form.id}`, {
@@ -31,9 +31,11 @@ export default class FormsController {
         strict: true,
       });
     }
+
     await form.save();
 
     const attributeIds = data.attributeIds ?? [];
+
     if (attributeIds.length > 0) {
       await form.related("attributes").sync(attributeIds);
     }
@@ -45,8 +47,8 @@ export default class FormsController {
   }
 
   public async show({ params }: HttpContext) {
-    const eventId = Number(params.id);
-    const formId = Number(params.formId);
+    const eventId = Number(params.eventId);
+    const formId = Number(params.id);
 
     return await Form.query()
       .where("event_id", eventId)
@@ -56,8 +58,9 @@ export default class FormsController {
   }
 
   public async update({ params, request, response }: HttpContext) {
-    const eventId = Number(params.id);
-    const formId = Number(params.formId);
+    const eventId = Number(params.eventId);
+    const formId = Number(params.id);
+
     const form = await Form.query()
       .where("event_id", eventId)
       .where("id", formId)
@@ -74,8 +77,8 @@ export default class FormsController {
   }
 
   public async destroy({ params, response }: HttpContext) {
-    const eventId = Number(params.id);
-    const formId = Number(params.formId);
+    const eventId = Number(params.eventId);
+    const formId = Number(params.id);
 
     const form = await Form.query()
       .where("event_id", eventId)
