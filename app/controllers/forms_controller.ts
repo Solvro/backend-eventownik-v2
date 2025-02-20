@@ -1,5 +1,4 @@
-import slugify from "slugify";
-
+import string from "@adonisjs/core/helpers/string";
 import type { HttpContext } from "@adonisjs/core/http";
 
 import Form from "#models/form";
@@ -27,10 +26,10 @@ export default class FormsController {
     await form.save();
 
     if (form.name && form.id) {
-      form.slug = slugify(`${form.name}${form.id}`, {
+      form.slug = string.slug(`${form.name}${form.id}`, {
         lower: true,
         strict: true,
-      }) as string;
+      });
     }
     await form.save();
 
