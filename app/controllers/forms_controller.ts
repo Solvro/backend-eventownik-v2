@@ -1,6 +1,7 @@
 import string from "@adonisjs/core/helpers/string";
 import type { HttpContext } from "@adonisjs/core/http";
 
+import Event from "#models/event";
 import Form from "#models/form";
 import { createFormValidator, updateFormValidator } from "#validators/form";
 
@@ -12,8 +13,9 @@ export default class FormsController {
    * @tag forms
    * @responseBody 200 - <Form[]>
    */
-  public async index({ params, request }: HttpContext) {
+  public async index({ params, request, bouncer }: HttpContext) {
     const eventId = Number(params.eventId);
+    await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
     const page = Number(request.input("page", 1));
     const perPage = Number(request.input("perPage", 10));
 
@@ -30,8 +32,10 @@ export default class FormsController {
    * @requestBody <createFormValidator>
    * @returnBody 201 - <Form>
    */
-  public async store({ params, request }: HttpContext) {
+  public async store({ params, request, bouncer }: HttpContext) {
     const eventId = Number(params.eventId);
+    await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
+
     const data = await createFormValidator.validate(request.all());
     const form = new Form();
 
@@ -67,9 +71,10 @@ export default class FormsController {
    * @responseBody 200 - <Form>
    * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    */
-  public async show({ params }: HttpContext) {
+  public async show({ params, bouncer }: HttpContext) {
     const eventId = Number(params.eventId);
     const formId = Number(params.id);
+    await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
 
     return await Form.query()
       .where("event_id", eventId)
@@ -87,9 +92,10 @@ export default class FormsController {
    * @responseBody 200 - <Form>
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
-  public async update({ params, request }: HttpContext) {
+  public async update({ params, request, bouncer }: HttpContext) {
     const eventId = Number(params.eventId);
     const formId = Number(params.id);
+    await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
 
     const form = await Form.query()
       .where("event_id", eventId)
@@ -116,9 +122,10 @@ export default class FormsController {
    * @responseBody 204 - {}
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
-  public async destroy({ params, response }: HttpContext) {
+  public async destroy({ params, response, bouncer }: HttpContext) {
     const eventId = Number(params.eventId);
     const formId = Number(params.id);
+    await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
 
     const form = await Form.query()
       .where("event_id", eventId)
