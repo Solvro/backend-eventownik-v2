@@ -1,11 +1,17 @@
+import { inject } from "@adonisjs/core";
 import type { HttpContext } from "@adonisjs/core/http";
 import db from "@adonisjs/lucid/services/db";
 
 import Event from "#models/event";
 import Permission from "#models/permission";
-import { createEventValidator, updateEventValidator } from "#validators/event";
+import { FileService } from "#services/file_service";
+import env from "#start/env";
 
+@inject()
 export default class EventController {
+  // eslint-disable-next-line no-useless-constructor
+  constructor(private fileService: FileService) {}
+
   /**
    * @index
    * @operationId getEvents
@@ -22,7 +28,7 @@ export default class EventController {
    * @store
    * @operationId createEvent
    * @description Creates a new event for the authenticated user. Date should be in format 2025-01-05 12:00:00
-   * @requestBody <createEventValidator>
+   * @requestFormDataBody <createEventValidator>
    * @responseBody 201 - <Event>
    * @responseBody 400 - Invalid input data
    * @responseBody 401 - Unauthorized access
@@ -30,15 +36,35 @@ export default class EventController {
    * @tag event
    */
   public async store({ request, response, auth }: HttpContext) {
-    const data = await createEventValidator.validate(request.all());
-    const event = await Event.create({ ...data, organizerId: auth.user?.id });
+    const { photo, ...eventData } =
+      await request.validateUsing(createEventValidator);
+
+    let photoUrl = null;
+
+    if (photo !== undefined) {
+      const photoStoragePath = env.get(
+        "PHOTO_STORAGE_URL",
+        "storage/event-photos",
+      );
+
+      photoUrl = await this.fileService.storeFile(photo, photoStoragePath);
+    }
+
+    const event = await Event.create({
+      ...eventData,
+      photoUrl,
+      organizerId: auth.user?.id,
+    });
+
     const permission = await Permission.query()
       .where("action", "manage")
       .where("subject", "all")
       .firstOrFail();
+
     await auth.user
       ?.related("permissions")
       .attach({ [permission.id]: { event_id: event.id } });
+
     return response.created(event);
   }
 
