@@ -7,6 +7,15 @@ import {
   participantsUpdateValidator,
 } from "#validators/participants";
 
+interface Attribute {
+    id: number;
+    attribute: {
+        name: string;
+        slug: string;
+    };
+    value: string;
+}
+
 export default class ParticipantsController {
   /**
    * @index
@@ -15,22 +24,26 @@ export default class ParticipantsController {
    * @description Get all participants and their attributes for specific event
    * @responseBody 200 - [{"id":32,"email":"test@test.pl","firstName":"name","lastName":"last name","slug":"9081d217-9e13-4642-b7f0-2b8f8f409dfb","createdAt":"2025-02-19 13:56:10","updatedAt":"2025-02-19 13:56:10","attributes":[{"id":25,"name":"Sample Attribute","value":"sample value","slug":"sample-slug"}]}]
   */
-  async index({ params, request }: HttpContext) {
-  const page = request.input('page', 1);
-  const limit = request.input('limit', 10);
+  async index({ params, request, response }: HttpContext) {
+  const page = request.input('page', 1) as number;
+  const limit = request.input('limit', 10) as number;
   const participants = await Participant.query()
-    .where('event_id', params.eventId)
+    .where('event_id', params.eventId as number)
     .preload('participant_attributes', (query) => {
       query
         .select('id', 'attribute_id', 'value', 'participant_id')
         .preload('attribute', (attributeQuery) => {
           attributeQuery
           .select('name', "slug")
-          .where('show_in_list', true);
+          .where('show_in_list', true).catch((error) => {
+            return response.badRequest({ message: (error as Error).message });
+          });
+        }).catch((error) => {
+          return response.badRequest({ message: (error as Error).message });
         });
     })
     .paginate(page, limit);
-  const serialized_participants = participants.serialize({
+  const serializedParticipants = participants.serialize({
     fields: {
       omit: ["eventId"]
     },
@@ -46,16 +59,17 @@ export default class ParticipantsController {
     }
 }
 );
-  const participantsJson = serialized_participants.data.map((participants) => {
+
+  const participantsJson = serializedParticipants.data.map((participant) => {
     return {
-      id: participants.id,
-      email: participants.email,
-      firstName: participants.firstName,
-      lastName: participants.lastName,
-      slug: participants.slug,
-      createdAt: participants.createdAt,
-      updatedAt: participants.updatedAt,
-      attributes: participants.participant_attributes.map((attribute: any) => {
+      id: participant.id as number,
+      email: participant.email as string,
+      firstName: participant.firstName as string,
+      lastName: participant.lastName as string,
+      slug: participant.slug as string,
+      createdAt: participant.createdAt as string,
+      updatedAt: participant.updatedAt as string,
+      attributes: (participant.participant_attributes as []).map((attribute: Attribute) => {
         return {
           id: attribute.id,
           name: attribute.attribute.name,
@@ -64,7 +78,8 @@ export default class ParticipantsController {
         }
       })
     }
-  })
+  });
+
   return participantsJson;
 }
 
@@ -76,22 +91,16 @@ export default class ParticipantsController {
    * @requestBody <participantsStoreValidator>
    * @responseBody 201 - <Participant>
    */
-  async store({ request, response }: HttpContext) {
-    const participant_data = await participantsStoreValidator.validate(request.all());
-    const participant_attributes = await participantAttributesStoreValidator.validate(request.all());
-    participant_data.eventId = request.params().event_id;
-    const participant = await Participant.create(participant_data);
-    // participant.related('participant_attributes').createMany(request.body()['participant_attributes']);
-    const participantAttributes = request.body()['participant_attributes'];
-
-    for (const attribute of participantAttributes ){
-      const attribute_data = await participantAttributesStoreValidator.validate(
-      {"participantId": participant.id,
-       "attributeId": attribute['attributeId'],
-        "value": attribute['value']
-      }
-    );
-    await ParticipantAttribute.create(attribute_data);
+  async store({ request, response, params }: HttpContext) {
+    const participantData = await participantsStoreValidator.validate(request.all());
+    const participantAttributes = participantData.participantAttributes;
+    delete participantData.participantAttributes;
+    participantData.eventId = params.eventId as number;
+    const participant = await Participant.create(participantData);
+    if (participantAttributes){
+    participant.related('participant_attributes').createMany(participantAttributes).catch((error) => {
+      return response.badRequest({ message: (error as Error).message });
+    });
     }
 
     participant.related('participant_attributes').createMany(participant_attributes.participantAttributes);
@@ -103,46 +112,52 @@ export default class ParticipantsController {
    * @tag participants
    * @summary Get a participant
    * @description Get a participant and sent emails for specific event
-   * @responseBody 201 - {"id": 1,"email":"john.doe@example.com","firstName": "John","lastName": "Doe","slug":"some-unique-slug","createdAt": "2025-02-18T00:56:06.115+01:00","updatedAt": "2025-02-18T00:56:06.115+01:00","emails":[{"id": 1,"name":"Welcome Email","content":"Welcome to our event!","participantEmails":{"status":"sent","sendBy": "admin","sendAt": "2025-02-19T14:43:12.000+01:00"}         }     ] }
+   * @responseBody 200 - {"id": 1,"email":"john.doe@example.com","firstName": "John","lastName": "Doe","slug":"some-unique-slug","createdAt": "2025-02-18T00:56:06.115+01:00","updatedAt": "2025-02-18T00:56:06.115+01:00","emails":[{"id": 1,"name":"Welcome Email","content":"Welcome to our event!","participantEmails":{"status":"sent","sendBy": "admin","sendAt": "2025-02-19T14:43:12.000+01:00"}         }     ] }
    * @responseBody 404 - {"message" : "Participant not found."}
    */
   async show({ params, response }: HttpContext) {
     const findParticipant = await Participant.query()
-    .where('id',params.id)
+    .where('id',params.id as number)
     if (findParticipant.length === 0){
       return response.notFound("Participant not found.");
     }
 
     const participant = await Participant.query()
-    .where('id',params.id)
+    .where('id',params.id as number)
     .preload('participant_emails', (query) => {
       query
       .where('status', 'sent')
       .preload('email', (emailQuery) => {
         emailQuery
-        .where('event_id', params.eventId)
-      })
+        .where('event_id', params.eventId as number).catch((error) => {
+          return response.badRequest({ message: (error as Error).message });
+        }
+        );
+      }).catch((error) => {
+        return response.badRequest({ message: (error as Error).message });
+      });
     })
-    if (participant[0].eventId !== parseInt(params.eventId)){
+
+    if (participant[0].eventId !== Number.parseInt(params.eventId as string)){
         return response.notFound("Participant not found.");
       }
-    const participantJson = participant.map((participant) => {
+    const participantJson = participant.map((participantBuilder) => {
       return {
-        id: participant.id,
-        email: participant.email,
-        firstName: participant.firstName,
-        lastName: participant.lastName,
-        slug: participant.slug,
-        createdAt: participant.createdAt.toFormat("yyyy-MM-dd HH:mm:ss"),
-        updatedAt: participant.updatedAt.toFormat("yyyy-MM-dd HH:mm:ss"),
-        emails : participant.participant_emails.map((participant_email: any) => {
+        id: participantBuilder.id,
+        email: participantBuilder.email,
+        firstName: participantBuilder.firstName,
+        lastName: participantBuilder.lastName,
+        slug: participantBuilder.slug,
+        createdAt: participantBuilder.createdAt.toFormat("yyyy-MM-dd HH:mm:ss"),
+        updatedAt: participantBuilder.updatedAt.toFormat("yyyy-MM-dd HH:mm:ss"),
+        emails : participantBuilder.participant_emails.map((participant_email) => {
           return {
             id: participant_email.email.id,
             name: participant_email.email.name,
             content: participant_email.email.content,
-              status: participant_email.status,
-              sendBy: participant_email.sendBy,
-              sendAt: participant_email.sendAt.toFormat("yyyy-MM-dd HH:mm:ss")
+            status: participant_email.status,
+            sendBy: participant_email.sendBy,
+            sendAt: participant_email.sendAt?.toFormat("yyyy-MM-dd HH:mm:ss")
           }
         })
       }
@@ -189,8 +204,8 @@ export default class ParticipantsController {
    */
   async destroy({ params, response }: HttpContext) {
     const participant = await Participant.findOrFail(params.id);
-    if (participant.eventId === parseInt(params.eventId)) {
-          await ParticipantAttribute.query().where('participant_id', params.id).delete();
+    if (participant.eventId === Number.parseInt(params.eventId as string)) {
+          await ParticipantAttribute.query().where('participant_id', params.id as number).delete();
           await participant.delete();
           return { message: `Participant successfully deleted.` };
     }
