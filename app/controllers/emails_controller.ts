@@ -16,7 +16,7 @@ export default class EmailsController {
    * @responseBody 200 - [{\"email": {"id": 1, "eventId": 1, "name": "Welcome Email", "content": "Hello name, welcome to the event!", "trigger": "participant_registered", "triggerValue": null, "createdAt": "2025-02-19T10:58:37.602+00:00", "updatedAt": "2025-02-19T10:58:37.602+00:00"}, "pending": 0, "sent": 0, "failed": 0}]
    */
   async index({ params, response }: HttpContext) {
-    const eventId = Number(params.event_id);
+    const eventId = Number(params.eventId);
 
     const emails = await Email.query().where("event_id", eventId);
 
@@ -62,12 +62,14 @@ export default class EmailsController {
    */
   async show({ params, response }: HttpContext) {
     const emailId = Number.parseInt(String(params.id));
-    const event = await Event.findOrFail(params.event_id);
+    const event = await Event.findOrFail(params.eventId);
+
     const email = await event
       .related("emails")
       .query()
       .where("id", emailId)
       .firstOrFail();
+
     return response.status(200).send(email);
   }
 
@@ -81,10 +83,12 @@ export default class EmailsController {
    * @responseBody 400 - {"message": "Failed to create email"}
    */
   async store({ params, request, response }: HttpContext) {
-    const eventId = Number(params.event_id);
-    const event = await Event.findOrFail(eventId);
+    const event = await Event.findOrFail(+params.eventId);
+
     const data = await emailsStoreValidator.validate(request.all());
+
     const email = await event.related("emails").create(data);
+
     return response.status(201).send(email);
   }
 
@@ -96,13 +100,17 @@ export default class EmailsController {
    * @requestBody <emailsUpdateValidator>
    * @responseBody 200 - {"id": 1, "name": "Updated Name", "content": "Updated Content", "trigger": "form_filled"}
    */
-  async update({ params, request, response }: HttpContext) {
-    const emailId = Number(params.id);
+  async update({ params, request }: HttpContext) {
     const data = await emailsUpdateValidator.validate(request.all());
+
+    const emailId = Number(params.id);
     const email = await Email.findOrFail(emailId);
+
     email.merge(data);
+
     await email.save();
-    return response.status(200).send(email);
+
+    return email;
   }
 
   /**
@@ -110,15 +118,15 @@ export default class EmailsController {
    * @operationId deleteEmail
    * @description Remove an email associated with a specific event.
    * @tag emails
-   * @responseBody 200 - {"message": "Email successfully deleted."}
+   * @responseBody 204 - {}
    */
   async destroy({ params, response }: HttpContext) {
     const emailId = Number(params.id);
     const email = await Email.findOrFail(emailId);
+
     await email.related("participants").detach();
     await email.delete();
-    return response
-      .status(200)
-      .send({ message: "Email successfully deleted." });
+
+    return response.noContent();
   }
 }
