@@ -46,7 +46,9 @@ export default class Participant extends BaseModel {
   declare createdAt: DateTime;
 
   @column.dateTime({
-    autoCreate: true, autoUpdate: true })
+    autoCreate: true,
+    autoUpdate: true,
+  })
   declare updatedAt: DateTime;
 
   @belongsTo(() => Event)

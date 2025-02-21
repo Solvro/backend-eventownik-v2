@@ -23,62 +23,67 @@ export default class ParticipantsController {
    * @summary Get all participants
    * @description Get all participants and their attributes for specific event
    * @responseBody 200 - [{"id":32,"email":"test@test.pl","firstName":"name","lastName":"last name","slug":"9081d217-9e13-4642-b7f0-2b8f8f409dfb","createdAt":"2025-02-19 13:56:10","updatedAt":"2025-02-19 13:56:10","attributes":[{"id":25,"name":"Sample Attribute","value":"sample value","slug":"sample-slug"}]}]
-  */
+   */
   async index({ params, request, response }: HttpContext) {
-  const page = request.input('page', 1) as number;
-  const limit = request.input('limit', 10) as number;
-  const participants = await Participant.query()
-    .where('event_id', params.eventId as number)
-    .preload('participant_attributes', (query) => {
-      query
-        .select('id', 'attribute_id', 'value', 'participant_id')
-        .preload('attribute', (attributeQuery) => {
-          attributeQuery
-          .select('name', "slug")
-          .where('show_in_list', true).catch((error) => {
+    const page = request.input("page", 1) as number;
+    const limit = request.input("limit", 10) as number;
+    const participants = await Participant.query()
+      .where("event_id", params.eventId as number)
+      .preload("participant_attributes", (query) => {
+        query
+          .select("id", "attribute_id", "value", "participant_id")
+          .preload("attribute", (attributeQuery) => {
+            attributeQuery
+              .select("name", "slug")
+              .where("show_in_list", true)
+              .catch((error) => {
+                return response.badRequest({
+                  message: (error as Error).message,
+                });
+              });
+          })
+          .catch((error) => {
             return response.badRequest({ message: (error as Error).message });
           });
-        }).catch((error) => {
-          return response.badRequest({ message: (error as Error).message });
-        });
-    })
-    .paginate(page, limit);
-  const serializedParticipants = participants.serialize({
-    fields: {
-      omit: ["eventId"]
-    },
-    relations:{
-      participant_attributes:{
-        fields: ["id","value"],
-        relations: {
-          attribute: {
-            fields: ["id", "name", "slug"]
-          }
-        }
-      }
-    }
-}
-);
-
-  const participantsJson = serializedParticipants.data.map((participant) => {
-    return {
-      id: participant.id as number,
-      email: participant.email as string,
-      firstName: participant.firstName as string,
-      lastName: participant.lastName as string,
-      slug: participant.slug as string,
-      createdAt: participant.createdAt as string,
-      updatedAt: participant.updatedAt as string,
-      attributes: (participant.participant_attributes as []).map((attribute: Attribute) => {
-        return {
-          id: attribute.id,
-          name: attribute.attribute.name,
-          value: attribute.value,
-          slug: attribute.attribute.slug
-        }
       })
-    }
-  });
+      .paginate(page, limit);
+    const serializedParticipants = participants.serialize({
+      fields: {
+        omit: ["eventId"],
+      },
+      relations: {
+        participant_attributes: {
+          fields: ["id", "value"],
+          relations: {
+            attribute: {
+              fields: ["id", "name", "slug"],
+            },
+          },
+        },
+      },
+    });
+
+    const participantsJson = serializedParticipants.data.map((participant) => {
+      return {
+        id: participant.id as number,
+        email: participant.email as string,
+        firstName: participant.firstName as string,
+        lastName: participant.lastName as string,
+        slug: participant.slug as string,
+        createdAt: participant.createdAt as string,
+        updatedAt: participant.updatedAt as string,
+        attributes: (participant.participant_attributes as []).map(
+          (attribute: Attribute) => {
+            return {
+              id: attribute.id,
+              name: attribute.attribute.name,
+              value: attribute.value,
+              slug: attribute.attribute.slug,
+            };
+          },
+        ),
+      };
+    });
 
     return participantsJson;
   }
@@ -99,13 +104,18 @@ export default class ParticipantsController {
     delete participantData.participantAttributes;
     participantData.eventId = params.eventId as number;
     const participant = await Participant.create(participantData);
-    if (participantAttributes){
-    participant.related('participant_attributes').createMany(participantAttributes).catch((error) => {
-      return response.badRequest({ message: (error as Error).message });
-    });
+    if (participantAttributes) {
+      participant
+        .related("participant_attributes")
+        .createMany(participantAttributes)
+        .catch((error) => {
+          return response.badRequest({ message: (error as Error).message });
+        });
     }
 
-    participant.related('participant_attributes').createMany(participant_attributes.participantAttributes);
+    participant
+      .related("participant_attributes")
+      .createMany(participant_attributes.participantAttributes);
     return response.status(201).send(participant);
   }
 
@@ -118,10 +128,11 @@ export default class ParticipantsController {
    * @responseBody 404 - {"message" : "Participant not found."}
    */
   async show({ params, response }: HttpContext) {
-
-    const findParticipant = await Participant.query()
-    .where('id',params.id as number)
-    if (findParticipant.length === 0){
+    const findParticipant = await Participant.query().where(
+      "id",
+      params.id as number,
+    );
+    if (findParticipant.length === 0) {
       return response.notFound("Participant not found.");
     }
 
@@ -163,11 +174,11 @@ export default class ParticipantsController {
             content: participant_email.email.content,
             status: participant_email.status,
             sendBy: participant_email.sendBy,
-            sendAt: participant_email.sendAt?.toFormat("yyyy-MM-dd HH:mm:ss")
-          }
-        })
-      }
-    })
+            sendAt: participant_email.sendAt?.toFormat("yyyy-MM-dd HH:mm:ss"),
+          };
+        }),
+      };
+    });
     return participantJson;
   }
 
