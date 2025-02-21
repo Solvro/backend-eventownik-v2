@@ -1,7 +1,19 @@
 import { DateTime } from "luxon";
+import { v4 as uuidv4 } from "uuid";
 
-import { BaseModel, belongsTo, column, manyToMany } from "@adonisjs/lucid/orm";
-import type { BelongsTo, ManyToMany } from "@adonisjs/lucid/types/relations";
+import {
+  BaseModel,
+  beforeCreate,
+  belongsTo,
+  column,
+  hasMany,
+  manyToMany,
+} from "@adonisjs/lucid/orm";
+import type {
+  BelongsTo,
+  HasMany,
+  ManyToMany,
+} from "@adonisjs/lucid/types/relations";
 
 import Email from "#models/email";
 import Event from "#models/event";
@@ -27,10 +39,14 @@ export default class Participant extends BaseModel {
   @column()
   declare slug: string;
 
-  @column.dateTime({ autoCreate: true, serialize: (value: DateTime) => value.toFormat("yyyy-MM-dd HH:mm:ss") })
+  @column.dateTime({
+    autoCreate: true,
+    serialize: (value: DateTime) => value.toFormat("yyyy-MM-dd HH:mm:ss"),
+  })
   declare createdAt: DateTime;
 
-  @column.dateTime({ autoCreate: true, serialize: (value: DateTime) => value.toFormat("yyyy-MM-dd HH:mm:ss") })
+  @column.dateTime({
+    autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime;
 
   @belongsTo(() => Event)
@@ -53,4 +69,3 @@ export default class Participant extends BaseModel {
     participant.slug = v4();
   }
 }
-

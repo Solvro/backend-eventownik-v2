@@ -1,37 +1,37 @@
-import { BaseModel, column, belongsTo } from '@adonisjs/lucid/orm'
-import { DateTime } from 'luxon'
-import type { BelongsTo } from '@adonisjs/lucid/types/relations'
+import { DateTime } from "luxon";
 
-import Participant from '#models/participant'
-import Attribute from '#models/attribute'
+import { BaseModel, belongsTo, column } from "@adonisjs/lucid/orm";
+import type { BelongsTo } from "@adonisjs/lucid/types/relations";
 
+import Attribute from "#models/attribute";
+import Participant from "#models/participant";
 
 export default class ParticipantAttribute extends BaseModel {
   @column({ isPrimary: true })
-  declare  id: number
+  declare id: number;
 
   @column()
-  declare participantId: number
+  declare participantId: number;
 
   @column()
-  declare  attributeId: number
+  declare attributeId: number;
 
   @column()
-  declare  value: string | null
+  declare value: string | null;
 
   @belongsTo(() => Participant, {
-    foreignKey: 'participantId',
+    foreignKey: "participantId",
   })
-  declare participant: BelongsTo<typeof Participant>
+  declare participant: BelongsTo<typeof Participant>;
 
   @belongsTo(() => Attribute, {
-    foreignKey: 'attributeId',
+    foreignKey: "attributeId",
   })
-  declare attribute: BelongsTo<typeof Attribute>
+  declare attribute: BelongsTo<typeof Attribute>;
 
   @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime
+  declare createdAt: DateTime;
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
-  declare updatedAt: DateTime
+  declare updatedAt: DateTime;
 }

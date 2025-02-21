@@ -1,11 +1,12 @@
-import { BaseModel, belongsTo, column } from "@adonisjs/lucid/orm";
 import { DateTime } from "luxon";
-import type { BelongsTo } from '@adonisjs/lucid/types/relations'
-import Participant from "#models/participant";
+
+import { BaseModel, belongsTo, column } from "@adonisjs/lucid/orm";
+import type { BelongsTo } from "@adonisjs/lucid/types/relations";
+
 import Email from "#models/email";
+import Participant from "#models/participant";
 
 export default class ParticipantEmail extends BaseModel {
-
   @column({ isPrimary: true })
   declare id: number;
 
@@ -22,21 +23,21 @@ export default class ParticipantEmail extends BaseModel {
   declare sendBy: string | null;
 
   @column()
-  declare status: 'pending' | 'sent' | 'failed';
+  declare status: "pending" | "sent" | "failed";
 
-  @column.dateTime({ autoCreate: true})
+  @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime;
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime;
 
   @belongsTo(() => Participant, {
-    foreignKey: 'participantId'
+    foreignKey: "participantId",
   })
   declare participant: BelongsTo<typeof Participant>;
 
   @belongsTo(() => Email, {
-    foreignKey: 'emailId'
+    foreignKey: "emailId",
   })
   declare email: BelongsTo<typeof Email>;
 }

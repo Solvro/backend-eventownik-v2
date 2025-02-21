@@ -1,64 +1,65 @@
-import { BaseModel, column, manyToMany, belongsTo } from '@adonisjs/lucid/orm'
-import type { BelongsTo, ManyToMany } from '@adonisjs/lucid/types/relations'
-import { DateTime } from 'luxon'
+import { DateTime } from "luxon";
 
-import ParticipantAttribute from '#models/participant_attribute'
-import Event from '#models/event'
-import Form from '#models/form'
-import Block from '#models/block'
+import { BaseModel, belongsTo, column, manyToMany } from "@adonisjs/lucid/orm";
+import type { BelongsTo, ManyToMany } from "@adonisjs/lucid/types/relations";
+
+import Block from "#models/block";
+import Event from "#models/event";
+import Form from "#models/form";
+import ParticipantAttribute from "#models/participant_attribute";
 
 export default class Attribute extends BaseModel {
   @column({ isPrimary: true })
-  declare id: number
+  declare id: number;
 
   @column()
-  declare name: string
+  declare name: string;
 
   @column()
-  declare slug: string | null
+  declare slug: string | null;
 
   @column()
-  declare eventId: number | null
+  declare eventId: number | null;
 
   @column()
-  declare options: object | null
+  declare options: object | null;
 
   @column()
-  declare type: string | null
+  declare type: string | null;
 
   @column()
-  declare rootBlockId: number | null
+  declare rootBlockId: number | null;
 
   @column()
-  declare showInList: boolean
+  declare showInList: boolean;
 
   @column()
-  declare showInForm: boolean
+  declare showInForm: boolean;
 
   @belongsTo(() => Event, {
-    foreignKey: 'eventId',
+    foreignKey: "eventId",
   })
-  public event!: BelongsTo<typeof Event>
+  public event!: BelongsTo<typeof Event>;
 
   @belongsTo(() => Block, {
-    foreignKey: 'rootBlockId',
+    foreignKey: "rootBlockId",
   })
-  public rootBlock!: BelongsTo<typeof Block>
+  public rootBlock!: BelongsTo<typeof Block>;
 
   @manyToMany(() => Form, {
-    pivotTable: 'form_definition',
-   })
-  public forms!: ManyToMany<typeof Form>
+    pivotTable: "form_definition",
+  })
+  public forms!: ManyToMany<typeof Form>;
 
   @manyToMany(() => ParticipantAttribute, {
-    pivotTable: 'participant_attribute',
-    pivotColumns: ['value'],
+    pivotTable: "participant_attribute",
+    pivotColumns: ["value"],
   })
-  public participantAttributes!: ManyToMany<typeof ParticipantAttribute>
+  public participantAttributes!: ManyToMany<typeof ParticipantAttribute>;
 
   @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime
+  declare createdAt: DateTime;
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
-  declare updatedAt: DateTime
+  declare updatedAt: DateTime;
 }
