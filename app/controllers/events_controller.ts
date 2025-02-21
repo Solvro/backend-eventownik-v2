@@ -1,3 +1,5 @@
+import { unlinkSync } from "node:fs";
+
 import { inject } from "@adonisjs/core";
 import type { HttpContext } from "@adonisjs/core/http";
 import db from "@adonisjs/lucid/services/db";
@@ -6,6 +8,7 @@ import Event from "#models/event";
 import Permission from "#models/permission";
 import { FileService } from "#services/file_service";
 import env from "#start/env";
+import { createEventValidator, updateEventValidator } from "#validators/event";
 
 @inject()
 export default class EventController {
@@ -93,7 +96,7 @@ export default class EventController {
    * @operationId updateEvent
    * @description Updates an existing event if user has permission. Date should be in format 2025-01-05 12:00:00
    * @paramPath id - Event identifier - @type(number) @required
-   * @requestBody <updateEventValidator>
+   * @requestFormDataBody <updateEventValidator>
    * @responseBody 200 - { message: "Event updated successfully", "event":"<Event>" }
    * @responseBody 400 - Invalid input data
    * @responseBody 403 - Not authorized to update this event
@@ -101,13 +104,39 @@ export default class EventController {
    * @responseBody 422 - Validation failed
    * @tag event
    */
-  public async update({ params, request, response, bouncer }: HttpContext) {
+  public async update({ params, request, bouncer }: HttpContext) {
     const event = await Event.findOrFail(params.id);
+
     await bouncer.authorize("manage_settings", event);
-    const data = await updateEventValidator.validate(request.all());
-    event.merge(data);
+
+    const { photo, ...eventData } =
+      await request.validateUsing(updateEventValidator);
+
+    let photoUrl;
+
+    if (photo !== undefined && photo !== null) {
+      const photoStoragePath = env.get(
+        "PHOTO_STORAGE_URL",
+        "storage/event-photos",
+      );
+
+      photoUrl = await this.fileService.storeFile(photo, photoStoragePath);
+
+      if (event.photoUrl !== null) {
+        unlinkSync(event.photoUrl);
+      }
+    }
+
+    if (photo === null && event.photoUrl !== null) {
+      unlinkSync(event.photoUrl);
+      photoUrl = null;
+    }
+
+    event.merge({ ...eventData, photoUrl });
+
     await event.save();
-    return response.ok({ message: "Event updated successfully", event });
+
+    return event;
   }
 
   /**
