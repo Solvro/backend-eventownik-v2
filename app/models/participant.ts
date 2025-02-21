@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "node:crypto";
 
 import {
   BaseModel,
@@ -66,6 +66,6 @@ export default class Participant extends BaseModel {
 
   @beforeCreate()
   static async generateSlug(participant: Participant) {
-    participant.slug = v4();
+    participant.slug = randomUUID();
   }
 }
