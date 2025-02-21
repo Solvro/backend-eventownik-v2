@@ -6,14 +6,13 @@ import db from "@adonisjs/lucid/services/db";
 
 import Event from "#models/event";
 import Permission from "#models/permission";
-import { FileService } from "#services/file_service";
-import env from "#start/env";
+import { PhotoService } from "#services/photo_service";
 import { createEventValidator, updateEventValidator } from "#validators/event";
 
 @inject()
 export default class EventController {
   // eslint-disable-next-line no-useless-constructor
-  constructor(private fileService: FileService) {}
+  constructor(private photoService: PhotoService) {}
 
   /**
    * @index
@@ -42,15 +41,10 @@ export default class EventController {
     const { photo, ...eventData } =
       await request.validateUsing(createEventValidator);
 
-    let photoUrl = null;
+    let photoUrl: string | null = null;
 
     if (photo !== undefined) {
-      const photoStoragePath = env.get(
-        "PHOTO_STORAGE_URL",
-        "storage/event-photos",
-      );
-
-      photoUrl = await this.fileService.storeFile(photo, photoStoragePath);
+      photoUrl = await this.photoService.storePhoto(photo);
     }
 
     const event = await Event.create({
@@ -112,15 +106,10 @@ export default class EventController {
     const { photo, ...eventData } =
       await request.validateUsing(updateEventValidator);
 
-    let photoUrl;
+    let photoUrl: string | null | undefined;
 
     if (photo !== undefined && photo !== null) {
-      const photoStoragePath = env.get(
-        "PHOTO_STORAGE_URL",
-        "storage/event-photos",
-      );
-
-      photoUrl = await this.fileService.storeFile(photo, photoStoragePath);
+      photoUrl = await this.photoService.storePhoto(photo);
 
       if (event.photoUrl !== null) {
         unlinkSync(event.photoUrl);
