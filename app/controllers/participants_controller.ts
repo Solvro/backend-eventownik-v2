@@ -243,4 +243,3 @@ export default class ParticipantsController {
     return response.status(201).send({ message: "Email successfully sent" });
   }
 }
-
