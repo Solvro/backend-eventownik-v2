@@ -26,6 +26,7 @@ export default class EventsSchema extends BaseSchema {
       table.string("primary_color", 12);
       table.string("organizer", 255);
       table.integer("participants_count");
+      table.string("photo_url").nullable();
       table.timestamps();
     });
   }

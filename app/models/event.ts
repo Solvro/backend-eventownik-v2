@@ -64,6 +64,9 @@ export default class Event extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime;
 
+  @column()
+  declare photoUrl: string | null;
+
   @manyToMany(() => Admin, {
     pivotTable: "admin_permissions",
     pivotColumns: ["permission_id"],
