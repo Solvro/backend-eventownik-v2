@@ -61,10 +61,10 @@ export default class Participant extends BaseModel {
   declare emails: ManyToMany<typeof Email>;
 
   @hasMany(() => ParticipantAttribute)
-  declare participant_attributes: HasMany<typeof ParticipantAttribute>;
+  declare participantAttributes: HasMany<typeof ParticipantAttribute>;
 
   @hasMany(() => ParticipantEmail)
-  declare participant_emails: HasMany<typeof ParticipantEmail>;
+  declare participantEmails: HasMany<typeof ParticipantEmail>;
 
   @beforeCreate()
   static async generateSlug(participant: Participant) {

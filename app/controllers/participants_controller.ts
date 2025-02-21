@@ -29,7 +29,7 @@ export default class ParticipantsController {
     const limit = request.input("limit", 10) as number;
     const participants = await Participant.query()
       .where("event_id", params.eventId as number)
-      .preload("participant_attributes", (query) => {
+      .preload("participantAttributes", (query) => {
         query
           .select("id", "attribute_id", "value", "participant_id")
           .preload("attribute", (attributeQuery) => {
@@ -104,18 +104,18 @@ export default class ParticipantsController {
     delete participantData.participantAttributes;
     participantData.eventId = params.eventId as number;
     const participant = await Participant.create(participantData);
-    if (participantAttributes) {
-      participant
-        .related("participant_attributes")
+    if (
+      participantAttributes !== undefined &&
+      participantAttributes.length > 0
+    ) {
+      await participant
+        .related("participantAttributes")
         .createMany(participantAttributes)
         .catch((error) => {
           return response.badRequest({ message: (error as Error).message });
         });
     }
 
-    participant
-      .related("participant_attributes")
-      .createMany(participant_attributes.participantAttributes);
     return response.status(201).send(participant);
   }
 
@@ -169,12 +169,12 @@ export default class ParticipantsController {
         updatedAt: participantBuilder.updatedAt.toFormat("yyyy-MM-dd HH:mm:ss"),
         emails: participantBuilder.participantEmails.map((participantEmail) => {
           return {
-            id: participant_email.email.id,
-            name: participant_email.email.name,
-            content: participant_email.email.content,
-            status: participant_email.status,
-            sendBy: participant_email.sendBy,
-            sendAt: participant_email.sendAt?.toFormat("yyyy-MM-dd HH:mm:ss"),
+            id: participantEmail.email.id,
+            name: participantEmail.email.name,
+            content: participantEmail.email.content,
+            status: participantEmail.status,
+            sendBy: participantEmail.sendBy,
+            sendAt: participantEmail.sendAt?.toFormat("yyyy-MM-dd HH:mm:ss"),
           };
         }),
       };
