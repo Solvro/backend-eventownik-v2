@@ -53,3 +53,4 @@ export default class Participant extends BaseModel {
     participant.slug = v4();
   }
 }
+
