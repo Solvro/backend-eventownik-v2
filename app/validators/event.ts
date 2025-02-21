@@ -23,6 +23,7 @@ export const createEventValidator = vine.compile(
     long: vine.number().nullable().optional(),
     primaryColor: vine.string().nullable().optional(),
     participantsCount: vine.number().nullable().optional(),
+    photo: vine.file().optional(),
   }),
 );
 
@@ -38,5 +39,6 @@ export const updateEventValidator = vine.compile(
     primaryColor: vine.string().nullable().optional(),
     participantsCount: vine.number().nullable().optional(),
     organizer: vine.string().nullable().optional(),
+    photo: vine.file().optional(),
   }),
 );
