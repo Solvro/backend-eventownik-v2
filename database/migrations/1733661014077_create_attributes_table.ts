@@ -35,11 +35,6 @@ export default class extends BaseSchema {
           },
         )
         .nullable();
-      table
-        .integer("root_block_id")
-        .unsigned()
-        .references("blocks.id")
-        .nullable();
       table.timestamps();
     });
   }

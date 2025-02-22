@@ -1,7 +1,17 @@
 import { DateTime } from "luxon";
 
-import { BaseModel, belongsTo, column, manyToMany } from "@adonisjs/lucid/orm";
-import type { BelongsTo, ManyToMany } from "@adonisjs/lucid/types/relations";
+import {
+  BaseModel,
+  belongsTo,
+  column,
+  hasOne,
+  manyToMany,
+} from "@adonisjs/lucid/orm";
+import type {
+  BelongsTo,
+  HasOne,
+  ManyToMany,
+} from "@adonisjs/lucid/types/relations";
 
 import Block from "#models/block";
 import Event from "#models/event";
@@ -33,15 +43,11 @@ export default class Attribute extends BaseModel {
   @column()
   declare showInList: boolean;
 
-  @belongsTo(() => Event, {
-    foreignKey: "eventId",
-  })
-  declare event: BelongsTo<typeof Event>;
+  @hasOne(() => Block)
+  declare rootBlock: HasOne<typeof Block>;
 
-  @belongsTo(() => Block, {
-    foreignKey: "rootBlockId",
-  })
-  declare rootBlock: BelongsTo<typeof Block>;
+  @belongsTo(() => Event)
+  declare event: BelongsTo<typeof Event>;
 
   @manyToMany(() => Form, {
     pivotTable: "form_definition",

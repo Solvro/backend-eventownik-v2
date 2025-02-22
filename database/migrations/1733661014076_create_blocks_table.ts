@@ -8,13 +8,14 @@ export default class extends BaseSchema {
       table.increments("id");
       table.string("name", 255);
       table.text("description", "long").nullable();
+      table.integer("capacity").nullable();
       table
         .integer("parent_id")
         .unsigned()
         .references("blocks.id")
         .onDelete("CASCADE")
         .nullable();
-      table.integer("capacity").nullable();
+      table.integer("attribute_id").unsigned().references("attributes.id");
       table.timestamps();
     });
   }

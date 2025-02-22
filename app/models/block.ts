@@ -3,12 +3,11 @@ import { DateTime } from "luxon";
 import { BaseModel, belongsTo, column, hasMany } from "@adonisjs/lucid/orm";
 import type { BelongsTo, HasMany } from "@adonisjs/lucid/types/relations";
 
+import Attribute from "./attribute.js";
+
 export default class Block extends BaseModel {
   @column({ isPrimary: true })
   declare id: number;
-
-  // @belongsTo(() => Attribute)
-  // declare attribute: HasOne<typeof Attribute>;
 
   @column()
   declare name: string;
@@ -19,18 +18,21 @@ export default class Block extends BaseModel {
   @column()
   declare parentId: number | null;
 
-  @belongsTo(() => Block, {
-    foreignKey: "parentId",
-  })
-  declare parent: BelongsTo<typeof Block>;
+  @column()
+  declare capacity: number | null;
 
   @hasMany(() => Block, {
     foreignKey: "parentId",
   })
   declare children: HasMany<typeof Block>;
 
-  @column()
-  declare capacity: number | null;
+  @belongsTo(() => Block, {
+    foreignKey: "parentId",
+  })
+  declare parent: BelongsTo<typeof Block>;
+
+  @belongsTo(() => Attribute)
+  declare attribute: BelongsTo<typeof Attribute>;
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime;
