@@ -101,7 +101,7 @@ export default class EventController {
   public async update({ params, request, bouncer }: HttpContext) {
     const event = await Event.findOrFail(params.id);
 
-    await bouncer.authorize("manage_settings", event);
+    await bouncer.authorize("manage_setting", event);
 
     const { photo, ...eventData } =
       await request.validateUsing(updateEventValidator);
