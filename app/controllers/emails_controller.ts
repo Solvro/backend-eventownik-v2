@@ -15,41 +15,23 @@ export default class EmailsController {
    * @tag emails
    * @responseBody 200 - [{\"email": {"id": 1, "eventId": 1, "name": "Welcome Email", "content": "Hello name, welcome to the event!", "trigger": "participant_registered", "triggerValue": null, "createdAt": "2025-02-19T10:58:37.602+00:00", "updatedAt": "2025-02-19T10:58:37.602+00:00"}, "pending": 0, "sent": 0, "failed": 0}]
    */
-  async index({ params, response }: HttpContext) {
+  async index({ params, response, bouncer }: HttpContext) {
     const eventId = Number(params.eventId);
+    await bouncer.authorize("manage_email", await Event.findOrFail(eventId));
 
-    const emails = await Email.query().where("event_id", eventId);
+    const emails = await Email.query()
+      .where("event_id", eventId)
+      .withCount("participants", (q) =>
+        q.where("status", "failed").as("failedCount"),
+      )
+      .withCount("participants", (q) =>
+        q.where("status", "pending").as("pendingCount"),
+      )
+      .withCount("participants", (q) =>
+        q.where("status", "sent").as("sentCount"),
+      );
 
-    const emailSummaries = await Promise.all(
-      emails.map(async (email) => {
-        const pendingCount = await email
-          .related("participants")
-          .query()
-          .wherePivot("status", "pending")
-          .count("* as total");
-
-        const sentCount = await email
-          .related("participants")
-          .query()
-          .wherePivot("status", "sent")
-          .count("* as total");
-
-        const failedCount = await email
-          .related("participants")
-          .query()
-          .wherePivot("status", "failed")
-          .count("* as total");
-
-        return {
-          email,
-          pending: Number(pendingCount[0]?.$extras?.total ?? 0),
-          sent: Number(sentCount[0]?.$extras?.total ?? 0),
-          failed: Number(failedCount[0]?.$extras?.total ?? 0),
-        };
-      }),
-    );
-
-    return response.status(200).send(emailSummaries);
+    return response.status(200).send(emails);
   }
 
   /**

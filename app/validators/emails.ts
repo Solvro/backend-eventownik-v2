@@ -2,7 +2,6 @@ import vine from "@vinejs/vine";
 
 export const emailsStoreValidator = vine.compile(
   vine.object({
-    eventId: vine.number(),
     name: vine.string(),
     content: vine.string(),
     trigger: vine.enum([
@@ -10,6 +9,7 @@ export const emailsStoreValidator = vine.compile(
       "participant_deleted",
       "form_filled",
       "attribute_changed",
+      "manual",
     ]),
     triggerValue: vine
       .string()

@@ -57,13 +57,5 @@ export default class Email extends BaseModel {
   })
   declare participants: ManyToMany<typeof Participant>;
 
-  public $extras: {
-    pending_count: number;
-    sent_count: number;
-    failed_count: number;
-  } = {
-    pending_count: 0,
-    sent_count: 0,
-    failed_count: 0,
-  };
+  public serializeExtras = true;
 }
