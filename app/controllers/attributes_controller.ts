@@ -2,7 +2,10 @@ import { inject } from "@adonisjs/core";
 import type { HttpContext } from "@adonisjs/core/http";
 
 import { AttributeService } from "#services/attribute_service";
-import { createAttributeValidator } from "#validators/attribute";
+import {
+  createAttributeValidator,
+  updateAttributeValidator,
+} from "#validators/attribute";
 
 @inject()
 export default class AttributesController {
@@ -65,5 +68,29 @@ export default class AttributesController {
     );
 
     return attribute;
+  }
+
+  /**
+   * @update
+   * @operationId updateEventAttribute
+   * @description Update event attribute details
+   * @tag attributes
+   * @requestBody <updateAttributeValidator>
+   * @responseBody 200 - <Attribute>
+   * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
+   */
+  async update({ params, request }: HttpContext) {
+    const eventId = +params.eventId;
+    const attributeId = +params.id;
+
+    const updates = await request.validateUsing(updateAttributeValidator);
+
+    const updatedAttribute = this.attributeService.updateAttribute(
+      eventId,
+      attributeId,
+      updates,
+    );
+
+    return updatedAttribute;
   }
 }

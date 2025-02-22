@@ -1,6 +1,9 @@
 import Attribute from "#models/attribute";
 
-import { CreateAttributeDTO } from "../types/attribute_types.js";
+import {
+  CreateAttributeDTO,
+  UpdateAttributeDTO,
+} from "../types/attribute_types.js";
 
 export class AttributeService {
   async getEventAttributes(eventId: number) {
@@ -22,5 +25,24 @@ export class AttributeService {
     const newAttribute = await Attribute.create(createAttributeDTO);
 
     return newAttribute;
+  }
+
+  async updateAttribute(
+    eventId: number,
+    attributeId: number,
+    updates: UpdateAttributeDTO,
+  ) {
+    const attributeToUpdate = await this.getEventAttribute(
+      eventId,
+      attributeId,
+    );
+
+    attributeToUpdate.merge(updates);
+
+    await attributeToUpdate.save();
+
+    const updatedAttribute = await this.getEventAttribute(eventId, attributeId);
+
+    return updatedAttribute;
   }
 }
