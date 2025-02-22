@@ -73,12 +73,15 @@ export default class EmailsController {
    * @responseBody 201 - {"id": 1, "name": "Email Name", "content": "Email Content", "trigger": "participant_registered"}
    * @responseBody 400 - {"message": "Failed to create email"}
    */
-  async store({ params, request, response }: HttpContext) {
+  async store({ params, request, response, bouncer }: HttpContext) {
     const event = await Event.findOrFail(+params.eventId);
+    await bouncer.authorize("manage_email", event);
 
-    const data = await emailsStoreValidator.validate(request.all());
+    const data = await request.validateUsing(emailsStoreValidator);
 
-    const email = await event.related("emails").create(data);
+    const email = await event
+      .related("emails")
+      .create({ eventId: event.id, ...data });
 
     return response.status(201).send(email);
   }
