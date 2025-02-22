@@ -47,7 +47,7 @@ export default class EmailsController {
    * @operationId getEmail
    * @description Retrieve details of a specific email linked to an event.
    * @tag emails
-   * @responseBody 200 - { "id": 1, "eventId": 5, "name": "test124", "content": "uuuu", "trigger": "participant_registered", "triggerValue": "eeee", "createdAt": "2025-02-22T19:13:10.471+00:00", "updatedAt": "2025-02-22T19:13:10.471+00:00", "participants": [ { "id": 4, "email": "dasd", "eventId": 5, "firstName": "fdf", "lastName": "fddfd", "createdAt": "2002-12-10 23:00:00", "updatedAt": null, "meta": { "pivot_status": "failed", "pivot_email_id": 1, "pivot_participant_id": 4, "pivot_send_at": null, "pivot_send_by": null } }, { "id": 4, "email": "dasd", "eventId": 5, "firstName": "fdf", "lastName": "fddfd", "createdAt": "2002-12-10 23:00:00", "updatedAt": null, "meta": { "pivot_status": "pending", "pivot_email_id": 1, "pivot_participant_id": 4, "pivot_send_at": null, "pivot_send_by": null } } ] }
+   * @responseBody 200 - { "id": 1, "eventId": 5, "name": "test124", "content": "uuuu", "trigger": "participant_registered", "triggerValue": "eeee", "createdAt": "2025-02-22T19:13:10.471+00:00", "updatedAt": "2025-02-22T19:13:10.471+00:00", "participants": [ { "id": 4, "email": "dasd", "eventId": 5, "firstName": "fdf", "lastName": "fddfd", "createdAt": "2025-02-22T19:13:10.471+00:00", "updatedAt":  "2025-02-22T19:13:10.471+00:00", "meta": { "pivot_status": "failed", "pivot_email_id": 1, "pivot_participant_id": 4, "pivot_send_at":  "2025-02-22T19:13:10.471+00:00", "pivot_send_by":  "2025-02-22T19:13:10.471+00:00" } }, { "id": 4, "email": "dasd", "eventId": 5, "firstName": "fdf", "lastName": "fddfd", "createdAt":  "2025-02-22T19:13:10.471+00:00", "updatedAt":  "2025-02-22T19:13:10.471+00:00", "meta": { "pivot_status": "pending", "pivot_email_id": 1, "pivot_participant_id": 4, "pivot_send_at":  "2025-02-22T19:13:10.471+00:00", "pivot_send_by":  "2025-02-22T19:13:10.471+00:00" } } ] }
    * @responseBody 404 - {"message": "Email not found"}
    */
   async show({ params, bouncer }: HttpContext) {
@@ -114,7 +114,7 @@ export default class EmailsController {
    * @operationId deleteEmail
    * @description Remove an email associated with a specific event.
    * @tag emails
-   * @responseBody 200 - {}
+   * @responseBody 200 - { message: "Email successfully deleted" }
    */
   async destroy({ params, bouncer }: HttpContext) {
     await bouncer.authorize(

@@ -35,7 +35,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 669
+          example: 830
         firstName:
           type: "string"
           example: "John"
@@ -80,7 +80,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 238
+          example: 725
         name:
           type: "string"
           example: "John Doe"
@@ -89,7 +89,7 @@ components:
           example: "Lorem Ipsum"
         eventId:
           type: "number"
-          example: 823
+          example: 261
         options:
           $ref: "#/components/schemas/object"
           example: null
@@ -98,25 +98,22 @@ components:
           example: "Lorem Ipsum"
         rootBlockId:
           type: "number"
-          example: 862
+          example: 182
         showInList:
           type: "boolean"
           example: true
-        showInForm:
-          type: "boolean"
-          example: true
-        event!:
-          $ref: "#/components/schemas/Event"
-          example: null
-        rootBlock!:
+        rootBlock:
           $ref: "#/components/schemas/Block"
           example: null
-        forms!:
+        event:
+          $ref: "#/components/schemas/Event"
+          example: null
+        forms:
           type: "array"
           items:
             $ref: "#/components/schemas/Form"
             example: null
-        participantAttributes!:
+        participantAttributes:
           type: "array"
           items:
             $ref: "#/components/schemas/ParticipantAttribute"
@@ -136,7 +133,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 916
+          example: 428
         name:
           type: "string"
           example: "John Doe"
@@ -145,18 +142,21 @@ components:
           example: "Lorem ipsum dolor sit amet"
         parentId:
           type: "number"
-          example: 804
-        parent:
-          $ref: "#/components/schemas/Block"
-          example: null
+          example: 243
+        capacity:
+          type: "number"
+          example: 563
         children:
           type: "array"
           items:
             $ref: "#/components/schemas/Block"
             example: null
-        capacity:
-          type: "number"
-          example: 650
+        parent:
+          $ref: "#/components/schemas/Block"
+          example: null
+        attribute:
+          $ref: "#/components/schemas/Attribute"
+          example: null
         createdAt:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -172,10 +172,10 @@ components:
       properties:
         id:
           type: "number"
-          example: 97
+          example: 683
         eventId:
           type: "number"
-          example: 807
+          example: 87
         name:
           type: "string"
           example: "John Doe"
@@ -209,9 +209,6 @@ components:
           items:
             $ref: "#/components/schemas/Participant"
             example: null
-        $extras:
-          $ref: "#/components/schemas/"
-          example: null
       description: "Email (Model)"
     Event:
       type: "object"
@@ -219,10 +216,10 @@ components:
       properties:
         id:
           type: "number"
-          example: 772
+          example: 78
         organizerId:
           type: "number"
-          example: 617
+          example: 586
         name:
           type: "string"
           example: "John Doe"
@@ -242,7 +239,7 @@ components:
           format: "date-time"
         firstFormId:
           type: "number"
-          example: 213
+          example: 246
         lat:
           type: "number"
           example: 41.705
@@ -257,7 +254,7 @@ components:
           example: "Lorem Ipsum"
         participantsCount:
           type: "number"
-          example: 674
+          example: 83
         createdAt:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -266,6 +263,9 @@ components:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
           format: "date-time"
+        photoUrl:
+          type: "string"
+          example: "Lorem Ipsum"
         admins:
           type: "array"
           items:
@@ -293,10 +293,10 @@ components:
       properties:
         id:
           type: "number"
-          example: 853
+          example: 390
         eventId:
           type: "number"
-          example: 399
+          example: 940
         isOpen:
           type: "boolean"
           example: true
@@ -328,6 +328,11 @@ components:
         event:
           $ref: "#/components/schemas/Event"
           example: null
+        attributes:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Attribute"
+            example: null
       description: "Form (Model)"
     Participant:
       type: "object"
@@ -335,14 +340,14 @@ components:
       properties:
         id:
           type: "number"
-          example: 852
+          example: 533
         email:
           type: "string"
           example: "johndoe@example.com"
           format: "email"
         eventId:
           type: "number"
-          example: 150
+          example: 560
         firstName:
           type: "string"
           example: "John"
@@ -385,13 +390,13 @@ components:
       properties:
         id:
           type: "number"
-          example: 762
+          example: 725
         participantId:
           type: "number"
-          example: 742
+          example: 149
         attributeId:
           type: "number"
-          example: 977
+          example: 18
         value:
           type: "string"
           example: "Lorem Ipsum"
@@ -416,13 +421,13 @@ components:
       properties:
         id:
           type: "number"
-          example: 263
+          example: 970
         participantId:
           type: "number"
-          example: 444
+          example: 675
         emailId:
           type: "number"
-          example: 736
+          example: 14
         sendAt:
           type: "string"
           example: "2021-03-23T16:13:08.489+01:00"
@@ -455,7 +460,7 @@ components:
       properties:
         id:
           type: "number"
-          example: 377
+          example: 359
         action:
           type: "string"
           example: "Lorem Ipsum"
@@ -532,7 +537,7 @@ components:
           required: true
         type:
           type: "number"
-          example: 190
+          example: 569
           choices:
             - "organizer"
             - "superadmin"
@@ -546,22 +551,22 @@ components:
             properties:
               permissionId:
                 type: "number"
-                example: 502
+                example: 143
                 required: true
               eventId:
                 type: "number"
-                example: 74
+                example: 998
                 required: true
       example:
         firstName: "Lorem Ipsum"
         lastName: "Lorem Ipsum"
         password: "Lorem Ipsum"
         email: "Lorem Ipsum"
-        type: 190
+        type: 569
         active: true
         permissions:
-          - permissionId: 502
-            eventId: 74
+          - permissionId: 143
+            eventId: 998
       description: "createAdminValidator (Validator)"
     updateAdminValidator:
       type: "object"
@@ -584,7 +589,7 @@ components:
           required: true
         type:
           type: "number"
-          example: 936
+          example: 530
           choices:
             - "organizer"
             - "superadmin"
@@ -598,23 +603,117 @@ components:
             properties:
               permissionId:
                 type: "number"
-                example: 829
+                example: 294
                 required: true
               eventId:
                 type: "number"
-                example: 995
+                example: 268
                 required: true
       example:
         firstName: "Lorem Ipsum"
         lastName: "Lorem Ipsum"
         password: "Lorem Ipsum"
         email: "Lorem Ipsum"
-        type: 936
+        type: 530
         active: true
         permissions:
-          - permissionId: 829
-            eventId: 995
+          - permissionId: 294
+            eventId: 268
       description: "updateAdminValidator (Validator)"
+    createAttributeValidator:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+        slug:
+          type: "string"
+          example: "Lorem Ipsum"
+        type:
+          type: "number"
+          example: 53
+          choices:
+            - "text"
+            - "number"
+            - "file"
+            - "select"
+            - "block"
+            - "date"
+            - "time"
+            - "datetime"
+            - "email"
+            - "tel"
+            - "color"
+            - "checkbox"
+          required: true
+        options:
+          type: "array"
+          items:
+            type: "number"
+            example: 2
+            minimum: 2
+        rootBlockId:
+          type: "number"
+          example: 423
+        showInList:
+          type: "boolean"
+          example: true
+      example:
+        name: "Lorem Ipsum"
+        slug: "Lorem Ipsum"
+        type: 53
+        options:
+          - 2
+        rootBlockId: 423
+        showInList: true
+      description: "createAttributeValidator (Validator)"
+    updateAttributeValidator:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+          example: "Lorem Ipsum"
+        slug:
+          type: "string"
+          example: "Lorem Ipsum"
+        type:
+          type: "number"
+          example: 714
+          choices:
+            - "text"
+            - "number"
+            - "file"
+            - "select"
+            - "block"
+            - "date"
+            - "time"
+            - "datetime"
+            - "email"
+            - "tel"
+            - "color"
+            - "checkbox"
+        options:
+          type: "array"
+          items:
+            type: "number"
+            example: 2
+            minimum: 2
+        rootBlockId:
+          type: "number"
+          example: 42
+        showInList:
+          type: "boolean"
+          example: true
+      example:
+        name: "Lorem Ipsum"
+        slug: "Lorem Ipsum"
+        type: 714
+        options:
+          - 2
+        rootBlockId: 42
+        showInList: true
+      description: "updateAttributeValidator (Validator)"
     loginValidator:
       type: "object"
       properties:
@@ -673,7 +772,7 @@ components:
           required: true
         parentId:
           type: "number"
-          example: 51
+          example: 622
           required: true
         capacity:
           type: "number"
@@ -683,7 +782,7 @@ components:
       example:
         name: "Lorem Ipsum"
         description: "Lorem Ipsum"
-        parentId: 51
+        parentId: 622
         capacity: 1
       description: "createBlockValidator (Validator)"
     updateBlockValidator:
@@ -699,7 +798,7 @@ components:
           required: true
         parentId:
           type: "number"
-          example: 647
+          example: 99
           required: true
         capacity:
           type: "number"
@@ -709,16 +808,12 @@ components:
       example:
         name: "Lorem Ipsum"
         description: "Lorem Ipsum"
-        parentId: 647
+        parentId: 99
         capacity: 1
       description: "updateBlockValidator (Validator)"
     emailsStoreValidator:
       type: "object"
       properties:
-        eventId:
-          type: "number"
-          example: 738
-          required: true
         name:
           type: "string"
           example: "Lorem Ipsum"
@@ -729,29 +824,26 @@ components:
           required: true
         trigger:
           type: "number"
-          example: 781
+          example: 123
           choices:
             - "participant_registered"
             - "participant_deleted"
             - "form_filled"
             - "attribute_changed"
+            - "manual"
           required: true
         triggerValue:
           type: "string"
           example: "Lorem Ipsum"
       example:
-        eventId: 738
         name: "Lorem Ipsum"
         content: "Lorem Ipsum"
-        trigger: 781
+        trigger: 123
         triggerValue: "Lorem Ipsum"
       description: "emailsStoreValidator (Validator)"
     emailsUpdateValidator:
       type: "object"
       properties:
-        eventId:
-          type: "number"
-          example: 938
         name:
           type: "string"
           example: "Lorem Ipsum"
@@ -760,7 +852,7 @@ components:
           example: "Lorem Ipsum"
         trigger:
           type: "number"
-          example: 992
+          example: 759
           choices:
             - "participant_registered"
             - "form_filled"
@@ -769,10 +861,9 @@ components:
           type: "string"
           example: "Lorem Ipsum"
       example:
-        eventId: 938
         name: "Lorem Ipsum"
         content: "Lorem Ipsum"
-        trigger: 992
+        trigger: 759
         triggerValue: "Lorem Ipsum"
       description: "emailsUpdateValidator (Validator)"
     createEventValidator:
@@ -795,39 +886,43 @@ components:
           required: true
         startDate:
           type: "number"
-          example: 589
+          example: 875
           required: true
         endDate:
           type: "number"
-          example: 82
+          example: 311
           required: true
         firstFormId:
           type: "number"
-          example: 792
+          example: 212
         lat:
           type: "number"
-          example: 478
+          example: 483
         long:
           type: "number"
-          example: 339
+          example: 130
         primaryColor:
           type: "string"
           example: "Lorem Ipsum"
         participantsCount:
           type: "number"
-          example: 418
+          example: 455
+        photo:
+          type: "number"
+          example: 327
       example:
         name: "Lorem Ipsum"
         description: "Lorem Ipsum"
         organizer: "Lorem Ipsum"
         slug: "Lorem Ipsum"
-        startDate: 589
-        endDate: 82
-        firstFormId: 792
-        lat: 478
-        long: 339
+        startDate: 875
+        endDate: 311
+        firstFormId: 212
+        lat: 483
+        long: 130
         primaryColor: "Lorem Ipsum"
-        participantsCount: 418
+        participantsCount: 455
+        photo: 327
       description: "createEventValidator (Validator)"
     updateEventValidator:
       type: "object"
@@ -844,104 +939,110 @@ components:
           example: "Lorem Ipsum"
         startDate:
           type: "number"
-          example: 430
+          example: 118
         endDate:
           type: "number"
-          example: 328
+          example: 748
         lat:
           type: "number"
-          example: 712
+          example: 172
         long:
           type: "number"
-          example: 3
+          example: 25
         primaryColor:
           type: "string"
           example: "Lorem Ipsum"
         participantsCount:
           type: "number"
-          example: 623
+          example: 630
         organizer:
           type: "string"
           example: "Lorem Ipsum"
+        photo:
+          type: "number"
+          example: 772
       example:
         name: "Lorem Ipsum"
         description: "Lorem Ipsum"
         slug: "Lorem Ipsum"
-        startDate: 430
-        endDate: 328
-        lat: 712
-        long: 3
+        startDate: 118
+        endDate: 748
+        lat: 172
+        long: 25
         primaryColor: "Lorem Ipsum"
-        participantsCount: 623
+        participantsCount: 630
         organizer: "Lorem Ipsum"
+        photo: 772
       description: "updateEventValidator (Validator)"
     createFormValidator:
       type: "object"
       properties:
-        isOpen:
-          type: "boolean"
-          example: true
+        name:
+          type: "string"
+          example: "Lorem Ipsum"
           required: true
         description:
           type: "string"
           example: "Lorem Ipsum"
           required: true
-        name:
-          type: "string"
-          example: "Lorem Ipsum"
-          required: true
         startDate:
           type: "number"
-          example: 259
+          example: 84
           required: true
-        endDate:
-          type: "number"
-          example: 795
-        attributeIds:
+        attributesIds:
           type: "array"
           items:
             type: "number"
-            example: 731
+            example: 1
+            minimum: 1
+          required: true
+        endDate:
+          type: "number"
+          example: 366
+        isOpen:
+          type: "boolean"
+          example: true
       example:
-        isOpen: true
-        description: "Lorem Ipsum"
         name: "Lorem Ipsum"
-        startDate: 259
-        endDate: 795
-        attributeIds:
-          - 731
+        description: "Lorem Ipsum"
+        startDate: 84
+        attributesIds:
+          - 1
+        endDate: 366
+        isOpen: true
       description: "createFormValidator (Validator)"
     updateFormValidator:
       type: "object"
       properties:
-        isOpen:
-          type: "boolean"
-          example: true
-        description:
+        name:
           type: "string"
           example: "Lorem Ipsum"
-        name:
+        description:
           type: "string"
           example: "Lorem Ipsum"
         startDate:
           type: "number"
-          example: 782
+          example: 442
         endDate:
           type: "number"
-          example: 545
-        attributeIds:
+          example: 616
+        attributesIds:
           type: "array"
           items:
             type: "number"
-            example: 207
+            example: 1
+            minimum: 1
+        isOpen:
+          type: "boolean"
+          example: true
       example:
-        isOpen: true
-        description: "Lorem Ipsum"
         name: "Lorem Ipsum"
-        startDate: 782
-        endDate: 545
-        attributeIds:
-          - 207
+        description: "Lorem Ipsum"
+        startDate: 442
+        endDate: 616
+        attributesIds:
+          - 1
+        isOpen: true
       description: "updateFormValidator (Validator)"
     addOrganizerValidator:
       type: "object"
@@ -954,7 +1055,7 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 750
+            example: 54
           required: true
         firstName:
           type: "string"
@@ -968,7 +1069,7 @@ components:
       example:
         email: "Lorem Ipsum"
         permissionsIds:
-          - 750
+          - 54
         firstName: "Lorem Ipsum"
         lastName: "Lorem Ipsum"
         password: "Lorem Ipsum"
@@ -980,11 +1081,11 @@ components:
           type: "array"
           items:
             type: "number"
-            example: 949
+            example: 214
           required: true
       example:
         permissionsIds:
-          - 949
+          - 214
       description: "updateOrganizerPermissionsValidator (Validator)"
     participantsStoreValidator:
       type: "object"
@@ -995,7 +1096,7 @@ components:
           required: true
         eventId:
           type: "number"
-          example: 793
+          example: 707
         firstName:
           type: "string"
           example: "Lorem Ipsum"
@@ -1011,11 +1112,11 @@ components:
             properties:
               attributeId:
                 type: "number"
-                example: 314
+                example: 579
                 required: true
               value:
                 type: "number"
-                example: 642
+                example: 856
                 required: true
           properties:
             items:
@@ -1024,11 +1125,11 @@ components:
                 example: "Lorem Ipsum"
       example:
         email: "Lorem Ipsum"
-        eventId: 793
+        eventId: 707
         firstName: "Lorem Ipsum"
         lastName: "Lorem Ipsum"
         participantAttributes:
-          - attributeId: 314
+          - attributeId: 579
             value: "Lorem Ipsum"
       description: "participantsStoreValidator (Validator)"
     participantsUpdateValidator:
@@ -1039,7 +1140,7 @@ components:
           example: "Lorem Ipsum"
         eventId:
           type: "number"
-          example: 183
+          example: 428
         firstName:
           type: "string"
           example: "Lorem Ipsum"
@@ -1053,11 +1154,11 @@ components:
             properties:
               id:
                 type: "number"
-                example: 545
+                example: 498
                 required: true
               value:
                 type: "number"
-                example: 66
+                example: 501
                 required: true
           properties:
             items:
@@ -1066,11 +1167,11 @@ components:
                 example: "Lorem Ipsum"
       example:
         email: "Lorem Ipsum"
-        eventId: 183
+        eventId: 428
         firstName: "Lorem Ipsum"
         lastName: "Lorem Ipsum"
         participantAttributes:
-          - id: 545
+          - id: 498
             value: "Lorem Ipsum"
       description: "participantsUpdateValidator (Validator)"
     participantAttributesStoreValidator:
@@ -1083,11 +1184,11 @@ components:
             properties:
               attributeId:
                 type: "number"
-                example: 62
+                example: 896
                 required: true
               value:
                 type: "number"
-                example: 488
+                example: 319
                 required: true
           properties:
             items:
@@ -1096,7 +1197,7 @@ components:
                 example: "Lorem Ipsum"
       example:
         participantAttributes:
-          - attributeId: 62
+          - attributeId: 896
             value: "Lorem Ipsum"
       description: "participantAttributesStoreValidator (Validator)"
     participantAttributesUpdateValidator:
@@ -1109,11 +1210,11 @@ components:
             properties:
               id:
                 type: "number"
-                example: 20
+                example: 670
                 required: true
               value:
                 type: "number"
-                example: 557
+                example: 61
                 required: true
           properties:
             items:
@@ -1122,7 +1223,7 @@ components:
                 example: "Lorem Ipsum"
       example:
         participantAttributes:
-          - id: 20
+          - id: 670
             value: "Lorem Ipsum"
       description: "participantAttributesUpdateValidator (Validator)"
     createPermissionValidator:
@@ -1171,7 +1272,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/Admin"
               example:
-                - id: 669
+                - id: 830
                   firstName: "John"
                   lastName: "Doe"
                   email: "johndoe@example.com"
@@ -1212,11 +1313,11 @@ paths:
               lastName: "Lorem Ipsum"
               password: "Lorem Ipsum"
               email: "Lorem Ipsum"
-              type: 190
+              type: 569
               active: true
               permissions:
-                - permissionId: 502
-                  eventId: 74
+                - permissionId: 143
+                  eventId: 998
   /api/v1/admins/{id}:
     get:
       summary: "Get a single instance of admins (show)"
@@ -1237,7 +1338,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Admin"
               example:
-                id: 669
+                id: 830
                 firstName: "John"
                 lastName: "Doe"
                 email: "johndoe@example.com"
@@ -1277,7 +1378,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Admin"
               example:
-                id: 669
+                id: 830
                 firstName: "John"
                 lastName: "Doe"
                 email: "johndoe@example.com"
@@ -1352,21 +1453,22 @@ paths:
                 items:
                   $ref: "#/components/schemas/Event"
               example:
-                - id: 772
-                  organizerId: 617
+                - id: 78
+                  organizerId: 586
                   name: "John Doe"
                   description: "Lorem ipsum dolor sit amet"
                   slug: "Lorem Ipsum"
                   startDate: "2021-03-23T16:13:08.489+01:00"
                   endDate: "2021-03-23T16:13:08.489+01:00"
-                  firstFormId: 213
+                  firstFormId: 246
                   lat: 41.705
                   long: -87.475
                   primaryColor: "Lorem Ipsum"
                   organizer: "Lorem Ipsum"
-                  participantsCount: 674
+                  participantsCount: 83
                   createdAt: "2021-03-23T16:13:08.489+01:00"
                   updatedAt: "2021-03-23T16:13:08.489+01:00"
+                  photoUrl: "Lorem Ipsum"
           description: "Returns **200** (OK) as **application/json**"
         401:
           description: "Returns **401** (Unauthorized)"
@@ -1389,21 +1491,22 @@ paths:
               schema:
                 $ref: "#/components/schemas/Event"
               example:
-                id: 772
-                organizerId: 617
+                id: 78
+                organizerId: 586
                 name: "John Doe"
                 description: "Lorem ipsum dolor sit amet"
                 slug: "Lorem Ipsum"
                 startDate: "2021-03-23T16:13:08.489+01:00"
                 endDate: "2021-03-23T16:13:08.489+01:00"
-                firstFormId: 213
+                firstFormId: 246
                 lat: 41.705
                 long: -87.475
                 primaryColor: "Lorem Ipsum"
                 organizer: "Lorem Ipsum"
-                participantsCount: 674
+                participantsCount: 83
                 createdAt: "2021-03-23T16:13:08.489+01:00"
                 updatedAt: "2021-03-23T16:13:08.489+01:00"
+                photoUrl: "Lorem Ipsum"
           description: "Returns **201** (Created) as **application/json**"
         400:
           content:
@@ -1427,21 +1530,51 @@ paths:
             - "access"
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              $ref: "#/components/schemas/createEventValidator"
-            example:
-              name: "Lorem Ipsum"
-              description: "Lorem Ipsum"
-              organizer: "Lorem Ipsum"
-              slug: "Lorem Ipsum"
-              startDate: 589
-              endDate: 82
-              firstFormId: 792
-              lat: 478
-              long: 339
-              primaryColor: "Lorem Ipsum"
-              participantsCount: 418
+              type: "object"
+              properties:
+                name:
+                  type: "string"
+                  format: "string"
+                description:
+                  type: "string"
+                  format: "string"
+                organizer:
+                  type: "string"
+                  format: "string"
+                slug:
+                  type: "string"
+                  format: "string"
+                startDate:
+                  type: "number"
+                  format: "string"
+                endDate:
+                  type: "number"
+                  format: "string"
+                firstFormId:
+                  type: "number"
+                  format: "string"
+                lat:
+                  type: "number"
+                  format: "string"
+                long:
+                  type: "number"
+                  format: "string"
+                primaryColor:
+                  type: "string"
+                  format: "string"
+                participantsCount:
+                  type: "number"
+                  format: "string"
+                photo:
+                  type: "number"
+                  format: "string"
+              required:
+                - "name"
+                - "slug"
+                - "startDate"
+                - "endDate"
   /api/v1/events/{id}:
     get:
       summary: "Get a single instance of event (show)"
@@ -1462,23 +1595,24 @@ paths:
               schema:
                 $ref: "#/components/schemas/Event"
               example:
-                id: 772
-                organizerId: 617
+                id: 78
+                organizerId: 586
                 name: "John Doe"
                 description: "Lorem ipsum dolor sit amet"
                 slug: "Lorem Ipsum"
                 startDate: "2021-03-23T16:13:08.489+01:00"
                 endDate: "2021-03-23T16:13:08.489+01:00"
-                firstFormId: 213
+                firstFormId: 246
                 lat: 41.705
                 long: -87.475
                 primaryColor: "Lorem Ipsum"
                 organizer: "Lorem Ipsum"
-                participantsCount: 674
+                participantsCount: 83
                 createdAt: "2021-03-23T16:13:08.489+01:00"
                 updatedAt: "2021-03-23T16:13:08.489+01:00"
+                photoUrl: "Lorem Ipsum"
                 permissions:
-                  - id: 377
+                  - id: 359
                     action: "Lorem Ipsum"
                     subject: "Lorem Ipsum"
           description: "Returns **201** (Created) as **application/json**"
@@ -1513,21 +1647,22 @@ paths:
               schema:
                 $ref: "#/components/schemas/Event"
               example:
-                id: 772
-                organizerId: 617
+                id: 78
+                organizerId: 586
                 name: "John Doe"
                 description: "Lorem ipsum dolor sit amet"
                 slug: "Lorem Ipsum"
                 startDate: "2021-03-23T16:13:08.489+01:00"
                 endDate: "2021-03-23T16:13:08.489+01:00"
-                firstFormId: 213
+                firstFormId: 246
                 lat: 41.705
                 long: -87.475
                 primaryColor: "Lorem Ipsum"
                 organizer: "Lorem Ipsum"
-                participantsCount: 674
+                participantsCount: 83
                 createdAt: "2021-03-23T16:13:08.489+01:00"
                 updatedAt: "2021-03-23T16:13:08.489+01:00"
+                photoUrl: "Lorem Ipsum"
           description: "Returns **200** (OK) as **application/json**"
         400:
           content:
@@ -1556,20 +1691,44 @@ paths:
             - "access"
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              $ref: "#/components/schemas/updateEventValidator"
-            example:
-              name: "Lorem Ipsum"
-              description: "Lorem Ipsum"
-              slug: "Lorem Ipsum"
-              startDate: 430
-              endDate: 328
-              lat: 712
-              long: 3
-              primaryColor: "Lorem Ipsum"
-              participantsCount: 623
-              organizer: "Lorem Ipsum"
+              type: "object"
+              properties:
+                name:
+                  type: "string"
+                  format: "string"
+                description:
+                  type: "string"
+                  format: "string"
+                slug:
+                  type: "string"
+                  format: "string"
+                startDate:
+                  type: "number"
+                  format: "string"
+                endDate:
+                  type: "number"
+                  format: "string"
+                lat:
+                  type: "number"
+                  format: "string"
+                long:
+                  type: "number"
+                  format: "string"
+                primaryColor:
+                  type: "string"
+                  format: "string"
+                participantsCount:
+                  type: "number"
+                  format: "string"
+                organizer:
+                  type: "string"
+                  format: "string"
+                photo:
+                  type: "number"
+                  format: "string"
+              required: []
     delete:
       summary: "Delete event (destroy)"
       description: "Deletes an event if user has permission\n\n _app/controllers/events_controller.ts_ - **destroy**"
@@ -1625,7 +1784,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/Permission"
               example:
-                - id: 377
+                - id: 359
                   action: "Lorem Ipsum"
                   subject: "Lorem Ipsum"
           description: "Returns **200** (OK) as **application/json**"
@@ -1679,7 +1838,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Permission"
               example:
-                id: 377
+                id: 359
                 action: "Lorem Ipsum"
                 subject: "Lorem Ipsum"
           description: "Returns **200** (OK) as **application/json**"
@@ -1714,7 +1873,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Permission"
               example:
-                id: 377
+                id: 359
                 action: "Lorem Ipsum"
                 subject: "Lorem Ipsum"
           description: "Returns **200** (OK) as **application/json**"
@@ -1759,6 +1918,255 @@ paths:
           required: true
       tags:
         - "PERMISSIONS"
+      responses:
+        204:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties: {}
+              example: {}
+          description: "Returns **204** (No Content) as **application/json**"
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
+  /api/v1/events/{eventId}/attributes:
+    get:
+      summary: "Get a list of attributes (index)"
+      description: "Returns **200** (OK) as **application/json**\n\n _app/controllers/attributes_controller.ts_ - **index**"
+      operationId: "getEventAttributes"
+      parameters:
+        - in: "path"
+          name: "eventId"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "ATTRIBUTES"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/Attribute"
+              example:
+                - id: 725
+                  name: "John Doe"
+                  slug: "Lorem Ipsum"
+                  eventId: 261
+                  options: {}
+                  type: "Lorem Ipsum"
+                  rootBlockId: 182
+                  showInList: true
+                  createdAt: "2021-03-23T16:13:08.489+01:00"
+                  updatedAt: "2021-03-23T16:13:08.489+01:00"
+          description: "Returns **200** (OK) as **application/json**"
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
+    post:
+      summary: " (store)"
+      description: "Returns **201** (Created) as **application/json**\n\n _app/controllers/attributes_controller.ts_ - **store**"
+      operationId: "addEventAttribute"
+      parameters:
+        - in: "path"
+          name: "eventId"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "ATTRIBUTES"
+      responses:
+        201:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Attribute"
+              example:
+                id: 725
+                name: "John Doe"
+                slug: "Lorem Ipsum"
+                eventId: 261
+                options: {}
+                type: "Lorem Ipsum"
+                rootBlockId: 182
+                showInList: true
+                createdAt: "2021-03-23T16:13:08.489+01:00"
+                updatedAt: "2021-03-23T16:13:08.489+01:00"
+          description: "Returns **201** (Created) as **application/json**"
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createAttributeValidator"
+            example:
+              name: "Lorem Ipsum"
+              slug: "Lorem Ipsum"
+              type: 53
+              options:
+                - 2
+              rootBlockId: 423
+              showInList: true
+  /api/v1/events/{eventId}/attributes/{id}:
+    get:
+      summary: "Get a single instance of attributes (show)"
+      description: "Returns **200** (OK) as **application/json**\n\n _app/controllers/attributes_controller.ts_ - **show**"
+      operationId: "getEventAttribute"
+      parameters:
+        - in: "path"
+          name: "eventId"
+          schema:
+            type: "string"
+          required: true
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "ATTRIBUTES"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Attribute"
+              example:
+                id: 725
+                name: "John Doe"
+                slug: "Lorem Ipsum"
+                eventId: 261
+                options: {}
+                type: "Lorem Ipsum"
+                rootBlockId: 182
+                showInList: true
+                createdAt: "2021-03-23T16:13:08.489+01:00"
+                updatedAt: "2021-03-23T16:13:08.489+01:00"
+          description: "Returns **200** (OK) as **application/json**"
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+        404:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Row not found"
+                  name: "Exception"
+                  status: 404
+              example:
+                message: "Row not found"
+                name: "Exception"
+                status: 404
+          description: "Returns **404** (Not Found) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
+    put:
+      summary: "Update attributes (update)"
+      description: "Update event attribute details\n\n _app/controllers/attributes_controller.ts_ - **update**"
+      operationId: "updateEventAttribute"
+      parameters:
+        - in: "path"
+          name: "eventId"
+          schema:
+            type: "string"
+          required: true
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "ATTRIBUTES"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Attribute"
+              example:
+                id: 725
+                name: "John Doe"
+                slug: "Lorem Ipsum"
+                eventId: 261
+                options: {}
+                type: "Lorem Ipsum"
+                rootBlockId: 182
+                showInList: true
+                createdAt: "2021-03-23T16:13:08.489+01:00"
+                updatedAt: "2021-03-23T16:13:08.489+01:00"
+          description: "Returns **200** (OK) as **application/json**"
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+        404:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message: "Row not found"
+                  name: "Exception"
+                  status: 404
+              example:
+                message: "Row not found"
+                name: "Exception"
+                status: 404
+          description: "Returns **404** (Not Found) as **application/json**"
+      security:
+        - BearerAuth:
+            - "access"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/updateAttributeValidator"
+            example:
+              name: "Lorem Ipsum"
+              slug: "Lorem Ipsum"
+              type: 714
+              options:
+                - 2
+              rootBlockId: 42
+              showInList: true
+    delete:
+      summary: "Delete attributes (destroy)"
+      description: "Deletes an attribute of an event\n\n _app/controllers/attributes_controller.ts_ - **destroy**"
+      operationId: "deleteEventAttribute"
+      parameters:
+        - in: "path"
+          name: "eventId"
+          schema:
+            type: "string"
+          required: true
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "ATTRIBUTES"
       responses:
         204:
           content:
@@ -1896,7 +2304,7 @@ paths:
   /api/v1/events/{eventId}/emails:
     get:
       summary: "Get a list of emails (index)"
-      description: "Returns **200** (OK) as **text/plain**\n\n _app/controllers/emails_controller.ts_ - **index**"
+      description: "Returns **200** (OK) as **application/json**\n\n _app/controllers/emails_controller.ts_ - **index**"
       operationId: "listEmails"
       parameters:
         - in: "path"
@@ -1909,9 +2317,24 @@ paths:
       responses:
         200:
           content:
-            text/plain:
-              example: "[{\\\"email\": {\"id\": 1, \"eventId\": 1, \"name\": \"Welcome Email\", \"content\": \"Hello name, welcome to the event!\", \"trigger\": \"participant_registered\", \"triggerValue\": null, \"createdAt\": \"2025-02-19T10:58:37.602+00:00\", \"updatedAt\": \"2025-02-19T10:58:37.602+00:00\"}, \"pending\": 0, \"sent\": 0, \"failed\": 0}]"
-          description: "Returns **200** (OK) as **text/plain**"
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  type: "object"
+              example:
+                - id: 1
+                  eventId: 5
+                  name: "test124"
+                  trigger: "participant_registered"
+                  triggerValue: ""
+                  createdAt: "2025-02-22T19:13:10.471+00:00"
+                  updatedAt: "2025-02-22T19:13:10.471+00:00"
+                  meta:
+                    failedCount: "1"
+                    pendingCount: "1"
+                    sentCount: "0"
+          description: "Returns **200** (OK) as **application/json**"
         401:
           description: "Returns **401** (Unauthorized)"
         403:
@@ -1971,10 +2394,9 @@ paths:
             schema:
               $ref: "#/components/schemas/emailsStoreValidator"
             example:
-              eventId: 738
               name: "Lorem Ipsum"
               content: "Lorem Ipsum"
-              trigger: 781
+              trigger: 123
               triggerValue: "Lorem Ipsum"
   /api/v1/events/{eventId}/emails/{id}:
     get:
@@ -2002,14 +2424,88 @@ paths:
                 type: "object"
                 properties:
                   id: 1
-                  name: "Email Name"
-                  content: "Email Content"
+                  eventId: 5
+                  name: "test124"
+                  content: "uuuu"
                   trigger: "participant_registered"
+                  triggerValue: "eeee"
+                  createdAt: "2025-02-22T19:13:10.471+00:00"
+                  updatedAt: "2025-02-22T19:13:10.471+00:00"
+                  participants:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          id: 4
+                          email: "dasd"
+                          eventId: 5
+                          firstName: "fdf"
+                          lastName: "fddfd"
+                          createdAt: "2025-02-22T19:13:10.471+00:00"
+                          updatedAt: "2025-02-22T19:13:10.471+00:00"
+                          meta:
+                            type: "object"
+                            properties:
+                              pivot_status: "failed"
+                              pivot_email_id: 1
+                              pivot_participant_id: 4
+                              pivot_send_at: "2025-02-22T19:13:10.471+00:00"
+                              pivot_send_by: "2025-02-22T19:13:10.471+00:00"
+                      1:
+                        type: "object"
+                        properties:
+                          id: 4
+                          email: "dasd"
+                          eventId: 5
+                          firstName: "fdf"
+                          lastName: "fddfd"
+                          createdAt: "2025-02-22T19:13:10.471+00:00"
+                          updatedAt: "2025-02-22T19:13:10.471+00:00"
+                          meta:
+                            type: "object"
+                            properties:
+                              pivot_status: "pending"
+                              pivot_email_id: 1
+                              pivot_participant_id: 4
+                              pivot_send_at: "2025-02-22T19:13:10.471+00:00"
+                              pivot_send_by: "2025-02-22T19:13:10.471+00:00"
               example:
                 id: 1
-                name: "Email Name"
-                content: "Email Content"
+                eventId: 5
+                name: "test124"
+                content: "uuuu"
                 trigger: "participant_registered"
+                triggerValue: "eeee"
+                createdAt: "2025-02-22T19:13:10.471+00:00"
+                updatedAt: "2025-02-22T19:13:10.471+00:00"
+                participants:
+                  - id: 4
+                    email: "dasd"
+                    eventId: 5
+                    firstName: "fdf"
+                    lastName: "fddfd"
+                    createdAt: "2025-02-22T19:13:10.471+00:00"
+                    updatedAt: "2025-02-22T19:13:10.471+00:00"
+                    meta:
+                      pivot_status: "failed"
+                      pivot_email_id: 1
+                      pivot_participant_id: 4
+                      pivot_send_at: "2025-02-22T19:13:10.471+00:00"
+                      pivot_send_by: "2025-02-22T19:13:10.471+00:00"
+                  - id: 4
+                    email: "dasd"
+                    eventId: 5
+                    firstName: "fdf"
+                    lastName: "fddfd"
+                    createdAt: "2025-02-22T19:13:10.471+00:00"
+                    updatedAt: "2025-02-22T19:13:10.471+00:00"
+                    meta:
+                      pivot_status: "pending"
+                      pivot_email_id: 1
+                      pivot_participant_id: 4
+                      pivot_send_at: "2025-02-22T19:13:10.471+00:00"
+                      pivot_send_by: "2025-02-22T19:13:10.471+00:00"
           description: "Returns **200** (OK) as **application/json**"
         401:
           description: "Returns **401** (Unauthorized)"
@@ -2075,10 +2571,9 @@ paths:
             schema:
               $ref: "#/components/schemas/emailsUpdateValidator"
             example:
-              eventId: 938
               name: "Lorem Ipsum"
               content: "Lorem Ipsum"
-              trigger: 992
+              trigger: 759
               triggerValue: "Lorem Ipsum"
     delete:
       summary: "Delete emails (destroy)"
@@ -2098,14 +2593,11 @@ paths:
       tags:
         - "EMAILS"
       responses:
-        204:
+        200:
           content:
-            application/json:
-              schema:
-                type: "object"
-                properties: {}
-              example: {}
-          description: "Returns **204** (No Content) as **application/json**"
+            text/plain:
+              example: '{ message: "Email successfully deleted" }'
+          description: "Returns **200** (OK) as **text/plain**"
         401:
           description: "Returns **401** (Unauthorized)"
         403:
@@ -2135,8 +2627,8 @@ paths:
                 items:
                   $ref: "#/components/schemas/Form"
               example:
-                - id: 853
-                  eventId: 399
+                - id: 390
+                  eventId: 940
                   isOpen: true
                   description: "Lorem ipsum dolor sit amet"
                   name: "John Doe"
@@ -2179,13 +2671,13 @@ paths:
             schema:
               $ref: "#/components/schemas/createFormValidator"
             example:
-              isOpen: true
-              description: "Lorem Ipsum"
               name: "Lorem Ipsum"
-              startDate: 259
-              endDate: 795
-              attributeIds:
-                - 731
+              description: "Lorem Ipsum"
+              startDate: 84
+              attributesIds:
+                - 1
+              endDate: 366
+              isOpen: true
   /api/v1/events/{eventId}/forms/{id}:
     get:
       summary: "Get a single instance of forms (show)"
@@ -2211,8 +2703,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/Form"
               example:
-                id: 853
-                eventId: 399
+                id: 390
+                eventId: 940
                 isOpen: true
                 description: "Lorem ipsum dolor sit amet"
                 name: "John Doe"
@@ -2258,8 +2750,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/Form"
               example:
-                id: 853
-                eventId: 399
+                id: 390
+                eventId: 940
                 isOpen: true
                 description: "Lorem ipsum dolor sit amet"
                 name: "John Doe"
@@ -2296,13 +2788,13 @@ paths:
             schema:
               $ref: "#/components/schemas/updateFormValidator"
             example:
-              isOpen: true
-              description: "Lorem Ipsum"
               name: "Lorem Ipsum"
-              startDate: 782
-              endDate: 545
-              attributeIds:
-                - 207
+              description: "Lorem Ipsum"
+              startDate: 442
+              endDate: 616
+              attributesIds:
+                - 1
+              isOpen: true
     delete:
       summary: "Delete forms (destroy)"
       description: "Deletes a form\n\n _app/controllers/forms_controller.ts_ - **destroy**"
@@ -2372,7 +2864,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/Admin"
               example:
-                - id: 669
+                - id: 830
                   firstName: "John"
                   lastName: "Doe"
                   email: "johndoe@example.com"
@@ -2416,7 +2908,7 @@ paths:
             example:
               email: "Lorem Ipsum"
               permissionsIds:
-                - 750
+                - 54
               firstName: "Lorem Ipsum"
               lastName: "Lorem Ipsum"
               password: "Lorem Ipsum"
@@ -2445,7 +2937,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Admin"
               example:
-                id: 669
+                id: 830
                 firstName: "John"
                 lastName: "Doe"
                 email: "johndoe@example.com"
@@ -2490,7 +2982,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Admin"
               example:
-                id: 669
+                id: 830
                 firstName: "John"
                 lastName: "Doe"
                 email: "johndoe@example.com"
@@ -2527,7 +3019,7 @@ paths:
               $ref: "#/components/schemas/updateOrganizerPermissionsValidator"
             example:
               permissionsIds:
-                - 949
+                - 214
     delete:
       summary: "Delete organizers (destroy)"
       description: "Removes organizer\n\n _app/controllers/organizers_controller.ts_ - **destroy**"
@@ -2620,9 +3112,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/Participant"
               example:
-                id: 852
+                id: 533
                 email: "johndoe@example.com"
-                eventId: 150
+                eventId: 560
                 firstName: "John"
                 lastName: "Doe"
                 slug: "Lorem Ipsum"
@@ -2643,11 +3135,11 @@ paths:
               $ref: "#/components/schemas/participantsStoreValidator"
             example:
               email: "Lorem Ipsum"
-              eventId: 793
+              eventId: 707
               firstName: "Lorem Ipsum"
               lastName: "Lorem Ipsum"
               participantAttributes:
-                - attributeId: 314
+                - attributeId: 579
                   value: "Lorem Ipsum"
   /api/v1/events/{eventId}/participants/{id}:
     get:
@@ -2752,9 +3244,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/Participant"
               example:
-                id: 852
+                id: 533
                 email: "johndoe@example.com"
-                eventId: 150
+                eventId: 560
                 firstName: "John"
                 lastName: "Doe"
                 slug: "Lorem Ipsum"
@@ -2775,11 +3267,11 @@ paths:
               $ref: "#/components/schemas/participantsUpdateValidator"
             example:
               email: "Lorem Ipsum"
-              eventId: 183
+              eventId: 428
               firstName: "Lorem Ipsum"
               lastName: "Lorem Ipsum"
               participantAttributes:
-                - id: 545
+                - id: 498
                   value: "Lorem Ipsum"
     delete:
       summary: "Delete a participant (destroy)"
@@ -2845,7 +3337,7 @@ paths:
                   token: "oat_Mw.YUxCZHV2Y0ZjNzJKcU5LejV0Q241V0JDUm83QlspsRENDZU9qT"
               example:
                 admin:
-                  id: 669
+                  id: 830
                   firstName: "John"
                   lastName: "Doe"
                   email: "johndoe@example.com"
@@ -2921,7 +3413,7 @@ paths:
                   token: "oat_Mw.YUxCZHV2Y0ZjNzJKcU5LejV0Q241V0JDUm83QlspsRENDZU9qT"
               example:
                 admin:
-                  id: 669
+                  id: 830
                   firstName: "John"
                   lastName: "Doe"
                   email: "johndoe@example.com"
@@ -2976,7 +3468,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Admin"
               example:
-                id: 669
+                id: 830
                 firstName: "John"
                 lastName: "Doe"
                 email: "johndoe@example.com"
@@ -3042,6 +3534,16 @@ tags:
     description: "Everything related to PERMISSIONS"
   - name: "PERMISSIONS"
     description: "Everything related to PERMISSIONS"
+  - name: "ATTRIBUTES"
+    description: "Everything related to ATTRIBUTES"
+  - name: "ATTRIBUTES"
+    description: "Everything related to ATTRIBUTES"
+  - name: "ATTRIBUTES"
+    description: "Everything related to ATTRIBUTES"
+  - name: "ATTRIBUTES"
+    description: "Everything related to ATTRIBUTES"
+  - name: "ATTRIBUTES"
+    description: "Everything related to ATTRIBUTES"
   - name: "EMAILS"
     description: "Everything related to EMAILS"
   - name: "EMAILS"
