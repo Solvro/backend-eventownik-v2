@@ -21,7 +21,6 @@ export const emailsStoreValidator = vine.compile(
 
 export const emailsUpdateValidator = vine.compile(
   vine.object({
-    eventId: vine.number().optional(),
     name: vine.string().optional(),
     content: vine.string().optional(),
     trigger: vine

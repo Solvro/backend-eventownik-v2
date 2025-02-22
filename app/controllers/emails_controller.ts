@@ -94,15 +94,17 @@ export default class EmailsController {
    * @requestBody <emailsUpdateValidator>
    * @responseBody 200 - {"id": 1, "name": "Updated Name", "content": "Updated Content", "trigger": "form_filled"}
    */
-  async update({ params, request }: HttpContext) {
-    const data = await emailsUpdateValidator.validate(request.all());
+  async update({ params, request, bouncer }: HttpContext) {
+    await bouncer.authorize(
+      "manage_email",
+      await Event.findOrFail(params.eventId),
+    );
 
+    const data = await request.validateUsing(emailsUpdateValidator);
     const emailId = Number(params.id);
     const email = await Email.findOrFail(emailId);
 
-    email.merge(data);
-
-    await email.save();
+    await email.merge(data).save();
 
     return email;
   }
