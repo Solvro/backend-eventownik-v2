@@ -114,15 +114,20 @@ export default class EmailsController {
    * @operationId deleteEmail
    * @description Remove an email associated with a specific event.
    * @tag emails
-   * @responseBody 204 - {}
+   * @responseBody 200 - {}
    */
-  async destroy({ params, response }: HttpContext) {
+  async destroy({ params, bouncer }: HttpContext) {
+    await bouncer.authorize(
+      "manage_email",
+      await Event.findOrFail(params.eventId),
+    );
+
     const emailId = Number(params.id);
     const email = await Email.findOrFail(emailId);
 
     await email.related("participants").detach();
     await email.delete();
 
-    return response.noContent();
+    return { message: "Email successfully deleted" };
   }
 }
