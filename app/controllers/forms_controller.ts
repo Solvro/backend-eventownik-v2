@@ -33,22 +33,15 @@ export default class FormsController {
    */
   public async store({ params, request, bouncer }: HttpContext) {
     const eventId = Number(params.eventId);
+
     await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
 
-    const data = await createFormValidator.validate(request.all());
-    const form = new Form();
+    const { attributesIds, ...newFormData } =
+      await request.validateUsing(createFormValidator);
 
-    form.merge({
-      ...data,
-      eventId,
-    });
+    const form = await Form.create({ ...newFormData, eventId });
 
-    //waiting for attributes implementation
-    // const attributeIds = data.attributeIds ?? [];
-
-    // if (attributeIds.length > 0) {
-    //   await form.related("attributes").sync(attributeIds);
-    // }
+    await form.related("attributes").attach(attributesIds);
 
     return form;
   }
