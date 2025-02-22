@@ -6,12 +6,17 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments("id");
-      table.integer("event_id").unsigned();
-      table.boolean("is_open").defaultTo(false).nullable();
-      table.text("description", "long").nullable();
+
       table.string("name").notNullable();
+      table.string("slug").notNullable().unique();
       table.timestamp("start_date").defaultTo("NOW()");
+      table.boolean("is_open").defaultTo(false);
+
+      table.text("description", "long").nullable();
       table.timestamp("end_date").nullable();
+
+      table.integer("event_id").unsigned();
+
       table.timestamps();
     });
   }
