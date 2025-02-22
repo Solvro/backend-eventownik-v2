@@ -46,4 +46,24 @@ export default class AttributesController {
 
     return newAttribute;
   }
+
+  /**
+   * @show
+   * @operationId getEventAttribute
+   * @description Returns event attribute details
+   * @tag attributes
+   * @responseBody 200 - <Attribute>
+   * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
+   */
+  async show({ params }: HttpContext) {
+    const eventId = +params.eventId;
+    const attributeId = +params.id;
+
+    const attribute = await this.attributeService.getEventAttribute(
+      eventId,
+      attributeId,
+    );
+
+    return attribute;
+  }
 }

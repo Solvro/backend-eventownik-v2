@@ -9,6 +9,15 @@ export class AttributeService {
     return attributes;
   }
 
+  async getEventAttribute(eventId: number, attributeId: number) {
+    const attribute = await Attribute.query()
+      .where("event_id", eventId)
+      .andWhere("id", attributeId)
+      .firstOrFail();
+
+    return attribute;
+  }
+
   async createAttribute(createAttributeDTO: CreateAttributeDTO) {
     const newAttribute = await Attribute.create(createAttributeDTO);
 
