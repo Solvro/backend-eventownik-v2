@@ -11,23 +11,22 @@ function dateTimeTransform(value: Date): DateTime {
 
 export const createFormValidator = vine.compile(
   vine.object({
-    isOpen: vine.boolean(),
-    description: vine.string(),
     name: vine.string(),
+    description: vine.string(),
     startDate: vine.date().transform(dateTimeTransform),
     attributesIds: vine.array(vine.number()).minLength(1),
     endDate: vine.date().transform(dateTimeTransform).optional(),
-    attributeIds: vine.array(vine.number()).optional(),
+    isOpen: vine.boolean().optional(),
   }),
 );
 
 export const updateFormValidator = vine.compile(
   vine.object({
-    isOpen: vine.boolean().optional(),
-    description: vine.string().optional(),
     name: vine.string().optional(),
+    description: vine.string().optional(),
     startDate: vine.date().transform(dateTimeTransform).optional(),
     endDate: vine.date().transform(dateTimeTransform).optional(),
     attributesIds: vine.array(vine.number()).minLength(1).optional(),
+    isOpen: vine.boolean().optional(),
   }),
 );
