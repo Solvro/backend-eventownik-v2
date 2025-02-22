@@ -2,6 +2,7 @@ import { inject } from "@adonisjs/core";
 import type { HttpContext } from "@adonisjs/core/http";
 
 import { AttributeService } from "#services/attribute_service";
+import { createAttributeValidator } from "#validators/attribute";
 
 @inject()
 export default class AttributesController {
@@ -21,5 +22,28 @@ export default class AttributesController {
     const attributes = await this.attributeService.getEventAttributes(eventId);
 
     return attributes;
+  }
+
+  /**
+   * @store
+   * @operationId addEventAttribute
+   * @description Adds an attribute to an event
+   * @tag attributes
+   * @requestBody <createAttributeValidator>
+   * @responseBody 201 - <Attribute>
+   */
+  async store({ params, request }: HttpContext) {
+    const eventId = +params.eventId;
+
+    const newAttributeData = await request.validateUsing(
+      createAttributeValidator,
+    );
+
+    const newAttribute = await this.attributeService.createAttribute({
+      eventId,
+      ...newAttributeData,
+    });
+
+    return newAttribute;
   }
 }
