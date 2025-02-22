@@ -117,12 +117,10 @@ export default class FormsController {
     const formId = Number(params.id);
     await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
 
-    const form = await Form.query()
+    await Form.query()
       .where("event_id", eventId)
-      .where("id", formId)
-      .firstOrFail();
-
-    await form.delete();
+      .andWhere("id", formId)
+      .delete();
 
     return response.noContent();
   }
