@@ -36,23 +36,23 @@ export default class Attribute extends BaseModel {
   @belongsTo(() => Event, {
     foreignKey: "eventId",
   })
-  public event!: BelongsTo<typeof Event>;
+  declare event: BelongsTo<typeof Event>;
 
   @belongsTo(() => Block, {
     foreignKey: "rootBlockId",
   })
-  public rootBlock!: BelongsTo<typeof Block>;
+  declare rootBlock: BelongsTo<typeof Block>;
 
   @manyToMany(() => Form, {
     pivotTable: "form_definition",
   })
-  public forms!: ManyToMany<typeof Form>;
+  declare forms: ManyToMany<typeof Form>;
 
   @manyToMany(() => ParticipantAttribute, {
     pivotTable: "participant_attribute",
     pivotColumns: ["value"],
   })
-  public participantAttributes!: ManyToMany<typeof ParticipantAttribute>;
+  declare participantAttributes: ManyToMany<typeof ParticipantAttribute>;
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime;
