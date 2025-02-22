@@ -1,6 +1,8 @@
+import ExcelJS from "exceljs";
+
 import type { HttpContext } from "@adonisjs/core/http";
 
-// import Event from "#models/event";
+import Event from "#models/event";
 
 export default class EventExportController {
   /**
@@ -13,12 +15,30 @@ export default class EventExportController {
    * @responseBody 404 - {"errors":[{ "message": "Event not found" }]}
    */
   public async handle({ params, response }: HttpContext) {
-    //TODO
+    let event;
 
-    console.log(params.eventId);
+    try {
+      event = await Event.findOrFail(params.eventId);
+    } catch (error) {
+      response.status(404).send({ errors: [{ message: "Event not found" }] });
+      return;
+    }
+    await event.load("participants");
 
-    response.download("spreadsheet.xlsx");
-    //albo
-    response.attachment("spreadsheet.xlsx");
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("Export");
+
+    for (const participant of event.participants) {
+      sheet.addRow([
+        participant.id,
+        participant.firstName,
+        participant.lastName,
+        participant.email,
+      ]);
+    }
+
+    await workbook.xlsx.writeFile("/tmp/spreadsheet.xlsx");
+
+    response.download("/tmp/spreadsheet.xlsx");
   }
 }
