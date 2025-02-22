@@ -84,16 +84,24 @@ export default class FormsController {
       .where("id", formId)
       .firstOrFail();
 
-    const data = await updateFormValidator.validate(request.all());
-    form.merge(data);
+    const { attributesIds, ...updates } =
+      await request.validateUsing(updateFormValidator);
+
+    form.merge(updates);
 
     await form.save();
 
-    // waiting for attributes implementation
-    // const attributeIds = data.attributeIds ?? [];
-    // await form.related("attributes").sync(attributeIds);
+    if (attributesIds !== undefined) {
+      await form.related("attributes").sync(attributesIds);
+    }
 
-    return form;
+    const updatedForm = await Form.query()
+      .where("event_id", eventId)
+      .where("id", formId)
+      .preload("attributes")
+      .firstOrFail();
+
+    return updatedForm;
   }
 
   /**
