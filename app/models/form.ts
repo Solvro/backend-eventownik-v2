@@ -1,6 +1,13 @@
 import { DateTime } from "luxon";
+import { randomUUID } from "node:crypto";
 
-import { BaseModel, belongsTo, column, manyToMany } from "@adonisjs/lucid/orm";
+import {
+  BaseModel,
+  beforeCreate,
+  belongsTo,
+  column,
+  manyToMany,
+} from "@adonisjs/lucid/orm";
 import type { BelongsTo, ManyToMany } from "@adonisjs/lucid/types/relations";
 
 import Event from "#models/event";
@@ -47,4 +54,9 @@ export default class Form extends BaseModel {
     pivotTimestamps: true,
   })
   declare attributes: ManyToMany<typeof Attribute>;
+
+  @beforeCreate()
+  static afterSlug(form: Form) {
+    form.slug = randomUUID();
+  }
 }

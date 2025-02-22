@@ -1,4 +1,3 @@
-import string from "@adonisjs/core/helpers/string";
 import type { HttpContext } from "@adonisjs/core/http";
 
 import Event from "#models/event";
@@ -43,15 +42,6 @@ export default class FormsController {
       ...data,
       eventId,
     });
-
-    if (form.name && form.id) {
-      form.slug = string.slug(`${form.name}${form.id}`, {
-        lower: true,
-        strict: true,
-      });
-    }
-
-    await form.save();
 
     //waiting for attributes implementation
     // const attributeIds = data.attributeIds ?? [];
