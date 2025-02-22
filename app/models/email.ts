@@ -57,5 +57,5 @@ export default class Email extends BaseModel {
   })
   declare participants: ManyToMany<typeof Participant>;
 
-  public serializeExtras = true;
+  serializeExtras = true;
 }

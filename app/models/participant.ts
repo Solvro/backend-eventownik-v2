@@ -70,4 +70,6 @@ export default class Participant extends BaseModel {
   static async generateSlug(participant: Participant) {
     participant.slug = randomUUID();
   }
+
+  serializeExtras = true;
 }

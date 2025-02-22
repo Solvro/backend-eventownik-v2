@@ -11,16 +11,24 @@ export default class EmailsController {
   /**
    * @index
    * @operationId listEmails
-   * @description Retrieve a list of emails for a specific event, along with their sending status.
+   * @description Retrieve a list of emails for a specific event without content, along with their sending status.
    * @tag emails
-   * @responseBody 200 - [{\"email": {"id": 1, "eventId": 1, "name": "Welcome Email", "content": "Hello name, welcome to the event!", "trigger": "participant_registered", "triggerValue": null, "createdAt": "2025-02-19T10:58:37.602+00:00", "updatedAt": "2025-02-19T10:58:37.602+00:00"}, "pending": 0, "sent": 0, "failed": 0}]
+   * @responseBody 200 - [ { "id": 1, "eventId": 5, "name": "test124", "trigger": "participant_registered", "triggerValue": "", "createdAt": "2025-02-22T19:13:10.471+00:00", "updatedAt": "2025-02-22T19:13:10.471+00:00", "meta": { "failedCount": "1", "pendingCount": "1", "sentCount": "0" } } ]
    */
-  async index({ params, response, bouncer }: HttpContext) {
+  async index({ params, bouncer }: HttpContext) {
     const eventId = Number(params.eventId);
     await bouncer.authorize("manage_email", await Event.findOrFail(eventId));
 
     const emails = await Email.query()
       .where("event_id", eventId)
+      .select([
+        "id",
+        "name",
+        "trigger",
+        "trigger_value",
+        "created_at",
+        "updated_at",
+      ])
       .withCount("participants", (q) =>
         q.where("status", "failed").as("failedCount"),
       )
@@ -31,7 +39,7 @@ export default class EmailsController {
         q.where("status", "sent").as("sentCount"),
       );
 
-    return response.status(200).send(emails);
+    return emails;
   }
 
   /**
@@ -39,20 +47,21 @@ export default class EmailsController {
    * @operationId getEmail
    * @description Retrieve details of a specific email linked to an event.
    * @tag emails
-   * @responseBody 200 - {"id": 1, "name": "Email Name", "content": "Email Content", "trigger": "participant_registered"}
+   * @responseBody 200 - { "id": 1, "eventId": 5, "name": "test124", "content": "uuuu", "trigger": "participant_registered", "triggerValue": "eeee", "createdAt": "2025-02-22T19:13:10.471+00:00", "updatedAt": "2025-02-22T19:13:10.471+00:00", "participants": [ { "id": 4, "email": "dasd", "eventId": 5, "firstName": "fdf", "lastName": "fddfd", "createdAt": "2002-12-10 23:00:00", "updatedAt": null, "meta": { "pivot_status": "failed", "pivot_email_id": 1, "pivot_participant_id": 4, "pivot_send_at": null, "pivot_send_by": null } }, { "id": 4, "email": "dasd", "eventId": 5, "firstName": "fdf", "lastName": "fddfd", "createdAt": "2002-12-10 23:00:00", "updatedAt": null, "meta": { "pivot_status": "pending", "pivot_email_id": 1, "pivot_participant_id": 4, "pivot_send_at": null, "pivot_send_by": null } } ] }
    * @responseBody 404 - {"message": "Email not found"}
    */
-  async show({ params, response }: HttpContext) {
-    const emailId = Number.parseInt(String(params.id));
+  async show({ params, bouncer }: HttpContext) {
+    const emailId = +params.id;
     const event = await Event.findOrFail(params.eventId);
+    await bouncer.authorize("manage_email", event);
 
-    const email = await event
-      .related("emails")
-      .query()
+    const email = Email.query()
+      .preload("participants", (q) => q.pivotColumns(["status"]))
       .where("id", emailId)
+      .where("event_id", event.id)
       .firstOrFail();
 
-    return response.status(200).send(email);
+    return email;
   }
 
   /**
