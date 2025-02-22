@@ -45,4 +45,11 @@ export class AttributeService {
 
     return updatedAttribute;
   }
+
+  async deleteAttribute(eventId: number, attributeId: number) {
+    await Attribute.query()
+      .where("event_id", eventId)
+      .andWhere("id", attributeId)
+      .delete();
+  }
 }

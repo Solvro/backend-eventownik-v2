@@ -93,4 +93,20 @@ export default class AttributesController {
 
     return updatedAttribute;
   }
+
+  /**
+   * @destroy
+   * @operationId deleteEventAttribute
+   * @description Deletes an attribute of an event
+   * @tag attributes
+   * @responseBody 204 - {}
+   */
+  async destroy({ params, response }: HttpContext) {
+    const eventId = +params.eventId;
+    const attributeId = +params.id;
+
+    await this.attributeService.deleteAttribute(eventId, attributeId);
+
+    return response.noContent();
+  }
 }
