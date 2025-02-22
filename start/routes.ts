@@ -6,6 +6,7 @@ import swagger from "#config/swagger";
 
 import { middleware } from "./kernel.js";
 
+const AttributesController = () => import("#controllers/attributes_controller");
 const BlocksController = () => import("#controllers/blocks_controller");
 const EventController = () => import("#controllers/events_controller");
 const ParticipantsController = () =>
@@ -35,6 +36,7 @@ router
 
         router
           .group(() => {
+            router.resource("attributes", AttributesController).apiOnly();
             router.resource("blocks", BlocksController).apiOnly();
             router.resource("emails", EmailsController).apiOnly();
             router.resource("forms", FormsController).apiOnly();
