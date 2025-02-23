@@ -1,5 +1,4 @@
 import ExcelJS from "exceljs";
-import { DateTime } from "luxon";
 
 import type { HttpContext } from "@adonisjs/core/http";
 
@@ -32,10 +31,9 @@ export default class EventImportController {
     const spreadsheetFile = request.file("spreadsheet");
 
     if (spreadsheetFile?.tmpPath === undefined) {
-      response
-        .status(500)
-        .send({ errors: [{ message: "Could not process file" }] });
-      return;
+      return response.internalServerError({
+        errors: [{ message: "Could not process file" }],
+      });
     }
 
     const workbook = new ExcelJS.Workbook();
@@ -45,8 +43,9 @@ export default class EventImportController {
     const sheet = workbook.getWorksheet(1);
 
     if (sheet === undefined) {
-      response.status(400).send({ errors: [{ message: "Bad file provided" }] });
-      return;
+      return response.badRequest({
+        errors: [{ message: "Bad file provided" }],
+      });
     }
 
     const id = sheet.getColumn("A");
@@ -76,11 +75,9 @@ export default class EventImportController {
         { id: data.id },
         {
           eventId: +params.eventId,
-          id: data.id,
           firstName: data.firstName,
           lastName: data.lastName,
           email: data.email,
-          updatedAt: DateTime.now(),
         },
       );
 
