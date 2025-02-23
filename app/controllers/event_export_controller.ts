@@ -1,8 +1,12 @@
 import ExcelJS from "exceljs";
+import { existsSync, mkdirSync } from "node:fs";
+import path from "node:path";
 
 import type { HttpContext } from "@adonisjs/core/http";
+import app from "@adonisjs/core/services/app";
 
 import Event from "#models/event";
+import env from "#start/env";
 
 export default class EventExportController {
   /**
@@ -12,18 +16,13 @@ export default class EventExportController {
    * @description Returns file to download of spreadsheet with all participants of given :eventId
    * @paramPath eventId - ID of the event to be exported - @type(number) @required
    * @responseBody 200 - file:xlsx - Spreadsheet download with xlsx extension
-   * @responseBody 404 - {"errors":[{ "message": "Event not found" }]}
+   * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    */
   public async handle({ params, response }: HttpContext) {
-    let event;
-
-    try {
-      event = await Event.findOrFail(params.eventId);
-    } catch (error) {
-      response.status(404).send({ errors: [{ message: "Event not found" }] });
-      return;
-    }
-    await event.load("participants");
+    const event = await Event.query()
+      .where("id", +params.eventId)
+      .preload("participants")
+      .firstOrFail();
 
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet("Export");
@@ -37,8 +36,18 @@ export default class EventExportController {
       ]);
     }
 
-    await workbook.xlsx.writeFile("/tmp/spreadsheet.xlsx");
+    const tempFolderPath = app.makePath(
+      env.get("TEMP_STORAGE_URL", "storage/temp"),
+    );
 
-    response.download("/tmp/spreadsheet.xlsx");
+    if (!existsSync(tempFolderPath)) {
+      mkdirSync(tempFolderPath, { recursive: true });
+    }
+
+    const tempWorksheetFilePath = path.join(tempFolderPath, "worksheet.xlsx");
+
+    await workbook.xlsx.writeFile(tempWorksheetFilePath);
+
+    response.download(tempWorksheetFilePath);
   }
 }
