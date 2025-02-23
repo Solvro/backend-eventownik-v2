@@ -45,9 +45,11 @@ router
             router.resource("emails", EmailsController).apiOnly();
             router.resource("forms", FormsController).apiOnly();
             router.resource("organizers", OrganizersController).apiOnly();
-            router.resource("participants", ParticipantsController).apiOnly();
+            // Participants/export and participants/import must be defined before the resource route
+            // Otherwise, the words "export" and "import" will be treated as ids
             router.get("participants/export", [EventExportController]);
             router.post("participants/import", [EventImportController]);
+            router.resource("participants", ParticipantsController).apiOnly();
           })
           .prefix("events/:eventId");
       })
