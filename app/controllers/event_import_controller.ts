@@ -23,20 +23,15 @@ export default class EventImportController {
    * @requestFormDataBody {"spreadsheet":{"type":"file:xlsx","format":"binary"}}
    * @responseBody 200 - {"eventId":"<number>","importedParticipants":"<Participant[]>"}
    * @responseBody 400 - {"errors":[{ "message": "Bad file provided" }]}
-   * @responseBody 404 - {"errors":[{ "message": "Event not found" }]}
+   * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    * @responseBody 500 - {"errors":[{ "message": "Could not process file" }]}
    */
   public async handle({ params, request, response }: HttpContext) {
-    try {
-      await Event.findOrFail(params.eventId);
-    } catch (error) {
-      response.status(404).send({ errors: [{ message: "Event not found" }] });
-      return;
-    }
+    await Event.findOrFail(params.eventId);
 
     const spreadsheetFile = request.file("spreadsheet");
 
-    if (spreadsheetFile === null || spreadsheetFile.tmpPath === undefined) {
+    if (spreadsheetFile?.tmpPath === undefined) {
       response
         .status(500)
         .send({ errors: [{ message: "Could not process file" }] });
@@ -59,26 +54,28 @@ export default class EventImportController {
     const participantsData: ParticipantData[] = [];
 
     id.eachCell((cell, rowNumber) => {
-      const id = Number(cell.value);
-      const firstName = sheet.getCell(`B${rowNumber}`).toString();
-      const lastName = sheet.getCell(`C${rowNumber}`).toString();
-      const email = sheet.getCell(`D${rowNumber}`).toString();
+      if (cell.value !== null && cell.value !== undefined) {
+        const participantId = +cell.value;
+        const firstName = sheet.getCell(`B${rowNumber}`).toString();
+        const lastName = sheet.getCell(`C${rowNumber}`).toString();
+        const email = sheet.getCell(`D${rowNumber}`).toString();
 
-      participantsData.push({
-        id: id,
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-      });
+        participantsData.push({
+          id: participantId,
+          firstName,
+          lastName,
+          email,
+        });
+      }
     });
 
     const importedParticipants = [];
 
-    for await (const data of participantsData) {
+    for (const data of participantsData) {
       const participant = await Participant.updateOrCreate(
         { id: data.id },
         {
-          eventId: params.eventId,
+          eventId: +params.eventId,
           id: data.id,
           firstName: data.firstName,
           lastName: data.lastName,
@@ -91,8 +88,8 @@ export default class EventImportController {
     }
 
     return {
-      eventId: params.eventId,
-      importedParticipants: importedParticipants,
+      eventId: +params.eventId,
+      importedParticipants,
     };
   }
 }
