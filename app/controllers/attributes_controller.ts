@@ -1,6 +1,7 @@
 import { inject } from "@adonisjs/core";
 import type { HttpContext } from "@adonisjs/core/http";
 
+import Event from "#models/event";
 import { AttributeService } from "#services/attribute_service";
 import {
   createAttributeValidator,
@@ -19,8 +20,10 @@ export default class AttributesController {
    * @tag attributes
    * @responseBody 200 - <Attribute[]>
    */
-  async index({ params }: HttpContext) {
+  async index({ params, bouncer }: HttpContext) {
     const eventId = +params.eventId;
+
+    await bouncer.authorize("manage_event", await Event.findOrFail(eventId));
 
     const attributes = await this.attributeService.getEventAttributes(eventId);
 
@@ -35,8 +38,10 @@ export default class AttributesController {
    * @requestBody <createAttributeValidator>
    * @responseBody 201 - <Attribute>
    */
-  async store({ params, request }: HttpContext) {
+  async store({ params, request, bouncer }: HttpContext) {
     const eventId = +params.eventId;
+
+    await bouncer.authorize("manage_setting", await Event.findOrFail(eventId));
 
     const newAttributeData = await request.validateUsing(
       createAttributeValidator,
@@ -58,9 +63,11 @@ export default class AttributesController {
    * @responseBody 200 - <Attribute>
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
-  async show({ params }: HttpContext) {
+  async show({ params, bouncer }: HttpContext) {
     const eventId = +params.eventId;
     const attributeId = +params.id;
+
+    await bouncer.authorize("manage_event", await Event.findOrFail(eventId));
 
     const attribute = await this.attributeService.getEventAttribute(
       eventId,
@@ -79,9 +86,11 @@ export default class AttributesController {
    * @responseBody 200 - <Attribute>
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
-  async update({ params, request }: HttpContext) {
+  async update({ params, request, bouncer }: HttpContext) {
     const eventId = +params.eventId;
     const attributeId = +params.id;
+
+    await bouncer.authorize("manage_setting", await Event.findOrFail(eventId));
 
     const updates = await request.validateUsing(updateAttributeValidator);
 
@@ -101,9 +110,11 @@ export default class AttributesController {
    * @tag attributes
    * @responseBody 204 - {}
    */
-  async destroy({ params, response }: HttpContext) {
+  async destroy({ params, response, bouncer }: HttpContext) {
     const eventId = +params.eventId;
     const attributeId = +params.id;
+
+    await bouncer.authorize("manage_setting", await Event.findOrFail(eventId));
 
     await this.attributeService.deleteAttribute(eventId, attributeId);
 
