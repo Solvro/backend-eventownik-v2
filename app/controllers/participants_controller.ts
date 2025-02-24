@@ -62,7 +62,6 @@ export default class ParticipantsController {
         },
       },
     });
-
     const participantsJson = serializedParticipants.data.map((participant) => {
       return {
         id: participant.id as number,
@@ -72,7 +71,7 @@ export default class ParticipantsController {
         slug: participant.slug as string,
         createdAt: participant.createdAt as string,
         updatedAt: participant.updatedAt as string,
-        attributes: (participant.participant_attributes as []).map(
+        attributes: (participant.participantAttributes as []).map(
           (attribute: Attribute) => {
             return {
               id: attribute.id,
@@ -84,7 +83,6 @@ export default class ParticipantsController {
         ),
       };
     });
-
     return participantsJson;
   }
 
