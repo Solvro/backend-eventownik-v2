@@ -48,6 +48,7 @@ export default class Participant extends BaseModel {
   @column.dateTime({
     autoCreate: true,
     autoUpdate: true,
+    serialize: (value: DateTime) => value.toFormat("yyyy-MM-dd HH:mm:ss"),
   })
   declare updatedAt: DateTime;
 
