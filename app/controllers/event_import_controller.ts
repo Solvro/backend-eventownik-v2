@@ -7,8 +7,6 @@ import Participant from "#models/participant";
 
 interface ParticipantData {
   id: number;
-  firstName: string;
-  lastName: string;
   email: string;
 }
 
@@ -55,14 +53,10 @@ export default class EventImportController {
     id.eachCell((cell, rowNumber) => {
       if (cell.value !== null && cell.value !== undefined) {
         const participantId = +cell.value;
-        const firstName = sheet.getCell(`B${rowNumber}`).toString();
-        const lastName = sheet.getCell(`C${rowNumber}`).toString();
-        const email = sheet.getCell(`D${rowNumber}`).toString();
+        const email = sheet.getCell(`B${rowNumber}`).toString();
 
         participantsData.push({
           id: participantId,
-          firstName,
-          lastName,
           email,
         });
       }
@@ -75,8 +69,6 @@ export default class EventImportController {
         { id: data.id },
         {
           eventId: +params.eventId,
-          firstName: data.firstName,
-          lastName: data.lastName,
           email: data.email,
         },
       );

@@ -31,12 +31,6 @@ export default class Participant extends BaseModel {
   declare eventId: number;
 
   @column()
-  declare firstName: string;
-
-  @column()
-  declare lastName: string;
-
-  @column()
   declare slug: string;
 
   @column.dateTime({

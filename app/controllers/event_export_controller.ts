@@ -28,12 +28,7 @@ export default class EventExportController {
     const sheet = workbook.addWorksheet("Export");
 
     for (const participant of event.participants) {
-      sheet.addRow([
-        participant.id,
-        participant.firstName,
-        participant.lastName,
-        participant.email,
-      ]);
+      sheet.addRow([participant.id, participant.email]);
     }
 
     const tempFolderPath = app.makePath(
