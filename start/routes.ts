@@ -33,6 +33,9 @@ router.get("/docs", async () => {
 router
   .group(() => {
     router
+      .get("events/:eventSlug", [EventController, "publicShow"])
+      .where("eventSlug", router.matchers.slug());
+    router
       .group(() => {
         router.resource("admins", AdminsController).apiOnly();
         router.resource("events", EventController).apiOnly();

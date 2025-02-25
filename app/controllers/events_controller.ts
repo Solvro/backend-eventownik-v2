@@ -86,6 +86,17 @@ export default class EventController {
   }
 
   /**
+   * @publicShow
+   * @operationId showPublicEvent
+   * @description Shows one event basic data without login
+   * @responseBody 201 - <Event>
+   * @tag event
+   */
+  public async publicShow({ params }: HttpContext) {
+    return await Event.findByOrFail("slug", params.eventSlug);
+  }
+
+  /**
    * @update
    * @operationId updateEvent
    * @description Updates an existing event if user has permission. Date should be in format 2025-01-05 12:00:00
