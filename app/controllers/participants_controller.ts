@@ -139,7 +139,9 @@ export default class ParticipantsController {
         ]),
       );
 
-      await participant.related("attributes").sync(transformedAttributes);
+      await participant
+        .related("attributes")
+        .sync(transformedAttributes, false);
     }
 
     const updatedParticipant = await Participant.query()
