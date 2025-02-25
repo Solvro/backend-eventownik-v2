@@ -1,5 +1,4 @@
 import type { HttpContext } from "@adonisjs/core/http";
-import db from "@adonisjs/lucid/services/db";
 
 import Event from "#models/event";
 import Form from "#models/form";
@@ -43,18 +42,17 @@ export default class FormsController {
 
     const form = await Form.create({ ...newFormData, eventId });
 
-    // Insert into form_definitions table
-    await Promise.all(
-      attributes.map(async (attribute) => {
-        await db.table("form_definitions").insert({
-          form_id: form.id,
-          attribute_id: attribute.id,
-          is_required: attribute.isRequired === true || false,
-          is_editable: true,
-          created_at: new Date(),
-          updated_at: new Date(),
-        });
-      }),
+    await form.related("attributes").attach(
+      attributes.reduce(
+        (acc, attribute) => {
+          acc[attribute.id] = {
+            is_required: attribute.isRequired === true || false,
+            is_editable: true,
+          };
+          return acc;
+        },
+        {} as Record<number, { is_required: boolean; is_editable: boolean }>,
+      ),
     );
 
     return response.created(
