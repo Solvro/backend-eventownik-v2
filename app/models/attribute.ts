@@ -35,7 +35,7 @@ export default class Attribute extends BaseModel {
   declare options: string | null;
 
   @column()
-  declare type: string | null;
+  declare type: string;
 
   @column()
   declare rootBlockId: number | null;

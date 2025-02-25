@@ -14,7 +14,7 @@ export default class extends BaseSchema {
         .unsigned()
         .references("events.id");
       table.boolean("show_in_list").defaultTo(false);
-      table.json("options").notNullable();
+      table.json("options").nullable();
       table
         .enum(
           "type",
@@ -38,7 +38,7 @@ export default class extends BaseSchema {
             existingType: false,
           },
         )
-        .nullable();
+        .notNullable();
       table.timestamps();
     });
   }
