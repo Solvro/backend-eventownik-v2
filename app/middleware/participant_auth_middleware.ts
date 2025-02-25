@@ -6,13 +6,8 @@ import Participant from "#models/participant";
 
 export default class ParticipantAuthMiddleware {
   async handle(ctx: HttpContext, next: NextFn) {
-    /**
-     * Middleware logic goes here (before the next call)
-     */
-    // console.log(ctx)
-
-    const slug = ctx.params.participantSlug;
-    const eventSlug = ctx.params.eventSlug;
+    const slug = ctx.params.participantSlug as string;
+    const eventSlug = ctx.params.eventSlug as string;
 
     const event = await Event.findBy("slug", eventSlug);
 
@@ -36,10 +31,6 @@ export default class ParticipantAuthMiddleware {
     ctx.event = event;
     ctx.participant = participant;
 
-    /**
-     * Call next method in the pipeline and return its output
-     */
-    const output = await next();
-    return output;
+    return next();
   }
 }
