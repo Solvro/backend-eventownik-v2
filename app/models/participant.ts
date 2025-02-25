@@ -6,19 +6,14 @@ import {
   beforeCreate,
   belongsTo,
   column,
-  hasMany,
   manyToMany,
 } from "@adonisjs/lucid/orm";
-import type {
-  BelongsTo,
-  HasMany,
-  ManyToMany,
-} from "@adonisjs/lucid/types/relations";
+import type { BelongsTo, ManyToMany } from "@adonisjs/lucid/types/relations";
 
 import Email from "#models/email";
 import Event from "#models/event";
-import ParticipantAttribute from "#models/participant_attribute";
-import ParticipantEmail from "#models/participant_email";
+
+import Attribute from "./attribute.js";
 
 export default class Participant extends BaseModel {
   @column({ isPrimary: true })
@@ -49,17 +44,19 @@ export default class Participant extends BaseModel {
   @belongsTo(() => Event)
   declare event: BelongsTo<typeof Event>;
 
+  @manyToMany(() => Attribute, {
+    pivotTable: "participant_attributes",
+    pivotColumns: ["value"],
+    pivotTimestamps: true,
+  })
+  declare attributes: ManyToMany<typeof Attribute>;
+
   @manyToMany(() => Email, {
     pivotTable: "participant_emails",
     pivotColumns: ["send_at", "send_by", "status"],
+    pivotTimestamps: true,
   })
   declare emails: ManyToMany<typeof Email>;
-
-  @hasMany(() => ParticipantAttribute)
-  declare participantAttributes: HasMany<typeof ParticipantAttribute>;
-
-  @hasMany(() => ParticipantEmail)
-  declare participantEmails: HasMany<typeof ParticipantEmail>;
 
   @beforeCreate()
   static async generateSlug(participant: Participant) {

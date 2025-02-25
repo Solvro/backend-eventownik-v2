@@ -1,20 +1,10 @@
 import { HttpContext } from "@adonisjs/core/http";
 
 import Participant from "#models/participant";
-import ParticipantAttribute from "#models/participant_attribute";
 import {
   participantsStoreValidator,
   participantsUpdateValidator,
 } from "#validators/participants";
-
-interface Attribute {
-  id: number;
-  attribute: {
-    name: string;
-    slug: string;
-  };
-  value: string;
-}
 
 export default class ParticipantsController {
   /**
@@ -24,64 +14,32 @@ export default class ParticipantsController {
    * @description Get all participants and their attributes for specific event
    * @responseBody 200 - [{"id":32,"email":"test@test.pl","slug":"9081d217-9e13-4642-b7f0-2b8f8f409dfb","createdAt":"2025-02-19 13:56:10","updatedAt":"2025-02-19 13:56:10","attributes":[{"id":25,"name":"Sample Attribute","value":"sample value","slug":"sample-slug"}]}]
    */
-  async index({ params, request, response }: HttpContext) {
-    const page = request.input("page", 1) as number;
-    const limit = request.input("limit", 10) as number;
+  async index({ params }: HttpContext) {
     const participants = await Participant.query()
+      .select("id", "email", "slug")
       .where("event_id", params.eventId as number)
-      .preload("participantAttributes", (query) => {
-        query
-          .select("id", "attribute_id", "value", "participant_id")
-          .preload("attribute", (attributeQuery) => {
-            attributeQuery
-              .select("name", "slug")
-              .where("show_in_list", true)
-              .catch((error) => {
-                return response.badRequest({
-                  message: (error as Error).message,
-                });
-              });
-          })
-          .catch((error) => {
-            return response.badRequest({ message: (error as Error).message });
-          });
-      })
-      .paginate(page, limit);
-    const serializedParticipants = participants.serialize({
-      fields: {
-        omit: ["eventId"],
-      },
-      relations: {
-        participant_attributes: {
-          fields: ["id", "value"],
-          relations: {
-            attribute: {
-              fields: ["id", "name", "slug"],
-            },
-          },
-        },
-      },
-    });
-    const participantsJson = serializedParticipants.data.map((participant) => {
+      .preload("attributes", (attributesQuery) =>
+        attributesQuery
+          .select("id", "name", "slug")
+          .pivotColumns(["value"])
+          .where("show_in_list", true),
+      );
+
+    const formattedParticipants = participants.map((participant) => {
       return {
-        id: participant.id as number,
-        email: participant.email as string,
-        slug: participant.slug as string,
-        createdAt: participant.createdAt as string,
-        updatedAt: participant.updatedAt as string,
-        attributes: (participant.participantAttributes as []).map(
-          (attribute: Attribute) => {
-            return {
-              id: attribute.id,
-              name: attribute.attribute.name,
-              value: attribute.value,
-              slug: attribute.attribute.slug,
-            };
-          },
-        ),
+        id: participant.id,
+        email: participant.email,
+        slug: participant.slug,
+        attributes: participant.attributes.map((attribute) => ({
+          id: attribute.id,
+          name: attribute.name,
+          slug: attribute.slug,
+          value: attribute.$extras.pivot_value as string,
+        })),
       };
     });
-    return participantsJson;
+
+    return formattedParticipants;
   }
 
   /**
@@ -92,27 +50,30 @@ export default class ParticipantsController {
    * @requestBody <participantsStoreValidator>
    * @responseBody 201 - <Participant>
    */
-  async store({ request, response, params }: HttpContext) {
-    const participantData = await participantsStoreValidator.validate(
-      request.all(),
-    );
-    const participantAttributes = participantData.participantAttributes;
-    delete participantData.participantAttributes;
-    participantData.eventId = params.eventId as number;
+  async store({ request, params }: HttpContext) {
+    const { participantAttributes, ...participantData } =
+      await request.validateUsing(participantsStoreValidator);
+
+    participantData.eventId = +params.eventId;
+
     const participant = await Participant.create(participantData);
+
     if (
       participantAttributes !== undefined &&
       participantAttributes.length > 0
     ) {
-      await participant
-        .related("participantAttributes")
-        .createMany(participantAttributes)
-        .catch((error) => {
-          return response.badRequest({ message: (error as Error).message });
-        });
+      // Transform permissions to match database schema: event_id instead of eventId
+      const transformedAttributes = Object.fromEntries(
+        participantAttributes.map((participantAttribute) => [
+          participantAttribute.attributeId,
+          { value: participantAttribute.value },
+        ]),
+      );
+
+      await participant.related("attributes").attach(transformedAttributes);
     }
 
-    return response.status(201).send(participant);
+    return participant;
   }
 
   /**
@@ -120,8 +81,8 @@ export default class ParticipantsController {
    * @tag participants
    * @summary Get a participant
    * @description Get a participant and sent emails for specific event
-   * @responseBody 200 - {"id": 1,"email":"john.doe@example.com","slug":"some-unique-slug","createdAt": "2025-02-18T00:56:06.115+01:00","updatedAt": "2025-02-18T00:56:06.115+01:00","emails":[{"id": 1,"name":"Welcome Email","content":"Welcome to our event!","participantEmails":{"status":"sent","sendBy": "admin","sendAt": "2025-02-19T14:43:12.000+01:00"}         }     ] }
-   * @responseBody 404 - {"message" : "Participant not found."}
+   * @responseBody 200 - {"id": 1,"email":"john.doe@example.com","firstName": "John","lastName": "Doe","slug":"some-unique-slug","createdAt": "2025-02-18T00:56:06.115+01:00","updatedAt": "2025-02-18T00:56:06.115+01:00","emails":[{"id": 1,"name":"Welcome Email","content":"Welcome to our event!","participantEmails":{"status":"sent","sendBy": "admin","sendAt": "2025-02-19T14:43:12.000+01:00"}         }     ] }
+   * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    */
   async show({ params, response }: HttpContext) {
     const findParticipant = await Participant.query().where(
@@ -133,47 +94,14 @@ export default class ParticipantsController {
     }
 
     const participant = await Participant.query()
-      .where("id", params.id as number)
-      .preload("participantEmails", (query) => {
-        query
-          .where("status", "sent")
-          .preload("email", (emailQuery) => {
-            emailQuery
-              .where("event_id", params.eventId as number)
-              .catch((error) => {
-                return response.badRequest({
-                  message: (error as Error).message,
-                });
-              });
-          })
-          .catch((error) => {
-            return response.badRequest({ message: (error as Error).message });
-          });
-      });
+      .select("id", "email", "firstName", "lastName", "slug")
+      .where("id", +params.id)
+      .andWhere("event_id", +params.eventId)
+      .preload("emails", (emailsQuery) =>
+        emailsQuery.select("id", "name", "content", "trigger", "trigger_value"),
+      );
 
-    if (participant[0].eventId !== Number.parseInt(params.eventId as string)) {
-      return response.notFound("Participant not found.");
-    }
-    const participantJson = participant.map((participantBuilder) => {
-      return {
-        id: participantBuilder.id,
-        email: participantBuilder.email,
-        slug: participantBuilder.slug,
-        createdAt: participantBuilder.createdAt.toFormat("yyyy-MM-dd HH:mm:ss"),
-        updatedAt: participantBuilder.updatedAt.toFormat("yyyy-MM-dd HH:mm:ss"),
-        emails: participantBuilder.participantEmails.map((participantEmail) => {
-          return {
-            id: participantEmail.email.id,
-            name: participantEmail.email.name,
-            content: participantEmail.email.content,
-            status: participantEmail.status,
-            sendBy: participantEmail.sendBy,
-            sendAt: participantEmail.sendAt?.toFormat("yyyy-MM-dd HH:mm:ss"),
-          };
-        }),
-      };
-    });
-    return participantJson;
+    return participant;
   }
 
   /**
@@ -181,34 +109,45 @@ export default class ParticipantsController {
    * @tag participants
    * @summary Update a participant
    * @description Update a participant for specific event with optional attributes
-   * @responseBody 200 - <Participant>
    * @requestBody <participantsUpdateValidator>
+   * @responseBody 200 - <Participant>
    */
   async update({ params, request }: HttpContext) {
-    const participant = await Participant.findOrFail(params.id);
-    const participantData = await participantsUpdateValidator.validate(
-      request.all(),
+    const participantId = +params.id;
+    const eventId = +params.eventId;
+    const participant = await Participant.query()
+      .where("id", participantId)
+      .andWhere("event_id", eventId)
+      .firstOrFail();
+
+    const { participantAttributes, ...updates } = await request.validateUsing(
+      participantsUpdateValidator,
     );
-    const participantAttributes = participantData.participantAttributes;
-    delete participantData.participantAttributes;
-    participant.merge(participantData);
+
+    participant.merge(updates);
+    await participant.save();
 
     if (
       participantAttributes !== undefined &&
       participantAttributes.length > 0
     ) {
-      for (const participantAttribute of participantAttributes) {
-        const attribute = await ParticipantAttribute.findOrFail(
+      // Transform permissions to match database schema: event_id instead of eventId
+      const transformedAttributes = Object.fromEntries(
+        participantAttributes.map((participantAttribute) => [
           participantAttribute.id,
-        );
-        if (attribute.participantId === participant.id) {
-          attribute.merge(participantAttribute);
-          await attribute.save();
-        }
-      }
+          { value: participantAttribute.value },
+        ]),
+      );
+
+      await participant.related("attributes").sync(transformedAttributes);
     }
-    await participant.save();
-    return { message: `Participant successfully updated.`, participant };
+
+    const updatedParticipant = await Participant.query()
+      .where("id", participantId)
+      .andWhere("event_id", eventId)
+      .firstOrFail();
+
+    return updatedParticipant;
   }
 
   /**
@@ -216,19 +155,19 @@ export default class ParticipantsController {
    * @tag participants
    * @summary Delete a participant
    * @description Delete a participant for specific event
-   * @responseBody 200 - {"message" : "Participant successfully deleted."}
-   * @responseBody 404 - {"message" : "Participant not found in this event."}
+   * @responseBody 204 - {}
+   * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    */
   async destroy({ params, response }: HttpContext) {
-    const participant = await Participant.findOrFail(params.id);
-    if (participant.eventId === Number.parseInt(params.eventId as string)) {
-      await ParticipantAttribute.query()
-        .where("participant_id", params.id as number)
-        .delete();
-      await participant.delete();
-      return { message: `Participant successfully deleted.` };
-    }
-    return response.notFound("Participant not found.");
+    const participantId = +params.id;
+    const eventId = +params.eventId;
+
+    await Participant.query()
+      .where("id", participantId)
+      .andWhere("event_id", eventId)
+      .delete();
+
+    return response.noContent();
   }
 
   async attachEmail({ params, request, response }: HttpContext) {
