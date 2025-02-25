@@ -22,7 +22,7 @@ export default class ParticipantsController {
    * @tag participants
    * @summary Get all participants
    * @description Get all participants and their attributes for specific event
-   * @responseBody 200 - [{"id":32,"email":"test@test.pl","firstName":"name","lastName":"last name","slug":"9081d217-9e13-4642-b7f0-2b8f8f409dfb","createdAt":"2025-02-19 13:56:10","updatedAt":"2025-02-19 13:56:10","attributes":[{"id":25,"name":"Sample Attribute","value":"sample value","slug":"sample-slug"}]}]
+   * @responseBody 200 - [{"id":32,"email":"test@test.pl","slug":"9081d217-9e13-4642-b7f0-2b8f8f409dfb","createdAt":"2025-02-19 13:56:10","updatedAt":"2025-02-19 13:56:10","attributes":[{"id":25,"name":"Sample Attribute","value":"sample value","slug":"sample-slug"}]}]
    */
   async index({ params, request, response }: HttpContext) {
     const page = request.input("page", 1) as number;
@@ -66,8 +66,6 @@ export default class ParticipantsController {
       return {
         id: participant.id as number,
         email: participant.email as string,
-        firstName: participant.firstName as string,
-        lastName: participant.lastName as string,
         slug: participant.slug as string,
         createdAt: participant.createdAt as string,
         updatedAt: participant.updatedAt as string,
@@ -122,7 +120,7 @@ export default class ParticipantsController {
    * @tag participants
    * @summary Get a participant
    * @description Get a participant and sent emails for specific event
-   * @responseBody 200 - {"id": 1,"email":"john.doe@example.com","firstName": "John","lastName": "Doe","slug":"some-unique-slug","createdAt": "2025-02-18T00:56:06.115+01:00","updatedAt": "2025-02-18T00:56:06.115+01:00","emails":[{"id": 1,"name":"Welcome Email","content":"Welcome to our event!","participantEmails":{"status":"sent","sendBy": "admin","sendAt": "2025-02-19T14:43:12.000+01:00"}         }     ] }
+   * @responseBody 200 - {"id": 1,"email":"john.doe@example.com","slug":"some-unique-slug","createdAt": "2025-02-18T00:56:06.115+01:00","updatedAt": "2025-02-18T00:56:06.115+01:00","emails":[{"id": 1,"name":"Welcome Email","content":"Welcome to our event!","participantEmails":{"status":"sent","sendBy": "admin","sendAt": "2025-02-19T14:43:12.000+01:00"}         }     ] }
    * @responseBody 404 - {"message" : "Participant not found."}
    */
   async show({ params, response }: HttpContext) {
@@ -160,8 +158,6 @@ export default class ParticipantsController {
       return {
         id: participantBuilder.id,
         email: participantBuilder.email,
-        firstName: participantBuilder.firstName,
-        lastName: participantBuilder.lastName,
         slug: participantBuilder.slug,
         createdAt: participantBuilder.createdAt.toFormat("yyyy-MM-dd HH:mm:ss"),
         updatedAt: participantBuilder.updatedAt.toFormat("yyyy-MM-dd HH:mm:ss"),
