@@ -17,6 +17,7 @@ export default class extends BaseSchema {
         .references("forms.id")
         .onDelete("CASCADE");
       table.boolean("is_editable").defaultTo(false).notNullable();
+      table.boolean("is_required").defaultTo(true).notNullable();
       table.timestamps();
     });
   }
