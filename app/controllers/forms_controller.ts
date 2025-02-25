@@ -102,15 +102,27 @@ export default class FormsController {
       .where("id", formId)
       .firstOrFail();
 
-    const { attributesIds, ...updates } =
+    const { attributes, ...updates } =
       await request.validateUsing(updateFormValidator);
 
     form.merge(updates);
-
     await form.save();
 
-    if (attributesIds !== undefined) {
-      await form.related("attributes").sync(attributesIds);
+    if (attributes !== undefined) {
+      await form.related("attributes").detach();
+
+      await form.related("attributes").attach(
+        attributes.reduce(
+          (acc, attribute) => {
+            acc[attribute.id] = {
+              is_required: attribute.isRequired === true || false,
+              is_editable: true,
+            };
+            return acc;
+          },
+          {} as Record<number, { is_required: boolean; is_editable: boolean }>,
+        ),
+      );
     }
 
     const updatedForm = await Form.query()
@@ -162,6 +174,7 @@ export default class FormsController {
       })
       .firstOrFail();
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { filledFields } = request.only(["filledFields"]);
 
     const requiredAttributes = form.attributes.filter(
