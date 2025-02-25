@@ -94,14 +94,45 @@ export default class ParticipantsController {
     }
 
     const participant = await Participant.query()
-      .select("id", "email", "firstName", "lastName", "slug")
+      .select("id", "email", "slug")
       .where("id", +params.id)
       .andWhere("event_id", +params.eventId)
+      .preload("attributes", (attributesQuery) =>
+        attributesQuery
+          .select("id", "name", "slug")
+          .pivotColumns(["value"])
+          .where("show_in_list", true),
+      )
       .preload("emails", (emailsQuery) =>
-        emailsQuery.select("id", "name", "content", "trigger", "trigger_value"),
-      );
+        emailsQuery
+          .select("id", "name", "content", "trigger", "trigger_value")
+          .pivotColumns(["send_by", "send_at", "status"]),
+      )
+      .firstOrFail();
 
-    return participant;
+    const transformedParticipant = {
+      id: participant.id,
+      email: participant.email,
+      slug: participant.slug,
+      attributes: participant.attributes.map((attribute) => ({
+        id: attribute.id,
+        name: attribute.name,
+        slug: attribute.slug,
+        value: attribute.$extras.pivot_value as string,
+      })),
+      emails: participant.emails.map((email) => {
+        const { $extras, $original } = email;
+
+        return {
+          ...$original,
+          sendBy: ($extras.pivot_sent_by as string) || null,
+          sendAt: ($extras.pivot_sent_at as string) || null,
+          status: $extras.pivot_status as string,
+        };
+      }),
+    };
+
+    return transformedParticipant;
   }
 
   /**
