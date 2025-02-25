@@ -19,6 +19,7 @@ export const createFormValidator = vine.compile(
         vine.object({
           id: vine.number(),
           isRequired: vine.boolean().optional(),
+          isEditable: vine.boolean().optional(),
         }),
       )
       .minLength(1),
@@ -38,10 +39,20 @@ export const updateFormValidator = vine.compile(
         vine.object({
           id: vine.number(),
           isRequired: vine.boolean().optional(),
+          isEditable: vine.boolean().optional(),
         }),
       )
       .minLength(1)
       .optional(),
     isOpen: vine.boolean().optional(),
+  }),
+);
+
+export const filledFieldsValidator = vine.compile(
+  vine.object({
+    filledFields: vine.object({
+      field1: vine.any().optional(),
+      field2: vine.any().optional(),
+    }),
   }),
 );

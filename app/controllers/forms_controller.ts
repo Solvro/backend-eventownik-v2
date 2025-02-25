@@ -2,7 +2,11 @@ import type { HttpContext } from "@adonisjs/core/http";
 
 import Event from "#models/event";
 import Form from "#models/form";
-import { createFormValidator, updateFormValidator } from "#validators/form";
+import {
+  createFormValidator,
+  filledFieldsValidator,
+  updateFormValidator,
+} from "#validators/form";
 
 export default class FormsController {
   /**
@@ -46,12 +50,12 @@ export default class FormsController {
       attributes.reduce(
         (acc, attribute) => {
           acc[attribute.id] = {
-            is_required: attribute.isRequired === true || false,
-            is_editable: true,
+            is_required: attribute.isRequired,
+            is_editable: attribute.isEditable,
           };
           return acc;
         },
-        {} as Record<number, { is_required: boolean; is_editable: boolean }>,
+        {} as Record<number, { is_required?: boolean; is_editable?: boolean }>,
       ),
     );
 
@@ -115,12 +119,15 @@ export default class FormsController {
         attributes.reduce(
           (acc, attribute) => {
             acc[attribute.id] = {
-              is_required: attribute.isRequired === true || false,
-              is_editable: true,
+              is_required: attribute.isRequired,
+              is_editable: attribute.isEditable,
             };
             return acc;
           },
-          {} as Record<number, { is_required: boolean; is_editable: boolean }>,
+          {} as Record<
+            number,
+            { is_required?: boolean; is_editable?: boolean }
+          >,
         ),
       );
     }
@@ -167,6 +174,8 @@ export default class FormsController {
   public async requiredFields({ params, request, response }: HttpContext) {
     const formId = +params.id;
 
+    const { filledFields } = await request.validateUsing(filledFieldsValidator);
+
     const form = await Form.query()
       .where("id", formId)
       .preload("attributes", async (query) => {
@@ -174,14 +183,8 @@ export default class FormsController {
       })
       .firstOrFail();
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const { filledFields } = request.only(["filledFields"]);
-
-    const requiredAttributes = form.attributes.filter(
-      (attribute) => attribute.$extras.pivot_is_required === true,
-    );
-
-    const missingRequiredFields = requiredAttributes
+    const missingRequiredFields = form.attributes
+      .filter((attribute) => attribute.$extras.pivot_is_required === true)
       .filter(
         (attribute) =>
           !Object.prototype.hasOwnProperty.call(filledFields, attribute.name),
