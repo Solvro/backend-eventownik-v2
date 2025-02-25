@@ -22,9 +22,14 @@ export class AttributeService {
   }
 
   async createAttribute(createAttributeDTO: CreateAttributeDTO) {
+    const optionsJSON: string | null =
+      createAttributeDTO.options !== undefined
+        ? JSON.stringify(createAttributeDTO.options)
+        : null;
+
     const newAttribute = await Attribute.create({
       ...createAttributeDTO,
-      options: JSON.stringify(createAttributeDTO.options),
+      options: optionsJSON,
     });
 
     return newAttribute;
@@ -40,9 +45,14 @@ export class AttributeService {
       attributeId,
     );
 
+    const optionsJSON: string | undefined =
+      updates.options !== undefined
+        ? JSON.stringify(updates.options)
+        : undefined;
+
     attributeToUpdate.merge({
       ...updates,
-      options: JSON.stringify(updates.options),
+      options: optionsJSON,
     });
 
     await attributeToUpdate.save();
