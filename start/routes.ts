@@ -62,7 +62,7 @@ router
             router.resource("blocks", BlocksController).apiOnly();
             router.resource("emails", EmailsController).apiOnly();
             router.resource("forms", FormsController).apiOnly();
-            router.get("forms/:id/required-fields", [
+            router.post("forms/:id/required-fields", [
               FormsController,
               "requiredFields",
             ]);

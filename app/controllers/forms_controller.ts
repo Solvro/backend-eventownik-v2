@@ -140,15 +140,17 @@ export default class FormsController {
 
   /**
    * @requiredFields
-   * @operationId getRequiredFields
-   * @description Returns required fields for a given form
+   * @operationId getMissingRequiredFields
+   * @description Returns missing required fields for a given form based on user input
    * @tag forms
-   * @responseBody 200 - { requiredFields: string[] }
+   * @requestBody { filledFields: { [key: string]: any } } - User's filled fields
+   * @responseBody 200 - { missingRequiredFields: { id: number, name: string }[] }
    * @responseBody 404 - { "message": "Form not found", "name": "Exception", "status": 404 }
    */
-  public async requiredFields({ params, response }: HttpContext) {
+  public async requiredFields({ params, request, response }: HttpContext) {
     const formId = +params.id;
 
+    // Fetch the form with its required attributes
     const form = await Form.query()
       .where("id", formId)
       .preload("attributes", async (query) => {
@@ -156,13 +158,22 @@ export default class FormsController {
       })
       .firstOrFail();
 
-    const requiredFields = form.attributes
-      .filter((attribute) => attribute.$extras.pivot_is_required === true)
+    const { filledFields } = request.only(["filledFields"]);
+
+    const requiredAttributes = form.attributes.filter(
+      (attribute) => attribute.$extras.pivot_is_required === true,
+    );
+
+    const missingRequiredFields = requiredAttributes
+      .filter(
+        (attribute) =>
+          !Object.prototype.hasOwnProperty.call(filledFields, attribute.name),
+      )
       .map((attribute) => ({
         id: attribute.id,
         name: attribute.name,
       }));
 
-    return response.json({ requiredFields });
+    return response.json({ missingRequiredFields });
   }
 }
