@@ -1,6 +1,8 @@
 import vine from "@vinejs/vine";
 import { DateTime } from "luxon";
 
+import string from "@adonisjs/core/helpers/string";
+
 function dateTimeTransform(value: Date): DateTime {
   const parsed = DateTime.fromISO(value.toISOString());
   if (!parsed.isValid) {
@@ -14,7 +16,9 @@ export const createEventValidator = vine.compile(
     name: vine.string().maxLength(255),
     description: vine.string().nullable().optional(),
     organizer: vine.string().nullable().optional(),
-    slug: vine.string(),
+    slug: vine
+      .string()
+      .transform((value) => string.slug(value, { lower: true })),
     // 2025-01-05 12:00:00
     startDate: vine.date().transform(dateTimeTransform),
     endDate: vine.date().transform(dateTimeTransform),
@@ -47,7 +51,10 @@ export const updateEventValidator = vine.compile(
   vine.object({
     name: vine.string().maxLength(255).optional(),
     description: vine.string().nullable().optional(),
-    slug: vine.string().optional(),
+    slug: vine
+      .string()
+      .transform((value) => string.slug(value, { lower: true }))
+      .optional(),
     startDate: vine.date().transform(dateTimeTransform).optional(),
     endDate: vine.date().transform(dateTimeTransform).optional(),
     lat: vine.number().nullable().optional(),
