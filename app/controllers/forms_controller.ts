@@ -1,5 +1,6 @@
 import type { HttpContext } from "@adonisjs/core/http";
 
+import Attribute from "#models/attribute";
 import Event from "#models/event";
 import Form from "#models/form";
 import { createFormValidator, updateFormValidator } from "#validators/form";
@@ -37,12 +38,17 @@ export default class FormsController {
 
     await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
 
-    const { attributesIds, ...newFormData } =
+    const { attributes, ...newFormData } =
       await request.validateUsing(createFormValidator);
 
     const form = await Form.create({ ...newFormData, eventId });
+    const attribute = await Attribute.find(1);
 
-    await form.related("attributes").attach(attributesIds);
+    await form.related("attributes").attach({
+      [attribute.id]: {
+        is_required: "true",
+      },
+    });
 
     return response.created(
       await Form.query()
@@ -130,5 +136,33 @@ export default class FormsController {
       .delete();
 
     return response.noContent();
+  }
+
+  /**
+   * @requiredFields
+   * @operationId getRequiredFields
+   * @description Returns required fields for a given form
+   * @tag forms
+   * @responseBody 200 - { requiredFields: string[] }
+   * @responseBody 404 - { "message": "Form not found", "name": "Exception", "status": 404 }
+   */
+  public async requiredFields({ params, response }: HttpContext) {
+    const formId = +params.id;
+
+    const form = await Form.query()
+      .where("id", formId)
+      .preload("attributes", async (query) => {
+        await query.pivotColumns(["is_required"]);
+      })
+      .firstOrFail();
+
+    const requiredFields = form.attributes
+      .filter((attribute) => attribute.$extras.pivot_is_required === true)
+      .map((attribute) => ({
+        id: attribute.id,
+        name: attribute.name,
+      }));
+
+    return response.json({ requiredFields });
   }
 }

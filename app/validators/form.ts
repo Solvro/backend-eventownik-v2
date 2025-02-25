@@ -14,7 +14,14 @@ export const createFormValidator = vine.compile(
     name: vine.string(),
     description: vine.string(),
     startDate: vine.date().transform(dateTimeTransform),
-    attributesIds: vine.array(vine.number()).minLength(1),
+    attributes: vine
+      .array(
+        vine.object({
+          id: vine.number(),
+          isRequired: vine.boolean().optional(),
+        }),
+      )
+      .minLength(1),
     endDate: vine.date().transform(dateTimeTransform).optional(),
     isOpen: vine.boolean().optional(),
   }),
@@ -26,7 +33,15 @@ export const updateFormValidator = vine.compile(
     description: vine.string().optional(),
     startDate: vine.date().transform(dateTimeTransform).optional(),
     endDate: vine.date().transform(dateTimeTransform).optional(),
-    attributesIds: vine.array(vine.number()).minLength(1).optional(),
+    attributes: vine
+      .array(
+        vine.object({
+          id: vine.number(),
+          isRequired: vine.boolean().optional(),
+        }),
+      )
+      .minLength(1)
+      .optional(),
     isOpen: vine.boolean().optional(),
   }),
 );

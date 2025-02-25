@@ -62,6 +62,10 @@ router
             router.resource("blocks", BlocksController).apiOnly();
             router.resource("emails", EmailsController).apiOnly();
             router.resource("forms", FormsController).apiOnly();
+            router.get("forms/:id/required-fields", [
+              FormsController,
+              "requiredFields",
+            ]);
             router.resource("organizers", OrganizersController).apiOnly();
             // Participants/export and participants/import must be defined before the resource route
             // Otherwise, the words "export" and "import" will be treated as ids
