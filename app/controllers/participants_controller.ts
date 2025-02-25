@@ -146,10 +146,28 @@ export default class ParticipantsController {
 
     const updatedParticipant = await Participant.query()
       .where("id", participantId)
-      .andWhere("event_id", eventId)
+      .where("event_id", eventId)
+      .preload("attributes", (attributesQuery) =>
+        attributesQuery
+          .select("id", "name", "slug")
+          .pivotColumns(["value"])
+          .where("show_in_list", true),
+      )
       .firstOrFail();
 
-    return updatedParticipant;
+    const transformedUpdatedParticipant = {
+      id: updatedParticipant.id,
+      email: updatedParticipant.email,
+      slug: updatedParticipant.slug,
+      attributes: updatedParticipant.attributes.map((attribute) => ({
+        id: attribute.id,
+        name: attribute.name,
+        slug: attribute.slug,
+        value: attribute.$extras.pivot_value as string,
+      })),
+    };
+
+    return transformedUpdatedParticipant;
   }
 
   /**
