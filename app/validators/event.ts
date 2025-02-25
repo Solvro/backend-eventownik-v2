@@ -29,6 +29,17 @@ export const createEventValidator = vine.compile(
         extnames: ["jpg", "jpeg", "png", "git"],
       })
       .optional(),
+    socialMediaLinks: vine
+      .array(
+        vine.string().normalizeUrl({
+          normalizeProtocol: true,
+          forceHttps: true,
+          stripWWW: false,
+          removeExplicitPort: true,
+        }),
+      )
+      .nullable()
+      .optional(),
   }),
 );
 
@@ -49,6 +60,17 @@ export const updateEventValidator = vine.compile(
         size: "10mb",
         extnames: ["jpg", "jpeg", "png", "git"],
       })
+      .nullable()
+      .optional(),
+    socialMediaLinks: vine
+      .array(
+        vine.string().normalizeUrl({
+          normalizeProtocol: true,
+          forceHttps: true,
+          stripWWW: false,
+          removeExplicitPort: true,
+        }),
+      )
       .nullable()
       .optional(),
   }),

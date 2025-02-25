@@ -97,4 +97,7 @@ export default class Event extends BaseModel {
 
   @hasMany(() => Email)
   declare emails: HasMany<typeof Email>;
+
+  @column()
+  declare socialMediaLinks: string[] | null;
 }

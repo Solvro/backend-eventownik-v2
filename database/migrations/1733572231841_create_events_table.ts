@@ -27,6 +27,7 @@ export default class EventsSchema extends BaseSchema {
       table.string("organizer", 255);
       table.integer("participants_count");
       table.string("photo_url").nullable();
+      table.specificType("social_media_links", "text[]").nullable();
       table.timestamps();
     });
   }
