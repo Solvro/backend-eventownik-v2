@@ -1,13 +1,6 @@
 import { DateTime } from "luxon";
 
-import string from "@adonisjs/core/helpers/string";
-import {
-  BaseModel,
-  afterCreate,
-  column,
-  hasMany,
-  manyToMany,
-} from "@adonisjs/lucid/orm";
+import { BaseModel, column, hasMany, manyToMany } from "@adonisjs/lucid/orm";
 import type { HasMany, ManyToMany } from "@adonisjs/lucid/types/relations";
 
 import Email from "#models/email";
@@ -32,7 +25,7 @@ export default class Event extends BaseModel {
   declare description: string | null;
 
   @column()
-  declare slug: string | null;
+  declare slug: string;
 
   @column.dateTime()
   declare startDate: DateTime;
@@ -86,14 +79,6 @@ export default class Event extends BaseModel {
 
   @hasMany(() => Participant)
   declare participants: HasMany<typeof Participant>;
-
-  @afterCreate()
-  public static async generateSlug(event: Event) {
-    if (event.name && event.slug !== null) {
-      event.slug = string.slug(`${event.name}-${event.id}`);
-      await event.save();
-    }
-  }
 
   @hasMany(() => Email)
   declare emails: HasMany<typeof Email>;

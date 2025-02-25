@@ -26,7 +26,7 @@ export const createEventValidator = vine.compile(
     photo: vine
       .file({
         size: "10mb",
-        extnames: ["jpg", "jpeg", "png", "git"],
+        extnames: ["jpg", "jpeg", "png", "gif"],
       })
       .optional(),
     socialMediaLinks: vine
