@@ -1,6 +1,6 @@
 import type { HttpContext } from "@adonisjs/core/http";
+import db from "@adonisjs/lucid/services/db";
 
-import Attribute from "#models/attribute";
 import Event from "#models/event";
 import Form from "#models/form";
 import { createFormValidator, updateFormValidator } from "#validators/form";
@@ -42,13 +42,20 @@ export default class FormsController {
       await request.validateUsing(createFormValidator);
 
     const form = await Form.create({ ...newFormData, eventId });
-    const attribute = await Attribute.find(1);
 
-    await form.related("attributes").attach({
-      [attribute.id]: {
-        is_required: "true",
-      },
-    });
+    // Insert into form_definitions table
+    await Promise.all(
+      attributes.map(async (attribute) => {
+        await db.table("form_definitions").insert({
+          form_id: form.id,
+          attribute_id: attribute.id,
+          is_required: attribute.isRequired === true || false,
+          is_editable: true,
+          created_at: new Date(),
+          updated_at: new Date(),
+        });
+      }),
+    );
 
     return response.created(
       await Form.query()
@@ -150,7 +157,6 @@ export default class FormsController {
   public async requiredFields({ params, request, response }: HttpContext) {
     const formId = +params.id;
 
-    // Fetch the form with its required attributes
     const form = await Form.query()
       .where("id", formId)
       .preload("attributes", async (query) => {
