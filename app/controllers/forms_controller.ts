@@ -160,6 +160,10 @@ export default class FormsController {
       event.firstFormId = form.id;
       await event.save();
     }
+    if (isFirstForm === false && event.firstFormId === formId) {
+      event.firstFormId = null;
+      await event.save();
+    }
 
     const updatedForm = await Form.query()
       .where("event_id", eventId)
