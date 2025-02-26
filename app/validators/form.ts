@@ -25,6 +25,7 @@ export const createFormValidator = vine.compile(
       .minLength(1),
     endDate: vine.date().transform(dateTimeTransform).optional(),
     isOpen: vine.boolean().optional(),
+    isFirstForm: vine.boolean(),
   }),
 );
 
@@ -45,6 +46,7 @@ export const updateFormValidator = vine.compile(
       .minLength(1)
       .optional(),
     isOpen: vine.boolean().optional(),
+    isFirstForm: vine.boolean(),
   }),
 );
 
