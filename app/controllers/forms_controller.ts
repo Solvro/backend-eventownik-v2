@@ -20,6 +20,7 @@ export default class FormsController {
 
     return await Form.query()
       .where("event_id", eventId)
+	  .preload("attributes")
       .paginate(page, perPage);
   }
 
@@ -67,6 +68,7 @@ export default class FormsController {
     return await Form.query()
       .where("event_id", eventId)
       .where("id", formId)
+	  .preload("attributes")
       .firstOrFail();
   }
 
