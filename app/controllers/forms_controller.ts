@@ -39,9 +39,9 @@ export default class FormsController {
   public async store({ params, request, response, bouncer }: HttpContext) {
     const eventId = Number(params.eventId);
 
-    await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
-
     const event = await Event.findOrFail(eventId);
+
+    await bouncer.authorize("manage_form", event);
 
     const { attributes, isFirstForm, ...newFormData } =
       await request.validateUsing(createFormValidator);
@@ -112,8 +112,9 @@ export default class FormsController {
   public async update({ params, request, bouncer, response }: HttpContext) {
     const eventId = Number(params.eventId);
     const formId = Number(params.id);
-    await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
     const event = await Event.findOrFail(eventId);
+
+    await bouncer.authorize("manage_form", event);
     const form = await Form.query()
       .where("event_id", eventId)
       .where("id", formId)
