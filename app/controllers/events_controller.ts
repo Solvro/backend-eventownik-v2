@@ -35,16 +35,23 @@ export default class EventController {
    * @responseBody 400 - Invalid input data
    * @responseBody 401 - Unauthorized access
    * @responseBody 422 - Validation failed
+   * @responseBody 500 - { message: "Error while processing the file" }
    * @tag event
    */
   public async store({ request, response, auth }: HttpContext) {
     const { photo, ...eventData } =
       await request.validateUsing(createEventValidator);
 
-    let photoUrl: string | null = null;
+    let photoUrl: string | null | undefined = null;
 
     if (photo !== undefined) {
       photoUrl = await this.photoService.storePhoto(photo);
+
+      if (photoUrl === undefined) {
+        return response.internalServerError(
+          '{ message: "Error while processing the file" }',
+        );
+      }
     }
 
     const event = await Event.create({

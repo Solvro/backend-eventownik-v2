@@ -10,14 +10,11 @@ export class PhotoService {
   // eslint-disable-next-line no-useless-constructor
   constructor(private fileService: FileService) {}
 
-  async storePhoto(photo: MultipartFile): Promise<string> {
-    const photoStoragePath = env.get(
-      "PHOTO_STORAGE_URL",
-      "storage/event-photos",
-    );
+  async storePhoto(photo: MultipartFile): Promise<string | undefined> {
+    const photoStoragePath = env.get("PHOTO_STORAGE_URL", "public");
 
-    const photoUrl = await this.fileService.storeFile(photo, photoStoragePath);
+    const fileName = await this.fileService.storeFile(photo, photoStoragePath);
 
-    return photoUrl;
+    return fileName;
   }
 }
