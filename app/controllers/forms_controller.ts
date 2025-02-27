@@ -9,7 +9,7 @@ export default class FormsController {
    * @operationId getForms
    * @description Returns an array of event forms
    * @tag forms
-   * @responseBody 200 - <Form[]>
+   * @responseBody 200 - <Form[]>.with(relations, attributes).exclude(event).paginated("data", "meta")
    */
   public async index({ params, request, bouncer }: HttpContext) {
     const eventId = Number(params.eventId);
@@ -56,7 +56,7 @@ export default class FormsController {
    * @operationId getForm
    * @description Returns a form
    * @tag forms
-   * @responseBody 200 - <Form>
+   * @responseBody 200 - <Form>.with(relations, attributes).exclude(event)
    * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    */
   public async show({ params, bouncer }: HttpContext) {
