@@ -31,7 +31,7 @@ export default class FormsController {
    * @requestBody <createFormValidator>
    * @returnBody 201 - <Form>
    */
-  public async store({ params, request, bouncer }: HttpContext) {
+  public async store({ params, request, response, bouncer }: HttpContext) {
     const eventId = Number(params.eventId);
 
     await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
@@ -43,7 +43,12 @@ export default class FormsController {
 
     await form.related("attributes").attach(attributesIds);
 
-    return form;
+    return response.created(
+      Form.query()
+        .where("id", form.id)
+        .andWhere("event_id", eventId)
+        .preload("attributes"),
+    );
   }
 
   /**
