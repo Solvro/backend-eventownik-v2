@@ -29,7 +29,7 @@ export default class FormsController {
    * @description Creates a form for the specified event
    * @tag forms
    * @requestBody <createFormValidator>
-   * @returnBody 201 - <Form>
+   * @responseBody 201 - <Form>
    */
   public async store({ params, request, response, bouncer }: HttpContext) {
     const eventId = Number(params.eventId);
