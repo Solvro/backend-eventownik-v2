@@ -38,6 +38,7 @@ export default defineConfig({
     () => import("@adonisjs/auth/auth_provider"),
     () => import("@adonisjs/bouncer/bouncer_provider"),
     () => import("#providers/app_provider"),
+    () => import("@adonisjs/static/static_provider"),
   ],
 
   /*
@@ -74,4 +75,10 @@ export default defineConfig({
     ],
     forceExit: false,
   },
+  metaFiles: [
+    {
+      pattern: "public/**",
+      reloadServer: false,
+    },
+  ],
 });
