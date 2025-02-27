@@ -4,6 +4,7 @@ import { BaseModel, column, hasMany, manyToMany } from "@adonisjs/lucid/orm";
 import type { HasMany, ManyToMany } from "@adonisjs/lucid/types/relations";
 
 import Email from "#models/email";
+import Form from "#models/form";
 
 import Admin from "./admin.js";
 import Participant from "./participant.js";
@@ -82,6 +83,9 @@ export default class Event extends BaseModel {
 
   @hasMany(() => Email)
   declare emails: HasMany<typeof Email>;
+
+  @hasMany(() => Form)
+  declare forms: HasMany<typeof Form>;
 
   @column()
   declare socialMediaLinks: string[] | null;
