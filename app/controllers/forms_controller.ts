@@ -44,7 +44,7 @@ export default class FormsController {
     await form.related("attributes").attach(attributesIds);
 
     return response.created(
-      Form.query()
+      await Form.query()
         .where("id", form.id)
         .andWhere("event_id", eventId)
         .preload("attributes"),
