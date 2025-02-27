@@ -1,7 +1,8 @@
+import type { HttpContext } from "@adonisjs/core/http";
+
 import Event from "#models/event";
 import Form from "#models/form";
 import { createFormValidator, updateFormValidator } from "#validators/form";
-import type { HttpContext } from "@adonisjs/core/http";
 
 export default class FormsController {
   /**
