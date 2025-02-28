@@ -33,9 +33,6 @@ export default class Event extends BaseModel {
   declare endDate: DateTime;
 
   @column()
-  declare firstFormId: number | null;
-
-  @column()
   declare lat: number | null;
 
   @column()
@@ -81,6 +78,11 @@ export default class Event extends BaseModel {
 
   @hasMany(() => Form)
   declare forms: HasMany<typeof Form>;
+
+  @hasMany(() => Form, {
+    onQuery: (query) => query.where("is_first_form", true),
+  })
+  declare firstForm: HasMany<typeof Form>;
 
   @column()
   declare socialMediaLinks: string[] | null;
