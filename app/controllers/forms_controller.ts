@@ -39,24 +39,23 @@ export default class FormsController {
   public async store({ params, request, response, bouncer }: HttpContext) {
     const eventId = Number(params.eventId);
 
-    const event = await Event.findOrFail(eventId);
+    const event = await Event.query()
+      .where("id", eventId)
+      .preload("firstForm")
+      .firstOrFail();
 
     await bouncer.authorize("manage_form", event);
 
-    const { attributes, isFirstForm, ...newFormData } =
+    const { attributes, ...newFormData } =
       await request.validateUsing(createFormValidator);
 
-    if (isFirstForm && event.firstFormId !== null) {
+    if (newFormData.isFirstForm === true && event.firstForm.length !== 0) {
       return response.badRequest({
         message: "Event already has a registration form",
       });
     }
 
     const form = await event.related("forms").create(newFormData);
-
-    if (isFirstForm) {
-      await form.related("firstForm").save(event);
-    }
 
     await form.related("attributes").attach(
       attributes.reduce(
@@ -111,7 +110,10 @@ export default class FormsController {
   public async update({ params, request, bouncer, response }: HttpContext) {
     const eventId = Number(params.eventId);
     const formId = Number(params.id);
-    const event = await Event.findOrFail(eventId);
+    const event = await Event.query()
+      .where("id", eventId)
+      .preload("firstForm")
+      .firstOrFail();
 
     await bouncer.authorize("manage_form", event);
     const form = await Form.query()
@@ -119,13 +121,13 @@ export default class FormsController {
       .where("id", formId)
       .firstOrFail();
 
-    const { attributes, isFirstForm, ...updates } =
+    const { attributes, ...updates } =
       await request.validateUsing(updateFormValidator);
 
     if (
-      event.firstFormId !== null &&
-      event.firstFormId !== formId &&
-      isFirstForm === true
+      event.firstForm.length !== 0 &&
+      form.isFirstForm === false &&
+      updates.isFirstForm === true
     ) {
       return response.badRequest({
         message: "Event already has a registration form",
@@ -153,13 +155,6 @@ export default class FormsController {
           >,
         ),
       );
-    }
-
-    if (isFirstForm === true) {
-      await form.related("firstForm").save(event);
-    }
-    if (isFirstForm === false && event.firstFormId === formId) {
-      await event.merge({ firstFormId: null }).save();
     }
 
     const updatedForm = await Form.query()
