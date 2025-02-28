@@ -10,8 +10,6 @@ import Admin from "./admin.js";
 import Participant from "./participant.js";
 import Permission from "./permission.js";
 
-// import Form from './Form.ts';
-
 export default class Event extends BaseModel {
   @column({ isPrimary: true })
   declare id: number;
@@ -74,9 +72,6 @@ export default class Event extends BaseModel {
     pivotTimestamps: true,
   })
   declare permissions: ManyToMany<typeof Permission>;
-
-  // @belongsTo(() => Form)
-  // public firstForm: BelongsTo<typeof Form>;
 
   @hasMany(() => Participant)
   declare participants: HasMany<typeof Participant>;
