@@ -11,7 +11,7 @@ export default class extends BaseSchema {
       table.string("slug").notNullable().unique();
       table.timestamp("start_date").defaultTo("NOW()");
       table.boolean("is_open").defaultTo(false);
-
+      table.boolean("is_first_form").defaultTo(false);
       table.text("description", "long").nullable();
       table.timestamp("end_date").nullable();
 

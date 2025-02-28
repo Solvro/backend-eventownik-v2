@@ -16,11 +16,6 @@ export default class EventsSchema extends BaseSchema {
       table.string("slug", 255).notNullable();
       table.timestamp("start_date").notNullable();
       table.timestamp("end_date").notNullable();
-      table
-        .integer("first_form_id")
-        .unsigned()
-        .references("forms.id")
-        .onDelete("CASCADE");
       table.float("lat").nullable();
       table.float("long").nullable();
       table.string("primary_color", 12);
