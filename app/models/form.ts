@@ -6,9 +6,14 @@ import {
   beforeCreate,
   belongsTo,
   column,
+  hasOne,
   manyToMany,
 } from "@adonisjs/lucid/orm";
-import type { BelongsTo, ManyToMany } from "@adonisjs/lucid/types/relations";
+import type {
+  BelongsTo,
+  HasOne,
+  ManyToMany,
+} from "@adonisjs/lucid/types/relations";
 
 import Event from "#models/event";
 
@@ -47,6 +52,11 @@ export default class Form extends BaseModel {
 
   @belongsTo(() => Event)
   declare event: BelongsTo<typeof Event>;
+
+  @hasOne(() => Event, {
+    foreignKey: "firstFormId",
+  })
+  declare firstForm: HasOne<typeof Event>;
 
   @manyToMany(() => Attribute, {
     pivotTable: "form_definitions",

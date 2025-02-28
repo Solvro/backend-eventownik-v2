@@ -55,8 +55,7 @@ export default class FormsController {
     const form = await event.related("forms").create(newFormData);
 
     if (isFirstForm) {
-      event.firstFormId = form.id;
-      await event.save();
+      await form.related("firstForm").save(event);
     }
 
     await form.related("attributes").attach(
@@ -157,12 +156,10 @@ export default class FormsController {
     }
 
     if (isFirstForm === true) {
-      event.firstFormId = form.id;
-      await event.save();
+      await form.related("firstForm").save(event);
     }
     if (isFirstForm === false && event.firstFormId === formId) {
-      event.firstFormId = null;
-      await event.save();
+      await event.merge({ firstFormId: null }).save();
     }
 
     const updatedForm = await Form.query()
