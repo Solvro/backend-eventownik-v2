@@ -1,12 +1,18 @@
+import { inject } from "@adonisjs/core";
 import { HttpContext } from "@adonisjs/core/http";
 
 import Participant from "#models/participant";
+import { ParticipantService } from "#services/participant_service";
 import {
   participantsStoreValidator,
   participantsUpdateValidator,
 } from "#validators/participants";
 
+@inject()
 export default class ParticipantsController {
+  // eslint-disable-next-line no-useless-constructor
+  constructor(private participantService: ParticipantService) {}
+
   /**
    * @index
    * @tag participants
@@ -51,27 +57,16 @@ export default class ParticipantsController {
    * @responseBody 201 - <Participant>
    */
   async store({ request, params }: HttpContext) {
-    const { participantAttributes, ...participantData } =
-      await request.validateUsing(participantsStoreValidator);
+    const eventId = +params.eventId;
 
-    participantData.eventId = +params.eventId;
+    const participantCreateDTO = await request.validateUsing(
+      participantsStoreValidator,
+    );
 
-    const participant = await Participant.create(participantData);
-
-    if (
-      participantAttributes !== undefined &&
-      participantAttributes.length > 0
-    ) {
-      // Transform permissions to match database schema: event_id instead of eventId
-      const transformedAttributes = Object.fromEntries(
-        participantAttributes.map((participantAttribute) => [
-          participantAttribute.attributeId,
-          { value: participantAttribute.value },
-        ]),
-      );
-
-      await participant.related("attributes").attach(transformedAttributes);
-    }
+    const participant = await this.participantService.createParticipant(
+      eventId,
+      participantCreateDTO,
+    );
 
     return participant;
   }
