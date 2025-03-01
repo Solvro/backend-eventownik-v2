@@ -3,7 +3,6 @@ import vine from "@vinejs/vine";
 export const participantsStoreValidator = vine.compile(
   vine.object({
     email: vine.string().email(),
-    eventId: vine.number().optional(),
     participantAttributes: vine
       .array(
         vine.object({
@@ -18,7 +17,6 @@ export const participantsStoreValidator = vine.compile(
 export const participantsUpdateValidator = vine.compile(
   vine.object({
     email: vine.string().email().optional(),
-    eventId: vine.number().optional(),
     participantAttributes: vine
       .array(
         vine.object({
