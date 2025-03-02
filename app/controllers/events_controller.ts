@@ -76,7 +76,7 @@ export default class EventController {
    * @show
    * @operationId showEvent
    * @description Shows one event with logged user permission
-   * @responseBody 201 - <Event>.with(permissions)
+   * @responseBody 201 - <Event>.with(permissions, forms)
    * @responseBody 401 - Unauthorized access
    * @tag event
    */
@@ -86,6 +86,7 @@ export default class EventController {
       .preload("permissions", (q) =>
         q.where("admin_permissions.admin_id", auth.user?.id ?? 0),
       )
+      .preload("forms", (q) => q.where('is_first_form', true))
       .first();
 
     await bouncer.authorize("manage_event", event);
@@ -96,11 +97,13 @@ export default class EventController {
    * @publicShow
    * @operationId showPublicEvent
    * @description Shows one event basic data without login
-   * @responseBody 201 - <Event>
+   * @responseBody 201 - <Event>.with(forms)
    * @tag event
    */
   public async publicShow({ params }: HttpContext) {
-    return await Event.findByOrFail("slug", params.eventSlug);
+    const event = await Event.findByOrFail("slug", params.eventSlug);
+    await event.load("forms", (q) => q.where('is_first_form', true))
+    return event
   }
 
   /**
