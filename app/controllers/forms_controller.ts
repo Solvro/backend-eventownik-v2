@@ -131,7 +131,7 @@ export default class FormsController {
       await request.validateUsing(updateFormValidator);
 
     if (
-      event.firstForm.length !== 0 &&
+      event.firstForm !== null &&
       form.isFirstForm === false &&
       updates.isFirstForm === true
     ) {
