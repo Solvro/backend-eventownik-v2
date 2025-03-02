@@ -196,11 +196,12 @@ export default class FormsController {
   /**
    * @submitForm
    * @operationId submitForm
-   * @description Returns missing required fields for a given form based on user input
+   * @description An endpoint to receive data from a form.<br>If this is the first form submission, send an email to create a participant.<br>For subsequent submissions, send a participantSlug.
    * @tag forms
-   * @requestBody { filledFields: { [key: string]: any } } - User's filled fields
+   * @requestBody <formSubmitValidator>
+   * @responseBody 201 - {}
    * @responseBody 200 - { missingRequiredFields: { id: number, name: string }[] }
-   * @responseBody 404 - { "message": "Form not found", "name": "Exception", "status": 404 }
+   * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
   public async submitForm({ params, request, response }: HttpContext) {
     const formId = +params.id;
