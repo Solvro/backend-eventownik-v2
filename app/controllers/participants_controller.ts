@@ -139,47 +139,18 @@ export default class ParticipantsController {
    * @responseBody 200 - <Participant>
    */
   async update({ params, request }: HttpContext) {
-    const participantId = +params.id;
     const eventId = +params.eventId;
-    const participant = await Participant.query()
-      .where("id", participantId)
-      .andWhere("event_id", eventId)
-      .firstOrFail();
+    const participantId = +params.id;
 
-    const { participantAttributes, ...updates } = await request.validateUsing(
+    const updateParticipantDTO = await request.validateUsing(
       participantsUpdateValidator,
     );
 
-    participant.merge(updates);
-    await participant.save();
-
-    if (
-      participantAttributes !== undefined &&
-      participantAttributes.length > 0
-    ) {
-      // Transform permissions to match database schema: event_id instead of eventId
-      const transformedAttributes = Object.fromEntries(
-        participantAttributes.map((participantAttribute) => [
-          participantAttribute.id,
-          { value: participantAttribute.value },
-        ]),
-      );
-
-      await participant
-        .related("attributes")
-        .sync(transformedAttributes, false);
-    }
-
-    const updatedParticipant = await Participant.query()
-      .where("id", participantId)
-      .where("event_id", eventId)
-      .preload("attributes", (attributesQuery) =>
-        attributesQuery
-          .select("id", "name", "slug")
-          .pivotColumns(["value"])
-          .where("show_in_list", true),
-      )
-      .firstOrFail();
+    const updatedParticipant = await this.participantService.updateParticipant(
+      eventId,
+      participantId,
+      updateParticipantDTO,
+    );
 
     const transformedUpdatedParticipant = {
       id: updatedParticipant.id,
