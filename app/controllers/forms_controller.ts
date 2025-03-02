@@ -1,14 +1,20 @@
+import { inject } from "@adonisjs/core";
 import type { HttpContext } from "@adonisjs/core/http";
 
 import Event from "#models/event";
 import Form from "#models/form";
+import { FormService } from "#services/form_service";
 import {
   createFormValidator,
-  filledFieldsValidator,
+  formSubmitValidator,
   updateFormValidator,
 } from "#validators/form";
 
+@inject()
 export default class FormsController {
+  // eslint-disable-next-line no-useless-constructor
+  constructor(private formService: FormService) {}
+
   /**
    * @index
    * @operationId getForms
@@ -188,37 +194,34 @@ export default class FormsController {
   }
 
   /**
-   * @requiredFields
-   * @operationId getMissingRequiredFields
+   * @submitForm
+   * @operationId submitForm
    * @description Returns missing required fields for a given form based on user input
    * @tag forms
    * @requestBody { filledFields: { [key: string]: any } } - User's filled fields
    * @responseBody 200 - { missingRequiredFields: { id: number, name: string }[] }
    * @responseBody 404 - { "message": "Form not found", "name": "Exception", "status": 404 }
    */
-  public async requiredFields({ params, request, response }: HttpContext) {
+  public async submitForm({ params, request, response }: HttpContext) {
     const formId = +params.id;
+    const eventSlug = params.eventSlug as string;
 
-    const { filledFields } = await request.validateUsing(filledFieldsValidator);
+    const event = await Event.findByOrFail("slug", eventSlug);
 
-    const form = await Form.query()
-      .where("id", formId)
-      .preload("attributes", async (query) => {
-        await query.pivotColumns(["is_required"]);
-      })
-      .firstOrFail();
+    const formFields = await request.validateUsing(formSubmitValidator, {
+      meta: { eventId: event.id },
+    });
 
-    const missingRequiredFields = form.attributes
-      .filter((attribute) => attribute.$extras.pivot_is_required === true)
-      .filter(
-        (attribute) =>
-          !Object.prototype.hasOwnProperty.call(filledFields, attribute.name),
-      )
-      .map((attribute) => ({
-        id: attribute.id,
-        name: attribute.name,
-      }));
+    const errorObject = await this.formService.submitForm(
+      eventSlug,
+      formId,
+      formFields,
+    );
 
-    return response.json({ missingRequiredFields });
+    if (errorObject !== undefined) {
+      return response.status(errorObject.status).json(errorObject.error);
+    }
+
+    return response.created();
   }
 }

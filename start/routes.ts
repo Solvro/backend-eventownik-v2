@@ -62,10 +62,6 @@ router
             router.resource("blocks", BlocksController).apiOnly();
             router.resource("emails", EmailsController).apiOnly();
             router.resource("forms", FormsController).apiOnly();
-            router.post("forms/:id/required-fields", [
-              FormsController,
-              "requiredFields",
-            ]);
             router.resource("organizers", OrganizersController).apiOnly();
             // Participants/export and participants/import must be defined before the resource route
             // Otherwise, the words "export" and "import" will be treated as ids
@@ -76,6 +72,13 @@ router
           .prefix("events/:eventId");
       })
       .use(middleware.auth());
+
+    router
+      .group(() => {
+        router.post("forms/:id/submit", [FormsController, "submitForm"]);
+      })
+      .prefix("events/:eventSlug")
+      .where("eventSlug", router.matchers.slug());
 
     router
       .group(() => {
