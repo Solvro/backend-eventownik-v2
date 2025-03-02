@@ -1,7 +1,17 @@
 import { DateTime } from "luxon";
 
-import { BaseModel, column, hasMany, manyToMany } from "@adonisjs/lucid/orm";
-import type { HasMany, ManyToMany } from "@adonisjs/lucid/types/relations";
+import {
+  BaseModel,
+  column,
+  hasMany,
+  hasOne,
+  manyToMany,
+} from "@adonisjs/lucid/orm";
+import type {
+  HasMany,
+  HasOne,
+  ManyToMany,
+} from "@adonisjs/lucid/types/relations";
 
 import Email from "#models/email";
 import Form from "#models/form";
@@ -79,10 +89,10 @@ export default class Event extends BaseModel {
   @hasMany(() => Form)
   declare forms: HasMany<typeof Form>;
 
-  @hasMany(() => Form, {
+  @hasOne(() => Form, {
     onQuery: (query) => query.where("is_first_form", true),
   })
-  declare firstForm: HasMany<typeof Form>;
+  declare firstForm: HasOne<typeof Form>;
 
   @column()
   declare socialMediaLinks: string[] | null;

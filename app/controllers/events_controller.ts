@@ -86,7 +86,7 @@ export default class EventController {
       .preload("permissions", (q) =>
         q.where("admin_permissions.admin_id", auth.user?.id ?? 0),
       )
-      .preload("forms", (q) => q.where("is_first_form", true))
+      .preload("firstForm")
       .first();
 
     await bouncer.authorize("manage_event", event);
@@ -102,7 +102,7 @@ export default class EventController {
    */
   public async publicShow({ params }: HttpContext) {
     const event = await Event.findByOrFail("slug", params.eventSlug);
-    await event.load("forms", (q) => q.where("is_first_form", true));
+    await event.load("firstForm");
     return event;
   }
 
