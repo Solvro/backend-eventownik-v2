@@ -90,7 +90,8 @@ export default class Event extends BaseModel {
   declare forms: HasMany<typeof Form>;
 
   @hasOne(() => Form, {
-    onQuery: (query) => query.where("is_first_form", true),
+    onQuery: (query) =>
+      query.where("is_first_form", true).preload("attributes"),
   })
   declare firstForm: HasOne<typeof Form>;
 
