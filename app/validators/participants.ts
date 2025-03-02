@@ -20,7 +20,7 @@ export const participantsUpdateValidator = vine.compile(
     participantAttributes: vine
       .array(
         vine.object({
-          id: vine.number(),
+          attributeId: vine.number(),
           value: vine.string(),
         }),
       )
