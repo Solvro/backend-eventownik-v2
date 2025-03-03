@@ -8,6 +8,7 @@ import db from "@adonisjs/lucid/services/db";
 import Event from "#models/event";
 import Permission from "#models/permission";
 import { PhotoService } from "#services/photo_service";
+import env from "#start/env";
 import { createEventValidator, updateEventValidator } from "#validators/event";
 
 @inject()

@@ -35,6 +35,7 @@ export const UpdateAttributeSchema = vine.object({
   type: vine
     .enum([
       "text",
+      "textarea",
       "number",
       "file",
       "select",
