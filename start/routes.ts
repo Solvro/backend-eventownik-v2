@@ -76,6 +76,12 @@ router
     router
       .group(() => {
         router.post("forms/:id/submit", [FormsController, "submitForm"]);
+        router
+          .delete("participants/:participantSlug", [
+            ParticipantsController,
+            "unregister",
+          ])
+          .where("participantSlug", router.matchers.slug());
       })
       .prefix("events/:eventSlug")
       .where("eventSlug", router.matchers.slug());

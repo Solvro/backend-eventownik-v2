@@ -1,6 +1,7 @@
 import { inject } from "@adonisjs/core";
 import { HttpContext } from "@adonisjs/core/http";
 
+import Event from "#models/event";
 import Participant from "#models/participant";
 import { ParticipantService } from "#services/participant_service";
 import {
@@ -202,5 +203,19 @@ export default class ParticipantsController {
     await participant.related("emails").attach({ [emailId]: pivotData });
 
     return response.status(201).send({ message: "Email successfully sent" });
+  }
+
+  async unregister({ params, response }: HttpContext) {
+    const eventSlug = params.eventSlug as string;
+    const participantSlug = params.participantSlug as string;
+
+    const event = await Event.findByOrFail("slug", eventSlug);
+
+    await Participant.query()
+      .where("slug", participantSlug)
+      .andWhere("event_id", event.id)
+      .delete();
+
+    return response.noContent();
   }
 }
