@@ -5,6 +5,7 @@ export const createAttributeSchema = vine.object({
   slug: vine.string().nullable().optional(),
   type: vine.enum([
     "text",
+    "textarea",
     "number",
     "file",
     "select",
