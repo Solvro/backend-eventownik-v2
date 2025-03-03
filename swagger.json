@@ -48,7 +48,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 687
+            "example": 681
           },
           "firstName": {
             "type": "string",
@@ -105,7 +105,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 846
+            "example": 127
           },
           "name": {
             "type": "string",
@@ -117,11 +117,11 @@
           },
           "eventId": {
             "type": "number",
-            "example": 126
+            "example": 431
           },
           "options": {
-            "$ref": "#/components/schemas/object",
-            "example": null
+            "type": "string",
+            "example": "Lorem Ipsum"
           },
           "type": {
             "type": "string",
@@ -129,7 +129,7 @@
           },
           "rootBlockId": {
             "type": "number",
-            "example": 130
+            "example": 758
           },
           "showInList": {
             "type": "boolean",
@@ -153,7 +153,7 @@
           "participantAttributes": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ParticipantAttribute",
+              "$ref": "#/components/schemas/Participant",
               "example": null
             }
           },
@@ -176,7 +176,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 685
+            "example": 432
           },
           "name": {
             "type": "string",
@@ -188,11 +188,11 @@
           },
           "parentId": {
             "type": "number",
-            "example": 197
+            "example": 744
           },
           "capacity": {
             "type": "number",
-            "example": 273
+            "example": 771
           },
           "children": {
             "type": "array",
@@ -228,11 +228,11 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 752
+            "example": 380
           },
           "eventId": {
             "type": "number",
-            "example": 249
+            "example": 776
           },
           "name": {
             "type": "string",
@@ -264,13 +264,6 @@
             "$ref": "#/components/schemas/Event",
             "example": null
           },
-          "participantEmails": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ParticipantEmail",
-              "example": null
-            }
-          },
           "participants": {
             "type": "array",
             "items": {
@@ -287,11 +280,11 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 520
+            "example": 289
           },
           "organizerId": {
             "type": "number",
-            "example": 610
+            "example": 137
           },
           "name": {
             "type": "string",
@@ -315,10 +308,6 @@
             "example": "2021-03-23T16:13:08.489+01:00",
             "format": "date-time"
           },
-          "firstFormId": {
-            "type": "number",
-            "example": 837
-          },
           "lat": {
             "type": "number",
             "example": 41.705
@@ -337,7 +326,7 @@
           },
           "participantsCount": {
             "type": "number",
-            "example": 737
+            "example": 3
           },
           "createdAt": {
             "type": "string",
@@ -380,6 +369,24 @@
               "$ref": "#/components/schemas/Email",
               "example": null
             }
+          },
+          "forms": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Form",
+              "example": null
+            }
+          },
+          "firstForm": {
+            "$ref": "#/components/schemas/Form",
+            "example": null
+          },
+          "socialMediaLinks": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "Lorem Ipsum"
+            }
           }
         },
         "description": "Event (Model)"
@@ -390,11 +397,11 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 154
+            "example": 461
           },
           "eventId": {
             "type": "number",
-            "example": 53
+            "example": 555
           },
           "isOpen": {
             "type": "boolean",
@@ -407,6 +414,10 @@
           "name": {
             "type": "string",
             "example": "John Doe"
+          },
+          "isFirstForm": {
+            "type": "boolean",
+            "example": true
           },
           "slug": {
             "type": "string",
@@ -452,7 +463,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 456
+            "example": 483
           },
           "email": {
             "type": "string",
@@ -461,15 +472,7 @@
           },
           "eventId": {
             "type": "number",
-            "example": 359
-          },
-          "firstName": {
-            "type": "string",
-            "example": "John"
-          },
-          "lastName": {
-            "type": "string",
-            "example": "Doe"
+            "example": 399
           },
           "slug": {
             "type": "string",
@@ -489,121 +492,22 @@
             "$ref": "#/components/schemas/Event",
             "example": null
           },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Attribute",
+              "example": null
+            }
+          },
           "emails": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Email",
               "example": null
             }
-          },
-          "participantAttributes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ParticipantAttribute",
-              "example": null
-            }
-          },
-          "participantEmails": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ParticipantEmail",
-              "example": null
-            }
           }
         },
         "description": "Participant (Model)"
-      },
-      "ParticipantAttribute": {
-        "type": "object",
-        "required": [],
-        "properties": {
-          "id": {
-            "type": "number",
-            "example": 926
-          },
-          "participantId": {
-            "type": "number",
-            "example": 149
-          },
-          "attributeId": {
-            "type": "number",
-            "example": 229
-          },
-          "value": {
-            "type": "string",
-            "example": "Lorem Ipsum"
-          },
-          "participant": {
-            "$ref": "#/components/schemas/Participant",
-            "example": null
-          },
-          "attribute": {
-            "$ref": "#/components/schemas/Attribute",
-            "example": null
-          },
-          "createdAt": {
-            "type": "string",
-            "example": "2021-03-23T16:13:08.489+01:00",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "example": "2021-03-23T16:13:08.489+01:00",
-            "format": "date-time"
-          }
-        },
-        "description": "ParticipantAttribute (Model)"
-      },
-      "ParticipantEmail": {
-        "type": "object",
-        "required": [],
-        "properties": {
-          "id": {
-            "type": "number",
-            "example": 437
-          },
-          "participantId": {
-            "type": "number",
-            "example": 293
-          },
-          "emailId": {
-            "type": "number",
-            "example": 827
-          },
-          "sendAt": {
-            "type": "string",
-            "example": "2021-03-23T16:13:08.489+01:00",
-            "format": "date-time"
-          },
-          "sendBy": {
-            "type": "string",
-            "example": "Lorem Ipsum"
-          },
-          "status": {
-            "$ref": "#/components/schemas/\"pending\"",
-            "example": null
-          },
-          "createdAt": {
-            "type": "string",
-            "example": "2021-03-23T16:13:08.489+01:00",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "example": "2021-03-23T16:13:08.489+01:00",
-            "format": "date-time"
-          },
-          "participant": {
-            "$ref": "#/components/schemas/Participant",
-            "example": null
-          },
-          "email": {
-            "type": "string",
-            "example": "johndoe@example.com",
-            "format": "email"
-          }
-        },
-        "description": "ParticipantEmail (Model)"
       },
       "Permission": {
         "type": "object",
@@ -611,7 +515,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 220
+            "example": 578
           },
           "action": {
             "type": "string",
@@ -711,7 +615,7 @@
           },
           "type": {
             "type": "number",
-            "example": 200,
+            "example": 764,
             "choices": ["organizer", "superadmin"]
           },
           "active": {
@@ -725,12 +629,12 @@
               "properties": {
                 "permissionId": {
                   "type": "number",
-                  "example": 950,
+                  "example": 62,
                   "required": true
                 },
                 "eventId": {
                   "type": "number",
-                  "example": 969,
+                  "example": 668,
                   "required": true
                 }
               }
@@ -742,12 +646,12 @@
           "lastName": "Lorem Ipsum",
           "password": "Lorem Ipsum",
           "email": "Lorem Ipsum",
-          "type": 200,
+          "type": 764,
           "active": true,
           "permissions": [
             {
-              "permissionId": 950,
-              "eventId": 969
+              "permissionId": 62,
+              "eventId": 668
             }
           ]
         },
@@ -778,7 +682,7 @@
           },
           "type": {
             "type": "number",
-            "example": 187,
+            "example": 134,
             "choices": ["organizer", "superadmin"]
           },
           "active": {
@@ -792,12 +696,12 @@
               "properties": {
                 "permissionId": {
                   "type": "number",
-                  "example": 246,
+                  "example": 36,
                   "required": true
                 },
                 "eventId": {
                   "type": "number",
-                  "example": 952,
+                  "example": 424,
                   "required": true
                 }
               }
@@ -809,12 +713,12 @@
           "lastName": "Lorem Ipsum",
           "password": "Lorem Ipsum",
           "email": "Lorem Ipsum",
-          "type": 187,
+          "type": 134,
           "active": true,
           "permissions": [
             {
-              "permissionId": 246,
-              "eventId": 952
+              "permissionId": 36,
+              "eventId": 424
             }
           ]
         },
@@ -834,9 +738,10 @@
           },
           "type": {
             "type": "number",
-            "example": 991,
+            "example": 537,
             "choices": [
               "text",
+              "textarea",
               "number",
               "file",
               "select",
@@ -861,7 +766,7 @@
           },
           "rootBlockId": {
             "type": "number",
-            "example": 266
+            "example": 980
           },
           "showInList": {
             "type": "boolean",
@@ -871,9 +776,9 @@
         "example": {
           "name": "Lorem Ipsum",
           "slug": "Lorem Ipsum",
-          "type": 991,
+          "type": 537,
           "options": [2],
-          "rootBlockId": 266,
+          "rootBlockId": 980,
           "showInList": true
         },
         "description": "createAttributeValidator (Validator)"
@@ -891,9 +796,10 @@
           },
           "type": {
             "type": "number",
-            "example": 282,
+            "example": 722,
             "choices": [
               "text",
+              "textarea",
               "number",
               "file",
               "select",
@@ -917,7 +823,7 @@
           },
           "rootBlockId": {
             "type": "number",
-            "example": 900
+            "example": 941
           },
           "showInList": {
             "type": "boolean",
@@ -927,9 +833,9 @@
         "example": {
           "name": "Lorem Ipsum",
           "slug": "Lorem Ipsum",
-          "type": 282,
+          "type": 722,
           "options": [2],
-          "rootBlockId": 900,
+          "rootBlockId": 941,
           "showInList": true
         },
         "description": "updateAttributeValidator (Validator)"
@@ -1007,7 +913,7 @@
           },
           "parentId": {
             "type": "number",
-            "example": 133,
+            "example": 796,
             "required": true
           },
           "capacity": {
@@ -1020,7 +926,7 @@
         "example": {
           "name": "Lorem Ipsum",
           "description": "Lorem Ipsum",
-          "parentId": 133,
+          "parentId": 796,
           "capacity": 1
         },
         "description": "createBlockValidator (Validator)"
@@ -1040,7 +946,7 @@
           },
           "parentId": {
             "type": "number",
-            "example": 89,
+            "example": 116,
             "required": true
           },
           "capacity": {
@@ -1053,7 +959,7 @@
         "example": {
           "name": "Lorem Ipsum",
           "description": "Lorem Ipsum",
-          "parentId": 89,
+          "parentId": 116,
           "capacity": 1
         },
         "description": "updateBlockValidator (Validator)"
@@ -1073,7 +979,7 @@
           },
           "trigger": {
             "type": "number",
-            "example": 355,
+            "example": 758,
             "choices": [
               "participant_registered",
               "participant_deleted",
@@ -1091,7 +997,7 @@
         "example": {
           "name": "Lorem Ipsum",
           "content": "Lorem Ipsum",
-          "trigger": 355,
+          "trigger": 758,
           "triggerValue": "Lorem Ipsum"
         },
         "description": "emailsStoreValidator (Validator)"
@@ -1109,7 +1015,7 @@
           },
           "trigger": {
             "type": "number",
-            "example": 787,
+            "example": 352,
             "choices": [
               "participant_registered",
               "form_filled",
@@ -1124,7 +1030,7 @@
         "example": {
           "name": "Lorem Ipsum",
           "content": "Lorem Ipsum",
-          "trigger": 787,
+          "trigger": 352,
           "triggerValue": "Lorem Ipsum"
         },
         "description": "emailsUpdateValidator (Validator)"
@@ -1151,27 +1057,23 @@
             "example": "Lorem Ipsum",
             "required": true
           },
-          "endDate": {
-            "type": "number",
-            "example": 78,
-            "required": true
-          },
           "startDate": {
             "type": "number",
-            "example": 249,
+            "example": 994,
             "required": true
           },
-          "firstFormId": {
+          "endDate": {
             "type": "number",
-            "example": 297
+            "example": 889,
+            "required": true
           },
           "lat": {
             "type": "number",
-            "example": 443
+            "example": 95
           },
           "long": {
             "type": "number",
-            "example": 904
+            "example": 826
           },
           "primaryColor": {
             "type": "string",
@@ -1179,11 +1081,24 @@
           },
           "participantsCount": {
             "type": "number",
-            "example": 374
+            "example": 180
           },
           "photo": {
             "type": "number",
-            "example": 90
+            "example": 391
+          },
+          "socialMediaLinks": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "example": 837
+            },
+            "properties": {
+              "items": {
+                "type": "string",
+                "example": "Lorem Ipsum"
+              }
+            }
           }
         },
         "example": {
@@ -1191,14 +1106,14 @@
           "description": "Lorem Ipsum",
           "organizer": "Lorem Ipsum",
           "slug": "Lorem Ipsum",
-          "endDate": 78,
-          "startDate": 249,
-          "firstFormId": 297,
-          "lat": 443,
-          "long": 904,
+          "startDate": 994,
+          "endDate": 889,
+          "lat": 95,
+          "long": 826,
           "primaryColor": "Lorem Ipsum",
-          "participantsCount": 374,
-          "photo": 90
+          "participantsCount": 180,
+          "photo": 391,
+          "socialMediaLinks": ["Lorem Ipsum"]
         },
         "description": "createEventValidator (Validator)"
       },
@@ -1220,19 +1135,19 @@
           },
           "startDate": {
             "type": "number",
-            "example": 580
+            "example": 974
           },
           "endDate": {
             "type": "number",
-            "example": 727
+            "example": 651
           },
           "lat": {
             "type": "number",
-            "example": 657
+            "example": 476
           },
           "long": {
             "type": "number",
-            "example": 747
+            "example": 107
           },
           "primaryColor": {
             "type": "string",
@@ -1240,7 +1155,7 @@
           },
           "participantsCount": {
             "type": "number",
-            "example": 157
+            "example": 82
           },
           "organizer": {
             "type": "string",
@@ -1248,21 +1163,35 @@
           },
           "photo": {
             "type": "number",
-            "example": 14
+            "example": 663
+          },
+          "socialMediaLinks": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "example": 351
+            },
+            "properties": {
+              "items": {
+                "type": "string",
+                "example": "Lorem Ipsum"
+              }
+            }
           }
         },
         "example": {
           "name": "Lorem Ipsum",
           "description": "Lorem Ipsum",
           "slug": "Lorem Ipsum",
-          "startDate": 580,
-          "endDate": 727,
-          "lat": 657,
-          "long": 747,
+          "startDate": 974,
+          "endDate": 651,
+          "lat": 476,
+          "long": 107,
           "primaryColor": "Lorem Ipsum",
-          "participantsCount": 157,
+          "participantsCount": 82,
           "organizer": "Lorem Ipsum",
-          "photo": 14
+          "photo": 663,
+          "socialMediaLinks": ["Lorem Ipsum"]
         },
         "description": "updateEventValidator (Validator)"
       },
@@ -1281,21 +1210,51 @@
           },
           "startDate": {
             "type": "number",
-            "example": 924,
+            "example": 801,
             "required": true
           },
-          "attributesIds": {
+          "isFirstForm": {
+            "type": "boolean",
+            "example": true,
+            "required": true
+          },
+          "attributes": {
             "type": "array",
             "items": {
-              "type": "number",
-              "example": 1,
-              "minimum": 1
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "example": 671,
+                  "required": true
+                },
+                "isRequired": {
+                  "type": "number",
+                  "example": 930
+                },
+                "isEditable": {
+                  "type": "number",
+                  "example": 465
+                }
+              }
             },
-            "required": true
+            "required": true,
+            "properties": {
+              "items": {
+                "isRequired": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "isEditable": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            }
           },
           "endDate": {
             "type": "number",
-            "example": 254
+            "example": 756
           },
           "isOpen": {
             "type": "boolean",
@@ -1305,12 +1264,43 @@
         "example": {
           "name": "Lorem Ipsum",
           "description": "Lorem Ipsum",
-          "startDate": 924,
-          "attributesIds": [1],
-          "endDate": 254,
+          "startDate": 801,
+          "isFirstForm": true,
+          "attributes": [
+            {
+              "id": 671,
+              "isRequired": true,
+              "isEditable": true
+            }
+          ],
+          "endDate": 756,
           "isOpen": true
         },
         "description": "createFormValidator (Validator)"
+      },
+      "formSubmitValidator": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "Lorem Ipsum"
+          },
+          "participantSlug": {
+            "type": "string",
+            "example": "Lorem Ipsum"
+          },
+          "attributes": {
+            "type": "object",
+            "properties": {},
+            "required": true
+          }
+        },
+        "example": {
+          "email": "Lorem Ipsum",
+          "participantSlug": "Lorem Ipsum",
+          "attributes": {}
+        },
+        "description": "formSubmitValidator (Validator)"
       },
       "updateFormValidator": {
         "type": "object",
@@ -1325,21 +1315,50 @@
           },
           "startDate": {
             "type": "number",
-            "example": 983
+            "example": 618
           },
           "endDate": {
             "type": "number",
-            "example": 965
+            "example": 738
           },
-          "attributesIds": {
+          "attributes": {
             "type": "array",
             "items": {
-              "type": "number",
-              "example": 1,
-              "minimum": 1
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "example": 147,
+                  "required": true
+                },
+                "isRequired": {
+                  "type": "number",
+                  "example": 877
+                },
+                "isEditable": {
+                  "type": "number",
+                  "example": 103
+                }
+              }
+            },
+            "properties": {
+              "items": {
+                "isRequired": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "isEditable": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
             }
           },
           "isOpen": {
+            "type": "boolean",
+            "example": true
+          },
+          "isFirstForm": {
             "type": "boolean",
             "example": true
           }
@@ -1347,10 +1366,17 @@
         "example": {
           "name": "Lorem Ipsum",
           "description": "Lorem Ipsum",
-          "startDate": 983,
-          "endDate": 965,
-          "attributesIds": [1],
-          "isOpen": true
+          "startDate": 618,
+          "endDate": 738,
+          "attributes": [
+            {
+              "id": 147,
+              "isRequired": true,
+              "isEditable": true
+            }
+          ],
+          "isOpen": true,
+          "isFirstForm": true
         },
         "description": "updateFormValidator (Validator)"
       },
@@ -1366,7 +1392,7 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 717
+              "example": 279
             },
             "required": true
           },
@@ -1385,7 +1411,7 @@
         },
         "example": {
           "email": "Lorem Ipsum",
-          "permissionsIds": [717],
+          "permissionsIds": [279],
           "firstName": "Lorem Ipsum",
           "lastName": "Lorem Ipsum",
           "password": "Lorem Ipsum"
@@ -1399,138 +1425,15 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 626
+              "example": 433
             },
             "required": true
           }
         },
         "example": {
-          "permissionsIds": [626]
+          "permissionsIds": [433]
         },
         "description": "updateOrganizerPermissionsValidator (Validator)"
-      },
-      "participantsStoreValidator": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "example": "Lorem Ipsum",
-            "required": true
-          },
-          "eventId": {
-            "type": "number",
-            "example": 674
-          },
-          "firstName": {
-            "type": "string",
-            "example": "Lorem Ipsum",
-            "required": true
-          },
-          "lastName": {
-            "type": "string",
-            "example": "Lorem Ipsum",
-            "required": true
-          },
-          "participantAttributes": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "attributeId": {
-                  "type": "number",
-                  "example": 271,
-                  "required": true
-                },
-                "value": {
-                  "type": "number",
-                  "example": 657,
-                  "required": true
-                }
-              }
-            },
-            "properties": {
-              "items": {
-                "value": {
-                  "type": "string",
-                  "example": "Lorem Ipsum"
-                }
-              }
-            }
-          }
-        },
-        "example": {
-          "email": "Lorem Ipsum",
-          "eventId": 674,
-          "firstName": "Lorem Ipsum",
-          "lastName": "Lorem Ipsum",
-          "participantAttributes": [
-            {
-              "attributeId": 271,
-              "value": "Lorem Ipsum"
-            }
-          ]
-        },
-        "description": "participantsStoreValidator (Validator)"
-      },
-      "participantsUpdateValidator": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "example": "Lorem Ipsum"
-          },
-          "eventId": {
-            "type": "number",
-            "example": 633
-          },
-          "firstName": {
-            "type": "string",
-            "example": "Lorem Ipsum"
-          },
-          "lastName": {
-            "type": "string",
-            "example": "Lorem Ipsum"
-          },
-          "participantAttributes": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "number",
-                  "example": 789,
-                  "required": true
-                },
-                "value": {
-                  "type": "number",
-                  "example": 865,
-                  "required": true
-                }
-              }
-            },
-            "properties": {
-              "items": {
-                "value": {
-                  "type": "string",
-                  "example": "Lorem Ipsum"
-                }
-              }
-            }
-          }
-        },
-        "example": {
-          "email": "Lorem Ipsum",
-          "eventId": 633,
-          "firstName": "Lorem Ipsum",
-          "lastName": "Lorem Ipsum",
-          "participantAttributes": [
-            {
-              "id": 789,
-              "value": "Lorem Ipsum"
-            }
-          ]
-        },
-        "description": "participantsUpdateValidator (Validator)"
       },
       "participantAttributesStoreValidator": {
         "type": "object",
@@ -1542,12 +1445,12 @@
               "properties": {
                 "attributeId": {
                   "type": "number",
-                  "example": 149,
+                  "example": 83,
                   "required": true
                 },
                 "value": {
                   "type": "number",
-                  "example": 151,
+                  "example": 524,
                   "required": true
                 }
               }
@@ -1565,7 +1468,7 @@
         "example": {
           "participantAttributes": [
             {
-              "attributeId": 149,
+              "attributeId": 83,
               "value": "Lorem Ipsum"
             }
           ]
@@ -1582,12 +1485,12 @@
               "properties": {
                 "id": {
                   "type": "number",
-                  "example": 976,
+                  "example": 572,
                   "required": true
                 },
                 "value": {
                   "type": "number",
-                  "example": 485,
+                  "example": 844,
                   "required": true
                 }
               }
@@ -1605,12 +1508,103 @@
         "example": {
           "participantAttributes": [
             {
-              "id": 976,
+              "id": 572,
               "value": "Lorem Ipsum"
             }
           ]
         },
         "description": "participantAttributesUpdateValidator (Validator)"
+      },
+      "participantsStoreValidator": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "Lorem Ipsum",
+            "required": true
+          },
+          "participantAttributes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "attributeId": {
+                  "type": "number",
+                  "example": 674,
+                  "required": true
+                },
+                "value": {
+                  "type": "number",
+                  "example": 725,
+                  "required": true
+                }
+              }
+            },
+            "properties": {
+              "items": {
+                "value": {
+                  "type": "string",
+                  "example": "Lorem Ipsum"
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "email": "Lorem Ipsum",
+          "participantAttributes": [
+            {
+              "attributeId": 674,
+              "value": "Lorem Ipsum"
+            }
+          ]
+        },
+        "description": "participantsStoreValidator (Validator)"
+      },
+      "participantsUpdateValidator": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "Lorem Ipsum"
+          },
+          "participantAttributes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "attributeId": {
+                  "type": "number",
+                  "example": 771,
+                  "required": true
+                },
+                "value": {
+                  "type": "number",
+                  "example": 776,
+                  "required": true
+                }
+              }
+            },
+            "properties": {
+              "items": {
+                "value": {
+                  "type": "string",
+                  "example": "Lorem Ipsum"
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "email": "Lorem Ipsum",
+          "participantAttributes": [
+            {
+              "attributeId": 771,
+              "value": "Lorem Ipsum"
+            }
+          ]
+        },
+        "description": "participantsUpdateValidator (Validator)"
       },
       "createPermissionValidator": {
         "type": "object",
@@ -1677,26 +1671,96 @@
                   "$ref": "#/components/schemas/Event"
                 },
                 "example": {
-                  "id": 520,
-                  "organizerId": 610,
+                  "id": 289,
+                  "organizerId": 137,
                   "name": "John Doe",
                   "description": "Lorem ipsum dolor sit amet",
                   "slug": "Lorem Ipsum",
                   "startDate": "2021-03-23T16:13:08.489+01:00",
                   "endDate": "2021-03-23T16:13:08.489+01:00",
-                  "firstFormId": 837,
                   "lat": 41.705,
                   "long": -87.475,
                   "primaryColor": "Lorem Ipsum",
                   "organizer": "Lorem Ipsum",
-                  "participantsCount": 737,
+                  "participantsCount": 3,
                   "createdAt": "2021-03-23T16:13:08.489+01:00",
                   "updatedAt": "2021-03-23T16:13:08.489+01:00",
-                  "photoUrl": "Lorem Ipsum"
+                  "photoUrl": "Lorem Ipsum",
+                  "forms": [
+                    {
+                      "id": 461,
+                      "eventId": 555,
+                      "isOpen": true,
+                      "description": "Lorem ipsum dolor sit amet",
+                      "name": "John Doe",
+                      "isFirstForm": true,
+                      "slug": "Lorem Ipsum",
+                      "startDate": "2021-03-23T16:13:08.489+01:00",
+                      "endDate": "2021-03-23T16:13:08.489+01:00",
+                      "createdAt": "2021-03-23T16:13:08.489+01:00",
+                      "updatedAt": "2021-03-23T16:13:08.489+01:00"
+                    }
+                  ],
+                  "socialMediaLinks": ["Lorem Ipsum"]
                 }
               }
             },
             "description": "Returns **201** (Created) as **application/json**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v1/events/{eventSlug}/participants/{participantSlug}": {
+      "get": {
+        "summary": "Get participant (index)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/public_participants_controller.ts_ - **index**",
+        "operationId": "getPublicParticipant",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventSlug",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "participantSlug",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": ["PUBLIC_PARTICIPANTS"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Participant"
+                },
+                "example": {
+                  "id": 483,
+                  "email": "johndoe@example.com",
+                  "eventId": 399,
+                  "slug": "Lorem Ipsum",
+                  "createdAt": "2021-03-23T16:13:08.489+01:00",
+                  "updatedAt": "2021-03-23T16:13:08.489+01:00"
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "example": "{ errors: [{ message: \"Unauthorized access\" }] }"
+              }
+            },
+            "description": "Returns **401** (Unauthorized) as **text/plain**"
           }
         },
         "security": []
@@ -1721,7 +1785,7 @@
                 },
                 "example": [
                   {
-                    "id": 687,
+                    "id": 681,
                     "firstName": "John",
                     "lastName": "Doe",
                     "email": "johndoe@example.com",
@@ -1734,19 +1798,9 @@
               }
             },
             "description": "Returns **200** (OK) as **application/json**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       },
       "post": {
         "summary": " (store)",
@@ -1755,18 +1809,14 @@
         "parameters": [],
         "tags": ["ADMINS"],
         "responses": {
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {}
+            }
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ],
+        "security": [],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1778,12 +1828,12 @@
                 "lastName": "Lorem Ipsum",
                 "password": "Lorem Ipsum",
                 "email": "Lorem Ipsum",
-                "type": 200,
+                "type": 764,
                 "active": true,
                 "permissions": [
                   {
-                    "permissionId": 950,
-                    "eventId": 969
+                    "permissionId": 62,
+                    "eventId": 668
                   }
                 ]
               }
@@ -1816,7 +1866,7 @@
                   "$ref": "#/components/schemas/Admin"
                 },
                 "example": {
-                  "id": 687,
+                  "id": 681,
                   "firstName": "John",
                   "lastName": "Doe",
                   "email": "johndoe@example.com",
@@ -1829,12 +1879,6 @@
             },
             "description": "Returns **200** (OK) as **application/json**"
           },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
-          },
           "404": {
             "content": {
               "text/plain": {
@@ -1844,11 +1888,7 @@
             "description": "Returns **404** (Not Found) as **text/plain**"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       },
       "put": {
         "summary": "Update admins (update)",
@@ -1873,7 +1913,7 @@
                   "$ref": "#/components/schemas/Admin"
                 },
                 "example": {
-                  "id": 687,
+                  "id": 681,
                   "firstName": "John",
                   "lastName": "Doe",
                   "email": "johndoe@example.com",
@@ -1885,12 +1925,6 @@
               }
             },
             "description": "Returns **200** (OK) as **application/json**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
           },
           "404": {
             "content": {
@@ -1913,11 +1947,7 @@
             "description": "Returns **404** (Not Found) as **application/json**"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       },
       "delete": {
         "summary": "Delete admins (destroy)",
@@ -1946,19 +1976,9 @@
               }
             },
             "description": "Returns **204** (No Content) as **application/json**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       }
     },
     "/api/v1/events": {
@@ -1980,40 +2000,30 @@
                 },
                 "example": [
                   {
-                    "id": 520,
-                    "organizerId": 610,
+                    "id": 289,
+                    "organizerId": 137,
                     "name": "John Doe",
                     "description": "Lorem ipsum dolor sit amet",
                     "slug": "Lorem Ipsum",
                     "startDate": "2021-03-23T16:13:08.489+01:00",
                     "endDate": "2021-03-23T16:13:08.489+01:00",
-                    "firstFormId": 837,
                     "lat": 41.705,
                     "long": -87.475,
                     "primaryColor": "Lorem Ipsum",
                     "organizer": "Lorem Ipsum",
-                    "participantsCount": 737,
+                    "participantsCount": 3,
                     "createdAt": "2021-03-23T16:13:08.489+01:00",
                     "updatedAt": "2021-03-23T16:13:08.489+01:00",
-                    "photoUrl": "Lorem Ipsum"
+                    "photoUrl": "Lorem Ipsum",
+                    "socialMediaLinks": ["Lorem Ipsum"]
                   }
                 ]
               }
             },
             "description": "Returns **200** (OK) as **application/json**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       },
       "post": {
         "summary": " (store)",
@@ -2029,22 +2039,22 @@
                   "$ref": "#/components/schemas/Event"
                 },
                 "example": {
-                  "id": 520,
-                  "organizerId": 610,
+                  "id": 289,
+                  "organizerId": 137,
                   "name": "John Doe",
                   "description": "Lorem ipsum dolor sit amet",
                   "slug": "Lorem Ipsum",
                   "startDate": "2021-03-23T16:13:08.489+01:00",
                   "endDate": "2021-03-23T16:13:08.489+01:00",
-                  "firstFormId": 837,
                   "lat": 41.705,
                   "long": -87.475,
                   "primaryColor": "Lorem Ipsum",
                   "organizer": "Lorem Ipsum",
-                  "participantsCount": 737,
+                  "participantsCount": 3,
                   "createdAt": "2021-03-23T16:13:08.489+01:00",
                   "updatedAt": "2021-03-23T16:13:08.489+01:00",
-                  "photoUrl": "Lorem Ipsum"
+                  "photoUrl": "Lorem Ipsum",
+                  "socialMediaLinks": ["Lorem Ipsum"]
                 }
               }
             },
@@ -2066,9 +2076,6 @@
             },
             "description": "Returns **401** (Unauthorized) as **text/plain**"
           },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
-          },
           "422": {
             "content": {
               "text/plain": {
@@ -2076,13 +2083,17 @@
               }
             },
             "description": "Returns **422** (Unprocessable Entity) as **text/plain**"
+          },
+          "500": {
+            "content": {
+              "text/plain": {
+                "example": "{ message: \"Error while processing the file\" }"
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **text/plain**"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ],
+        "security": [],
         "requestBody": {
           "content": {
             "multipart/form-data": {
@@ -2105,15 +2116,11 @@
                     "type": "string",
                     "format": "string"
                   },
-                  "endDate": {
-                    "type": "number",
-                    "format": "string"
-                  },
                   "startDate": {
                     "type": "number",
                     "format": "string"
                   },
-                  "firstFormId": {
+                  "endDate": {
                     "type": "number",
                     "format": "string"
                   },
@@ -2136,9 +2143,13 @@
                   "photo": {
                     "type": "number",
                     "format": "string"
+                  },
+                  "socialMediaLinks": {
+                    "type": "array",
+                    "format": "string"
                   }
                 },
-                "required": ["name", "slug", "endDate", "startDate"]
+                "required": ["name", "slug", "startDate", "endDate"]
               }
             }
           }
@@ -2169,29 +2180,44 @@
                   "$ref": "#/components/schemas/Event"
                 },
                 "example": {
-                  "id": 520,
-                  "organizerId": 610,
+                  "id": 289,
+                  "organizerId": 137,
                   "name": "John Doe",
                   "description": "Lorem ipsum dolor sit amet",
                   "slug": "Lorem Ipsum",
                   "startDate": "2021-03-23T16:13:08.489+01:00",
                   "endDate": "2021-03-23T16:13:08.489+01:00",
-                  "firstFormId": 837,
                   "lat": 41.705,
                   "long": -87.475,
                   "primaryColor": "Lorem Ipsum",
                   "organizer": "Lorem Ipsum",
-                  "participantsCount": 737,
+                  "participantsCount": 3,
                   "createdAt": "2021-03-23T16:13:08.489+01:00",
                   "updatedAt": "2021-03-23T16:13:08.489+01:00",
                   "photoUrl": "Lorem Ipsum",
                   "permissions": [
                     {
-                      "id": 220,
+                      "id": 578,
                       "action": "Lorem Ipsum",
                       "subject": "Lorem Ipsum"
                     }
-                  ]
+                  ],
+                  "forms": [
+                    {
+                      "id": 461,
+                      "eventId": 555,
+                      "isOpen": true,
+                      "description": "Lorem ipsum dolor sit amet",
+                      "name": "John Doe",
+                      "isFirstForm": true,
+                      "slug": "Lorem Ipsum",
+                      "startDate": "2021-03-23T16:13:08.489+01:00",
+                      "endDate": "2021-03-23T16:13:08.489+01:00",
+                      "createdAt": "2021-03-23T16:13:08.489+01:00",
+                      "updatedAt": "2021-03-23T16:13:08.489+01:00"
+                    }
+                  ],
+                  "socialMediaLinks": ["Lorem Ipsum"]
                 }
               }
             },
@@ -2204,16 +2230,9 @@
               }
             },
             "description": "Returns **401** (Unauthorized) as **text/plain**"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       },
       "put": {
         "summary": "Update event (update)",
@@ -2240,22 +2259,22 @@
                   "$ref": "#/components/schemas/Event"
                 },
                 "example": {
-                  "id": 520,
-                  "organizerId": 610,
+                  "id": 289,
+                  "organizerId": 137,
                   "name": "John Doe",
                   "description": "Lorem ipsum dolor sit amet",
                   "slug": "Lorem Ipsum",
                   "startDate": "2021-03-23T16:13:08.489+01:00",
                   "endDate": "2021-03-23T16:13:08.489+01:00",
-                  "firstFormId": 837,
                   "lat": 41.705,
                   "long": -87.475,
                   "primaryColor": "Lorem Ipsum",
                   "organizer": "Lorem Ipsum",
-                  "participantsCount": 737,
+                  "participantsCount": 3,
                   "createdAt": "2021-03-23T16:13:08.489+01:00",
                   "updatedAt": "2021-03-23T16:13:08.489+01:00",
-                  "photoUrl": "Lorem Ipsum"
+                  "photoUrl": "Lorem Ipsum",
+                  "socialMediaLinks": ["Lorem Ipsum"]
                 }
               }
             },
@@ -2268,9 +2287,6 @@
               }
             },
             "description": "Returns **400** (Bad Request) as **text/plain**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
           },
           "403": {
             "content": {
@@ -2297,11 +2313,7 @@
             "description": "Returns **422** (Unprocessable Entity) as **text/plain**"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ],
+        "security": [],
         "requestBody": {
           "content": {
             "multipart/form-data": {
@@ -2350,6 +2362,10 @@
                   },
                   "photo": {
                     "type": "number",
+                    "format": "string"
+                  },
+                  "socialMediaLinks": {
+                    "type": "array",
                     "format": "string"
                   }
                 },
@@ -2397,9 +2413,6 @@
             },
             "description": "Returns **401** (Unauthorized) as **text/plain**"
           },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
-          },
           "404": {
             "content": {
               "text/plain": {
@@ -2409,11 +2422,7 @@
             "description": "Returns **404** (Not Found) as **text/plain**"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       }
     },
     "/api/v1/permissions": {
@@ -2435,7 +2444,7 @@
                 },
                 "example": [
                   {
-                    "id": 220,
+                    "id": 578,
                     "action": "Lorem Ipsum",
                     "subject": "Lorem Ipsum"
                   }
@@ -2443,19 +2452,9 @@
               }
             },
             "description": "Returns **200** (OK) as **application/json**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       },
       "post": {
         "summary": " (store)",
@@ -2464,18 +2463,14 @@
         "parameters": [],
         "tags": ["PERMISSIONS"],
         "responses": {
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {}
+            }
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ],
+        "security": [],
         "requestBody": {
           "content": {
             "application/json": {
@@ -2515,19 +2510,13 @@
                   "$ref": "#/components/schemas/Permission"
                 },
                 "example": {
-                  "id": 220,
+                  "id": 578,
                   "action": "Lorem Ipsum",
                   "subject": "Lorem Ipsum"
                 }
               }
             },
             "description": "Returns **200** (OK) as **application/json**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
           },
           "404": {
             "content": {
@@ -2538,11 +2527,7 @@
             "description": "Returns **404** (Not Found) as **text/plain**"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       },
       "put": {
         "summary": "Update permissions (update)",
@@ -2567,19 +2552,13 @@
                   "$ref": "#/components/schemas/Permission"
                 },
                 "example": {
-                  "id": 220,
+                  "id": 578,
                   "action": "Lorem Ipsum",
                   "subject": "Lorem Ipsum"
                 }
               }
             },
             "description": "Returns **200** (OK) as **application/json**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
           },
           "404": {
             "content": {
@@ -2602,11 +2581,7 @@
             "description": "Returns **404** (Not Found) as **application/json**"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ],
+        "security": [],
         "requestBody": {
           "content": {
             "application/json": {
@@ -2648,19 +2623,9 @@
               }
             },
             "description": "Returns **204** (No Content) as **application/json**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       }
     },
     "/api/v1/events/{eventId}/attributes": {
@@ -2691,13 +2656,13 @@
                 },
                 "example": [
                   {
-                    "id": 846,
+                    "id": 127,
                     "name": "John Doe",
                     "slug": "Lorem Ipsum",
-                    "eventId": 126,
-                    "options": {},
+                    "eventId": 431,
+                    "options": "Lorem Ipsum",
                     "type": "Lorem Ipsum",
-                    "rootBlockId": 130,
+                    "rootBlockId": 758,
                     "showInList": true,
                     "createdAt": "2021-03-23T16:13:08.489+01:00",
                     "updatedAt": "2021-03-23T16:13:08.489+01:00"
@@ -2706,19 +2671,9 @@
               }
             },
             "description": "Returns **200** (OK) as **application/json**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       },
       "post": {
         "summary": " (store)",
@@ -2743,13 +2698,13 @@
                   "$ref": "#/components/schemas/Attribute"
                 },
                 "example": {
-                  "id": 846,
+                  "id": 127,
                   "name": "John Doe",
                   "slug": "Lorem Ipsum",
-                  "eventId": 126,
-                  "options": {},
+                  "eventId": 431,
+                  "options": "Lorem Ipsum",
                   "type": "Lorem Ipsum",
-                  "rootBlockId": 130,
+                  "rootBlockId": 758,
                   "showInList": true,
                   "createdAt": "2021-03-23T16:13:08.489+01:00",
                   "updatedAt": "2021-03-23T16:13:08.489+01:00"
@@ -2757,19 +2712,9 @@
               }
             },
             "description": "Returns **201** (Created) as **application/json**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ],
+        "security": [],
         "requestBody": {
           "content": {
             "application/json": {
@@ -2779,9 +2724,9 @@
               "example": {
                 "name": "Lorem Ipsum",
                 "slug": "Lorem Ipsum",
-                "type": 991,
+                "type": 537,
                 "options": [2],
-                "rootBlockId": 266,
+                "rootBlockId": 980,
                 "showInList": true
               }
             }
@@ -2821,13 +2766,13 @@
                   "$ref": "#/components/schemas/Attribute"
                 },
                 "example": {
-                  "id": 846,
+                  "id": 127,
                   "name": "John Doe",
                   "slug": "Lorem Ipsum",
-                  "eventId": 126,
-                  "options": {},
+                  "eventId": 431,
+                  "options": "Lorem Ipsum",
                   "type": "Lorem Ipsum",
-                  "rootBlockId": 130,
+                  "rootBlockId": 758,
                   "showInList": true,
                   "createdAt": "2021-03-23T16:13:08.489+01:00",
                   "updatedAt": "2021-03-23T16:13:08.489+01:00"
@@ -2835,12 +2780,6 @@
               }
             },
             "description": "Returns **200** (OK) as **application/json**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
           },
           "404": {
             "content": {
@@ -2863,11 +2802,7 @@
             "description": "Returns **404** (Not Found) as **application/json**"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       },
       "put": {
         "summary": "Update attributes (update)",
@@ -2900,13 +2835,13 @@
                   "$ref": "#/components/schemas/Attribute"
                 },
                 "example": {
-                  "id": 846,
+                  "id": 127,
                   "name": "John Doe",
                   "slug": "Lorem Ipsum",
-                  "eventId": 126,
-                  "options": {},
+                  "eventId": 431,
+                  "options": "Lorem Ipsum",
                   "type": "Lorem Ipsum",
-                  "rootBlockId": 130,
+                  "rootBlockId": 758,
                   "showInList": true,
                   "createdAt": "2021-03-23T16:13:08.489+01:00",
                   "updatedAt": "2021-03-23T16:13:08.489+01:00"
@@ -2914,12 +2849,6 @@
               }
             },
             "description": "Returns **200** (OK) as **application/json**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
           },
           "404": {
             "content": {
@@ -2942,11 +2871,7 @@
             "description": "Returns **404** (Not Found) as **application/json**"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ],
+        "security": [],
         "requestBody": {
           "content": {
             "application/json": {
@@ -2956,9 +2881,9 @@
               "example": {
                 "name": "Lorem Ipsum",
                 "slug": "Lorem Ipsum",
-                "type": 282,
+                "type": 722,
                 "options": [2],
-                "rootBlockId": 900,
+                "rootBlockId": 941,
                 "showInList": true
               }
             }
@@ -3000,19 +2925,9 @@
               }
             },
             "description": "Returns **204** (No Content) as **application/json**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       }
     },
     "/api/v1/events/{eventId}/blocks": {
@@ -3031,18 +2946,14 @@
         ],
         "tags": ["V1"],
         "responses": {
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {}
+            }
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       },
       "post": {
         "summary": " (store)",
@@ -3059,18 +2970,14 @@
         ],
         "tags": ["V1"],
         "responses": {
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {}
+            }
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ],
+        "security": [],
         "requestBody": {
           "content": {
             "application/json": {}
@@ -3102,18 +3009,14 @@
         ],
         "tags": ["V1"],
         "responses": {
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {}
+            }
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       },
       "put": {
         "summary": "Update v1 (update)",
@@ -3138,18 +3041,14 @@
         ],
         "tags": ["V1"],
         "responses": {
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
+          "204": {
+            "description": "No Content",
+            "content": {
+              "application/json": {}
+            }
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ],
+        "security": [],
         "requestBody": {
           "content": {
             "application/json": {}
@@ -3179,18 +3078,14 @@
         ],
         "tags": ["V1"],
         "responses": {
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {}
+            }
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       }
     },
     "/api/v1/events/{eventId}/emails": {
@@ -3238,19 +3133,9 @@
               }
             },
             "description": "Returns **200** (OK) as **application/json**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       },
       "post": {
         "summary": " (store)",
@@ -3305,19 +3190,9 @@
               }
             },
             "description": "Returns **400** (Bad Request) as **application/json**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ],
+        "security": [],
         "requestBody": {
           "content": {
             "application/json": {
@@ -3327,7 +3202,7 @@
               "example": {
                 "name": "Lorem Ipsum",
                 "content": "Lorem Ipsum",
-                "trigger": 355,
+                "trigger": 758,
                 "triggerValue": "Lorem Ipsum"
               }
             }
@@ -3473,12 +3348,6 @@
             },
             "description": "Returns **200** (OK) as **application/json**"
           },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
-          },
           "404": {
             "content": {
               "application/json": {
@@ -3496,11 +3365,7 @@
             "description": "Returns **404** (Not Found) as **application/json**"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       },
       "put": {
         "summary": "Update emails (update)",
@@ -3547,19 +3412,9 @@
               }
             },
             "description": "Returns **200** (OK) as **application/json**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ],
+        "security": [],
         "requestBody": {
           "content": {
             "application/json": {
@@ -3569,7 +3424,7 @@
               "example": {
                 "name": "Lorem Ipsum",
                 "content": "Lorem Ipsum",
-                "trigger": 787,
+                "trigger": 352,
                 "triggerValue": "Lorem Ipsum"
               }
             }
@@ -3607,19 +3462,9 @@
               }
             },
             "description": "Returns **200** (OK) as **text/plain**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       }
     },
     "/api/v1/events/{eventId}/forms": {
@@ -3643,45 +3488,72 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Form"
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Form"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/PaginationMeta"
+                    }
                   }
                 },
-                "example": [
-                  {
-                    "id": 154,
-                    "eventId": 53,
-                    "isOpen": true,
-                    "description": "Lorem ipsum dolor sit amet",
-                    "name": "John Doe",
-                    "slug": "Lorem Ipsum",
-                    "startDate": "2021-03-23T16:13:08.489+01:00",
-                    "endDate": "2021-03-23T16:13:08.489+01:00",
-                    "createdAt": "2021-03-23T16:13:08.489+01:00",
-                    "updatedAt": "2021-03-23T16:13:08.489+01:00"
+                "example": {
+                  "data": [
+                    {
+                      "id": 461,
+                      "eventId": 555,
+                      "isOpen": true,
+                      "description": "Lorem ipsum dolor sit amet",
+                      "name": "John Doe",
+                      "isFirstForm": true,
+                      "slug": "Lorem Ipsum",
+                      "startDate": "2021-03-23T16:13:08.489+01:00",
+                      "endDate": "2021-03-23T16:13:08.489+01:00",
+                      "createdAt": "2021-03-23T16:13:08.489+01:00",
+                      "updatedAt": "2021-03-23T16:13:08.489+01:00",
+                      "attributes": [
+                        {
+                          "id": 127,
+                          "name": "John Doe",
+                          "slug": "Lorem Ipsum",
+                          "eventId": 431,
+                          "options": "Lorem Ipsum",
+                          "type": "Lorem Ipsum",
+                          "rootBlockId": 758,
+                          "showInList": true,
+                          "createdAt": "2021-03-23T16:13:08.489+01:00",
+                          "updatedAt": "2021-03-23T16:13:08.489+01:00"
+                        }
+                      ]
+                    }
+                  ],
+                  "meta": {
+                    "total": 100,
+                    "page": 2,
+                    "perPage": 10,
+                    "currentPage": 3,
+                    "lastPage": 10,
+                    "firstPage": 1,
+                    "lastPageUrl": "/?page=10",
+                    "firstPageUrl": "/?page=1",
+                    "nextPageUrl": "/?page=6",
+                    "previousPageUrl": "/?page=5"
                   }
-                ]
+                }
               }
             },
             "description": "Returns **200** (OK) as **application/json**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       },
       "post": {
-        "summary": " (store)",
-        "description": "Creates a form for the specified event\n\n _app/controllers/forms_controller.ts_ - **store**",
+        "summary": "elo zelo (store)",
+        "description": "Returns **201** (Created) as **application/json**\n\n _app/controllers/forms_controller.ts_ - **store**",
         "operationId": "createForm",
         "parameters": [
           {
@@ -3695,18 +3567,31 @@
         ],
         "tags": ["FORMS"],
         "responses": {
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Form"
+                },
+                "example": {
+                  "id": 461,
+                  "eventId": 555,
+                  "isOpen": true,
+                  "description": "Lorem ipsum dolor sit amet",
+                  "name": "John Doe",
+                  "isFirstForm": true,
+                  "slug": "Lorem Ipsum",
+                  "startDate": "2021-03-23T16:13:08.489+01:00",
+                  "endDate": "2021-03-23T16:13:08.489+01:00",
+                  "createdAt": "2021-03-23T16:13:08.489+01:00",
+                  "updatedAt": "2021-03-23T16:13:08.489+01:00"
+                }
+              }
+            },
+            "description": "Returns **201** (Created) as **application/json**"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ],
+        "security": [],
         "requestBody": {
           "content": {
             "application/json": {
@@ -3716,9 +3601,16 @@
               "example": {
                 "name": "Lorem Ipsum",
                 "description": "Lorem Ipsum",
-                "startDate": 924,
-                "attributesIds": [1],
-                "endDate": 254,
+                "startDate": 801,
+                "isFirstForm": true,
+                "attributes": [
+                  {
+                    "id": 671,
+                    "isRequired": true,
+                    "isEditable": true
+                  }
+                ],
+                "endDate": 756,
                 "isOpen": true
               }
             }
@@ -3758,26 +3650,35 @@
                   "$ref": "#/components/schemas/Form"
                 },
                 "example": {
-                  "id": 154,
-                  "eventId": 53,
+                  "id": 461,
+                  "eventId": 555,
                   "isOpen": true,
                   "description": "Lorem ipsum dolor sit amet",
                   "name": "John Doe",
+                  "isFirstForm": true,
                   "slug": "Lorem Ipsum",
                   "startDate": "2021-03-23T16:13:08.489+01:00",
                   "endDate": "2021-03-23T16:13:08.489+01:00",
                   "createdAt": "2021-03-23T16:13:08.489+01:00",
-                  "updatedAt": "2021-03-23T16:13:08.489+01:00"
+                  "updatedAt": "2021-03-23T16:13:08.489+01:00",
+                  "attributes": [
+                    {
+                      "id": 127,
+                      "name": "John Doe",
+                      "slug": "Lorem Ipsum",
+                      "eventId": 431,
+                      "options": "Lorem Ipsum",
+                      "type": "Lorem Ipsum",
+                      "rootBlockId": 758,
+                      "showInList": true,
+                      "createdAt": "2021-03-23T16:13:08.489+01:00",
+                      "updatedAt": "2021-03-23T16:13:08.489+01:00"
+                    }
+                  ]
                 }
               }
             },
             "description": "Returns **200** (OK) as **application/json**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
           },
           "404": {
             "content": {
@@ -3788,11 +3689,7 @@
             "description": "Returns **404** (Not Found) as **text/plain**"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       },
       "put": {
         "summary": "Update forms (update)",
@@ -3825,11 +3722,12 @@
                   "$ref": "#/components/schemas/Form"
                 },
                 "example": {
-                  "id": 154,
-                  "eventId": 53,
+                  "id": 461,
+                  "eventId": 555,
                   "isOpen": true,
                   "description": "Lorem ipsum dolor sit amet",
                   "name": "John Doe",
+                  "isFirstForm": true,
                   "slug": "Lorem Ipsum",
                   "startDate": "2021-03-23T16:13:08.489+01:00",
                   "endDate": "2021-03-23T16:13:08.489+01:00",
@@ -3839,12 +3737,6 @@
               }
             },
             "description": "Returns **200** (OK) as **application/json**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
           },
           "404": {
             "content": {
@@ -3867,11 +3759,7 @@
             "description": "Returns **404** (Not Found) as **application/json**"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ],
+        "security": [],
         "requestBody": {
           "content": {
             "application/json": {
@@ -3881,10 +3769,17 @@
               "example": {
                 "name": "Lorem Ipsum",
                 "description": "Lorem Ipsum",
-                "startDate": 983,
-                "endDate": 965,
-                "attributesIds": [1],
-                "isOpen": true
+                "startDate": 618,
+                "endDate": 738,
+                "attributes": [
+                  {
+                    "id": 147,
+                    "isRequired": true,
+                    "isEditable": true
+                  }
+                ],
+                "isOpen": true,
+                "isFirstForm": true
               }
             }
           }
@@ -3926,12 +3821,6 @@
             },
             "description": "Returns **204** (No Content) as **application/json**"
           },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
-          },
           "404": {
             "content": {
               "application/json": {
@@ -3953,11 +3842,7 @@
             "description": "Returns **404** (Not Found) as **application/json**"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       }
     },
     "/api/v1/events/{eventId}/organizers": {
@@ -3988,7 +3873,7 @@
                 },
                 "example": [
                   {
-                    "id": 687,
+                    "id": 681,
                     "firstName": "John",
                     "lastName": "Doe",
                     "email": "johndoe@example.com",
@@ -4001,19 +3886,9 @@
               }
             },
             "description": "Returns **200** (OK) as **application/json**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       },
       "post": {
         "summary": " (store)",
@@ -4031,18 +3906,14 @@
         ],
         "tags": ["ORGANIZERS"],
         "responses": {
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {}
+            }
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ],
+        "security": [],
         "requestBody": {
           "content": {
             "application/json": {
@@ -4051,7 +3922,7 @@
               },
               "example": {
                 "email": "Lorem Ipsum",
-                "permissionsIds": [717],
+                "permissionsIds": [279],
                 "firstName": "Lorem Ipsum",
                 "lastName": "Lorem Ipsum",
                 "password": "Lorem Ipsum"
@@ -4093,7 +3964,7 @@
                   "$ref": "#/components/schemas/Admin"
                 },
                 "example": {
-                  "id": 687,
+                  "id": 681,
                   "firstName": "John",
                   "lastName": "Doe",
                   "email": "johndoe@example.com",
@@ -4106,12 +3977,6 @@
             },
             "description": "Returns **200** (OK) as **application/json**"
           },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
-          },
           "404": {
             "content": {
               "text/plain": {
@@ -4121,11 +3986,7 @@
             "description": "Returns **404** (Not Found) as **text/plain**"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       },
       "put": {
         "summary": "Update organizers (update)",
@@ -4158,7 +4019,7 @@
                   "$ref": "#/components/schemas/Admin"
                 },
                 "example": {
-                  "id": 687,
+                  "id": 681,
                   "firstName": "John",
                   "lastName": "Doe",
                   "email": "johndoe@example.com",
@@ -4170,12 +4031,6 @@
               }
             },
             "description": "Returns **200** (OK) as **application/json**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
           },
           "404": {
             "content": {
@@ -4198,11 +4053,7 @@
             "description": "Returns **404** (Not Found) as **application/json**"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ],
+        "security": [],
         "requestBody": {
           "content": {
             "application/json": {
@@ -4210,7 +4061,7 @@
                 "$ref": "#/components/schemas/updateOrganizerPermissionsValidator"
               },
               "example": {
-                "permissionsIds": [626]
+                "permissionsIds": [433]
               }
             }
           }
@@ -4251,19 +4102,9 @@
               }
             },
             "description": "Returns **204** (No Content) as **application/json**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       }
     },
     "/api/v1/events/{eventId}/participants/export": {
@@ -4293,12 +4134,6 @@
             },
             "description": "Spreadsheet download with xlsx extension"
           },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
-          },
           "404": {
             "content": {
               "text/plain": {
@@ -4308,11 +4143,7 @@
             "description": "Returns **404** (Not Found) as **text/plain**"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       }
     },
     "/api/v1/events/{eventId}/participants/import": {
@@ -4355,11 +4186,9 @@
                   "eventId": {},
                   "importedParticipants": [
                     {
-                      "id": 456,
+                      "id": 483,
                       "email": "johndoe@example.com",
-                      "eventId": 359,
-                      "firstName": "John",
-                      "lastName": "Doe",
+                      "eventId": 399,
                       "slug": "Lorem Ipsum",
                       "createdAt": "2021-03-23T16:13:08.489+01:00",
                       "updatedAt": "2021-03-23T16:13:08.489+01:00"
@@ -4400,12 +4229,6 @@
             },
             "description": "Returns **400** (Bad Request) as **application/json**"
           },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
-          },
           "404": {
             "content": {
               "text/plain": {
@@ -4445,11 +4268,7 @@
             "description": "Returns **500** (Internal Server Error) as **application/json**"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ],
+        "security": [],
         "requestBody": {
           "content": {
             "multipart/form-data": {
@@ -4497,8 +4316,6 @@
                   {
                     "id": 32,
                     "email": "test@test.pl",
-                    "firstName": "name",
-                    "lastName": "last name",
                     "slug": "9081d217-9e13-4642-b7f0-2b8f8f409dfb",
                     "createdAt": "2025-02-19 13:56:10",
                     "updatedAt": "2025-02-19 13:56:10",
@@ -4515,19 +4332,9 @@
               }
             },
             "description": "Returns **200** (OK) as **application/json**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       },
       "post": {
         "summary": "Create a new participant (store)",
@@ -4551,11 +4358,9 @@
                   "$ref": "#/components/schemas/Participant"
                 },
                 "example": {
-                  "id": 456,
+                  "id": 483,
                   "email": "johndoe@example.com",
-                  "eventId": 359,
-                  "firstName": "John",
-                  "lastName": "Doe",
+                  "eventId": 399,
                   "slug": "Lorem Ipsum",
                   "createdAt": "2021-03-23T16:13:08.489+01:00",
                   "updatedAt": "2021-03-23T16:13:08.489+01:00"
@@ -4563,19 +4368,9 @@
               }
             },
             "description": "Returns **201** (Created) as **application/json**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ],
+        "security": [],
         "requestBody": {
           "content": {
             "application/json": {
@@ -4584,12 +4379,9 @@
               },
               "example": {
                 "email": "Lorem Ipsum",
-                "eventId": 674,
-                "firstName": "Lorem Ipsum",
-                "lastName": "Lorem Ipsum",
                 "participantAttributes": [
                   {
-                    "attributeId": 271,
+                    "attributeId": 674,
                     "value": "Lorem Ipsum"
                   }
                 ]
@@ -4684,34 +4476,16 @@
             },
             "description": "Returns **200** (OK) as **application/json**"
           },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
-          },
           "404": {
             "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": "Participant not found."
-                  }
-                },
-                "example": {
-                  "message": "Participant not found."
-                }
+              "text/plain": {
+                "example": "{ message: \"Row not found\", \"name\": \"Exception\", status: 404},"
               }
             },
-            "description": "Returns **404** (Not Found) as **application/json**"
+            "description": "Returns **404** (Not Found) as **text/plain**"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ]
+        "security": []
       },
       "put": {
         "summary": "Update a participant (update)",
@@ -4743,11 +4517,9 @@
                   "$ref": "#/components/schemas/Participant"
                 },
                 "example": {
-                  "id": 456,
+                  "id": 483,
                   "email": "johndoe@example.com",
-                  "eventId": 359,
-                  "firstName": "John",
-                  "lastName": "Doe",
+                  "eventId": 399,
                   "slug": "Lorem Ipsum",
                   "createdAt": "2021-03-23T16:13:08.489+01:00",
                   "updatedAt": "2021-03-23T16:13:08.489+01:00"
@@ -4755,19 +4527,9 @@
               }
             },
             "description": "Returns **200** (OK) as **application/json**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
-          },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
-          }
-        ],
+        "security": [],
         "requestBody": {
           "content": {
             "application/json": {
@@ -4776,12 +4538,9 @@
               },
               "example": {
                 "email": "Lorem Ipsum",
-                "eventId": 633,
-                "firstName": "Lorem Ipsum",
-                "lastName": "Lorem Ipsum",
                 "participantAttributes": [
                   {
-                    "id": 789,
+                    "attributeId": 771,
                     "value": "Lorem Ipsum"
                   }
                 ]
@@ -4813,27 +4572,74 @@
         ],
         "tags": ["PARTICIPANTS"],
         "responses": {
-          "200": {
+          "204": {
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "message": "Participant successfully deleted."
-                  }
+                  "properties": {}
                 },
-                "example": {
-                  "message": "Participant successfully deleted."
-                }
+                "example": {}
               }
             },
-            "description": "Returns **200** (OK) as **application/json**"
+            "description": "Returns **204** (No Content) as **application/json**"
           },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
+          "404": {
+            "content": {
+              "text/plain": {
+                "example": "{ message: \"Row not found\", \"name\": \"Exception\", status: 404},"
+              }
+            },
+            "description": "Returns **404** (Not Found) as **text/plain**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v1/events/{eventSlug}/forms/{id}/submit": {
+      "post": {
+        "summary": " (submitForm)",
+        "description": "Returns **201** (Created) as **application/json**\n\n _app/controllers/forms_controller.ts_ - **submitForm**",
+        "operationId": "submitForm",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventSlug",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
           },
-          "403": {
-            "description": "Returns **403** (Forbidden)"
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": ["FORMS"],
+        "responses": {
+          "200": {
+            "content": {
+              "text/plain": {
+                "example": "{ missingRequiredFields: { id: number, name: string }[] }"
+              }
+            },
+            "description": "Returns **200** (OK) as **text/plain**"
+          },
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {}
+              }
+            },
+            "description": "Returns **201** (Created) as **application/json**"
           },
           "404": {
             "content": {
@@ -4841,22 +4647,36 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "message": "Participant not found in this event."
+                    "message": "Row not found",
+                    "name": "Exception",
+                    "status": 404
                   }
                 },
                 "example": {
-                  "message": "Participant not found in this event."
+                  "message": "Row not found",
+                  "name": "Exception",
+                  "status": 404
                 }
               }
             },
             "description": "Returns **404** (Not Found) as **application/json**"
           }
         },
-        "security": [
-          {
-            "BearerAuth": ["access"]
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/formSubmitValidator"
+              },
+              "example": {
+                "email": "Lorem Ipsum",
+                "participantSlug": "Lorem Ipsum",
+                "attributes": {}
+              }
+            }
           }
-        ]
+        }
       }
     },
     "/api/v1/auth/login": {
@@ -4881,7 +4701,7 @@
                 },
                 "example": {
                   "admin": {
-                    "id": 687,
+                    "id": 681,
                     "firstName": "John",
                     "lastName": "Doe",
                     "email": "johndoe@example.com",
@@ -4998,7 +4818,7 @@
                 },
                 "example": {
                   "admin": {
-                    "id": 687,
+                    "id": 681,
                     "firstName": "John",
                     "lastName": "Doe",
                     "email": "johndoe@example.com",
@@ -5079,7 +4899,7 @@
                   "$ref": "#/components/schemas/Admin"
                 },
                 "example": {
-                  "id": 687,
+                  "id": 681,
                   "firstName": "John",
                   "lastName": "Doe",
                   "email": "johndoe@example.com",
@@ -5147,6 +4967,10 @@
       "description": "Everything related to EVENT"
     },
     {
+      "name": "PUBLIC_PARTICIPANTS",
+      "description": "Everything related to PUBLIC_PARTICIPANTS"
+    },
+    {
       "name": "ADMINS",
       "description": "Everything related to ADMINS"
     },
@@ -5305,6 +5129,10 @@
     {
       "name": "PARTICIPANTS",
       "description": "Everything related to PARTICIPANTS"
+    },
+    {
+      "name": "FORMS",
+      "description": "Everything related to FORMS"
     },
     {
       "name": "AUTH",
