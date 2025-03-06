@@ -55,7 +55,7 @@ export default class FormsController {
     const { attributes, ...newFormData } =
       await request.validateUsing(createFormValidator);
 
-    if (newFormData.isFirstForm === true) {
+    if (newFormData.isFirstForm === true && event.firstForm !== null) {
       return response.badRequest({
         message: "Event already has a registration form",
       });
@@ -130,7 +130,11 @@ export default class FormsController {
     const { attributes, ...updates } =
       await request.validateUsing(updateFormValidator);
 
-    if (form.isFirstForm === false && updates.isFirstForm === true) {
+    if (
+      event.firstForm !== null &&
+      form.isFirstForm === false &&
+      updates.isFirstForm === true
+    ) {
       return response.badRequest({
         message: "Event already has a registration form",
       });
