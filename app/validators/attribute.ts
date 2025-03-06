@@ -39,6 +39,7 @@ export const UpdateAttributeSchema = vine.object({
       "number",
       "file",
       "select",
+      "multiselect",
       "block",
       "date",
       "time",
