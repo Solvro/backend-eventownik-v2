@@ -1,13 +1,19 @@
 import vine from "@vinejs/vine";
 
+import string from "@adonisjs/core/helpers/string";
+
 export const createAttributeSchema = vine.object({
   name: vine.string(),
   slug: vine
     .string()
     .unique(
       async (db, value) =>
-        (await db.from("attributes").where("slug", value).first()) === null,
+        (await db
+          .from("attributes")
+          .where("slug", string.slug(value, { lower: true }))
+          .first()) === null,
     )
+    .transform((value) => string.slug(value, { lower: true }))
     .nullable()
     .optional(),
   type: vine.enum([
@@ -42,8 +48,12 @@ export const UpdateAttributeSchema = vine.object({
     .string()
     .unique(
       async (db, value) =>
-        (await db.from("attributes").where("slug", value).first()) === null,
+        (await db
+          .from("attributes")
+          .where("slug", string.slug(value, { lower: true }))
+          .first()) === null,
     )
+    .transform((value) => string.slug(value, { lower: true }))
     .nullable()
     .optional(),
   type: vine
