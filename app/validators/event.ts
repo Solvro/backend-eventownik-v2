@@ -20,7 +20,10 @@ export const createEventValidator = vine.compile(
       .string()
       .unique(
         async (db, value) =>
-          (await db.from("events").where("slug", value).first()) === null,
+          (await db
+            .from("events")
+            .where("slug", string.slug(value, { lower: true }))
+            .first()) === null,
       )
       .transform((value) => string.slug(value, { lower: true })),
     // 2025-01-05 12:00:00
@@ -58,7 +61,10 @@ export const updateEventValidator = vine.compile(
       .string()
       .unique(
         async (db, value) =>
-          (await db.from("events").where("slug", value).first()) === null,
+          (await db
+            .from("events")
+            .where("slug", string.slug(value, { lower: true }))
+            .first()) === null,
       )
       .transform((value) => string.slug(value, { lower: true }))
       .optional(),
