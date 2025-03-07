@@ -2,7 +2,14 @@ import vine from "@vinejs/vine";
 
 export const createAttributeSchema = vine.object({
   name: vine.string(),
-  slug: vine.string().nullable().optional(),
+  slug: vine
+    .string()
+    .unique(
+      async (db, value) =>
+        (await db.from("attributes").where("slug", value).first()) === null,
+    )
+    .nullable()
+    .optional(),
   type: vine.enum([
     "text",
     "textarea",
@@ -31,7 +38,14 @@ export const createAttributeValidator = vine.compile(createAttributeSchema);
 
 export const UpdateAttributeSchema = vine.object({
   name: vine.string().optional(),
-  slug: vine.string().nullable().optional(),
+  slug: vine
+    .string()
+    .unique(
+      async (db, value) =>
+        (await db.from("attributes").where("slug", value).first()) === null,
+    )
+    .nullable()
+    .optional(),
   type: vine
     .enum([
       "text",
