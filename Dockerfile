@@ -3,14 +3,14 @@ FROM node:22 AS base
 # All deps stage
 FROM base AS deps
 WORKDIR /app
-ADD package.json ./
-RUN npm i
+ADD package.json package-lock.json ./
+RUN npm ci
 
 # Production only deps stage
 FROM base AS production-deps
 WORKDIR /app
-ADD package.json ./
-RUN npm i --omit=dev
+ADD package.json package-lock.json ./
+RUN npm ci --omit=dev
 
 # Build stage
 FROM base AS build
