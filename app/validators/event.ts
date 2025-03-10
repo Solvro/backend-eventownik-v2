@@ -18,6 +18,7 @@ export const createEventValidator = vine.compile(
     organizer: vine.string().nullable().optional(),
     slug: vine
       .string()
+      .minLength(3)
       .unique(
         async (db, value) =>
           (await db
@@ -60,6 +61,7 @@ export const updateEventValidator = vine.compile(
     description: vine.string().nullable().optional(),
     slug: vine
       .string()
+      .minLength(3)
       .unique(
         async (db, value) =>
           (await db
