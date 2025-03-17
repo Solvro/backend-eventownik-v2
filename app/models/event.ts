@@ -17,6 +17,7 @@ import Email from "#models/email";
 import Form from "#models/form";
 
 import Admin from "./admin.js";
+import Attribute from "./attribute.js";
 import Participant from "./participant.js";
 import Permission from "./permission.js";
 
@@ -101,6 +102,9 @@ export default class Event extends BaseModel {
       query.where("is_first_form", true).preload("attributes"),
   })
   declare firstForm: HasOne<typeof Form>;
+
+  @hasMany(() => Attribute)
+  declare attributes: HasMany<typeof Attribute>;
 
   @column()
   declare socialMediaLinks: string[] | null;

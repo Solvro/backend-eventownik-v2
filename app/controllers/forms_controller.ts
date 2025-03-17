@@ -48,6 +48,7 @@ export default class FormsController {
     const event = await Event.query()
       .where("id", eventId)
       .preload("firstForm")
+      .preload("attributes")
       .firstOrFail();
 
     await bouncer.authorize("manage_form", event);
@@ -55,6 +56,7 @@ export default class FormsController {
     const { attributes, ...newFormData } =
       await request.validateUsing(createFormValidator);
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (newFormData.isFirstForm === true && event.firstForm !== null) {
       return response.badRequest({
         message: "Event already has a registration form",
@@ -62,6 +64,20 @@ export default class FormsController {
     }
 
     const form = await event.related("forms").create(newFormData);
+
+    const eventAttributesIdsSet = new Set(
+      event.attributes.map((attribute) => attribute.id),
+    );
+
+    const attributesFromDifferentEvent = attributes.filter(
+      (attribute) => !eventAttributesIdsSet.has(attribute.id),
+    );
+
+    if (attributesFromDifferentEvent.length > 0) {
+      return response.badRequest({
+        message: `Attributes with ids ${JSON.stringify(attributesFromDifferentEvent.map((attribute) => attribute.id))}, do not belong to this event`,
+      });
+    }
 
     await form.related("attributes").attach(
       attributes.reduce(
@@ -131,6 +147,7 @@ export default class FormsController {
       await request.validateUsing(updateFormValidator);
 
     if (
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       event.firstForm !== null &&
       form.isFirstForm === false &&
       updates.isFirstForm === true
