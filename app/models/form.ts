@@ -36,10 +36,16 @@ export default class Form extends BaseModel {
   @column()
   declare slug: string;
 
-  @column.dateTime()
+  @column.dateTime({
+    serialize: (value: DateTime) => value.toFormat("yyyy-MM-dd HH-mm-ss"),
+  })
   declare startDate: DateTime;
 
-  @column.dateTime()
+  @column.dateTime({
+    serialize: (value: DateTime | null) => {
+      return value !== null ? value.toFormat("yyyy-MM-dd HH-mm-ss") : value;
+    },
+  })
   declare endDate: DateTime | null;
 
   @column.dateTime({ autoCreate: true })
