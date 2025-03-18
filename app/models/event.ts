@@ -44,7 +44,6 @@ export default class Event extends BaseModel {
   @column.dateTime({
     serialize: (value: DateTime) => value.toFormat("yyyy-MM-dd HH-mm-ss"),
   })
-  @column.dateTime()
   declare endDate: DateTime;
 
   @column()
