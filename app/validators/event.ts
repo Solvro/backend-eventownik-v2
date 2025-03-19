@@ -43,7 +43,7 @@ export const createEventValidator = vine.compile(
             .where("slug", string.slug(value, { lower: true }))
             .first()) === null,
       )
-      .use(slugMinLength(10))
+      .use(slugMinLength(3))
       .transform((value) => string.slug(value, { lower: true })),
     // 2025-01-05 12:00:00
     startDate: vine.date().transform(dateTimeTransform),
