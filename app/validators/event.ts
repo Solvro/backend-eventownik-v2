@@ -16,15 +16,15 @@ const slugMinLength = vine.createRule(
   async (value, minLength: number, field: FieldContext) => {
     if (typeof value !== "string") {
       field.report("Slug must be a string", "slugMinLength", field);
-      return;
-    }
-    const sluggedValue = string.slug(value, { lower: true });
-    if (sluggedValue.length < minLength) {
-      field.report(
-        `Slug must be at least ${minLength} characters long`,
-        "slugMinLength",
-        field,
-      );
+    } else {
+      const sluggedValue = string.slug(value, { lower: true });
+      if (sluggedValue.length < minLength) {
+        field.report(
+          `Slug must be at least ${minLength} characters long`,
+          "slugMinLength",
+          field,
+        );
+      }
     }
   },
 );
@@ -87,7 +87,7 @@ export const updateEventValidator = vine.compile(
             .first()) === null,
       )
       .use(slugMinLength(3))
-      .transform((value) => string.slug(value, { lower: true }).length > 3)
+      .transform((value) => string.slug(value, { lower: true }))
       .optional(),
     startDate: vine.date().transform(dateTimeTransform).optional(),
     endDate: vine.date().transform(dateTimeTransform).optional(),
