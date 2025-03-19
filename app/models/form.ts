@@ -37,13 +37,13 @@ export default class Form extends BaseModel {
   declare slug: string;
 
   @column.dateTime({
-    serialize: (value: DateTime) => value.toFormat("yyyy-MM-dd HH-mm-ss"),
+    serialize: (value: DateTime) => value.toISO({ includeOffset: false }),
   })
   declare startDate: DateTime;
 
   @column.dateTime({
     serialize: (value: DateTime | null) => {
-      return value !== null ? value.toFormat("yyyy-MM-dd HH-mm-ss") : value;
+      return value !== null ? value.toISO({ includeOffset: false }) : value;
     },
   })
   declare endDate: DateTime | null;
