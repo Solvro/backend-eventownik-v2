@@ -7,10 +7,11 @@ export const createAttributeSchema = vine.object({
   slug: vine
     .string()
     .unique(
-      async (db, value) =>
+      async (db, value, field) =>
         (await db
           .from("attributes")
           .where("slug", string.slug(value, { lower: true }))
+          .andWhere("event_id", +field.meta.eventId)
           .first()) === null,
     )
     .transform((value) => string.slug(value, { lower: true }))
@@ -47,10 +48,11 @@ export const UpdateAttributeSchema = vine.object({
   slug: vine
     .string()
     .unique(
-      async (db, value) =>
+      async (db, value, field) =>
         (await db
           .from("attributes")
           .where("slug", string.slug(value, { lower: true }))
+          .andWhere("event_id", +field.meta.eventId)
           .first()) === null,
     )
     .transform((value) => string.slug(value, { lower: true }))
