@@ -215,7 +215,7 @@ export default class FormsController {
    * @operationId submitForm
    * @description An endpoint to receive data from a form.<br>If this is the first form submission, send an email to create a participant.<br>For subsequent submissions, send a participantSlug.
    * @tag forms
-   * @requestBody <formSubmitValidator>
+   * @requestFormDataBody <formSubmitValidator>
    * @responseBody 201 - {}
    * @responseBody 200 - { missingRequiredFields: { id: number, name: string }[] }
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
@@ -226,15 +226,27 @@ export default class FormsController {
 
     const event = await Event.findByOrFail("slug", eventSlug);
 
-    const formFields = await request.validateUsing(formSubmitValidator, {
-      meta: { eventId: event.id },
-    });
+    const { email, participantSlug, ...attributes } =
+      await request.validateUsing(formSubmitValidator, {
+        meta: { eventId: event.id },
+      });
 
-    const errorObject = await this.formService.submitForm(
-      eventSlug,
-      formId,
-      formFields,
+    // Transform attributes so that files work properly
+    const transformedAttributes = Object.fromEntries(
+      Object.entries(attributes).map(([key, value]) => {
+        if ((value as { isMultipartFile: boolean }).isMultipartFile) {
+          return [key, request.file(key)];
+        }
+
+        return [key, value];
+      }),
     );
+
+    const errorObject = await this.formService.submitForm(eventSlug, formId, {
+      email,
+      participantSlug,
+      ...transformedAttributes,
+    });
 
     if (errorObject !== undefined) {
       return response.status(errorObject.status).json(errorObject.error);

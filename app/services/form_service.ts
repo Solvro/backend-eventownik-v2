@@ -1,4 +1,6 @@
 import { inject } from "@adonisjs/core";
+import { MultipartFile } from "@adonisjs/core/bodyparser";
+import { Exception } from "@adonisjs/core/exceptions";
 
 import Event from "#models/event";
 import Form from "#models/form";
@@ -6,12 +8,16 @@ import Participant from "#models/participant";
 
 import { FormSubmitDTO } from "../types/form_types.js";
 import { filterObjectFields } from "../utils/filter_object_fields.js";
+import { FileService } from "./file_service.js";
 import { ParticipantService } from "./participant_service.js";
 
 @inject()
 export class FormService {
   // eslint-disable-next-line no-useless-constructor
-  constructor(private participantService: ParticipantService) {}
+  constructor(
+    private participantService: ParticipantService,
+    private fileService: FileService,
+  ) {}
 
   async submitForm(
     eventSlug: string,
@@ -28,20 +34,29 @@ export class FormService {
       })
       .firstOrFail();
 
-    if (form.isFirstForm && formSubmitDTO.email === undefined) {
+    const {
+      email: participantEmail,
+      participantSlug,
+      ...attributes
+    } = formSubmitDTO;
+
+    if (form.isFirstForm && participantEmail === undefined) {
       return {
         status: 400,
         error: { missingRequiredFields: { name: "email" } },
       };
-    } else if (
-      !form.isFirstForm &&
-      formSubmitDTO.participantSlug === undefined
-    ) {
+    } else if (!form.isFirstForm && participantSlug === undefined) {
       return {
         status: 400,
         error: { missingRequiredFields: { name: "participantSlug" } },
       };
     }
+
+    const fileAttributesIds = new Set(
+      form.attributes
+        .filter((attribute) => attribute.type === "file")
+        .map((attribute) => attribute.id),
+    );
 
     const allowedFieldsIds = form.attributes.map((attribute) =>
       attribute.id.toString(),
@@ -49,7 +64,7 @@ export class FormService {
 
     const missingRequiredFields = form.attributes
       .filter((attribute) => attribute.$extras.pivot_is_required === true)
-      .filter((attribute) => !(attribute.id in formSubmitDTO.attributes))
+      .filter((attribute) => !(attribute.id in attributes))
       .map((attribute) => ({
         id: attribute.id,
         name: attribute.name,
@@ -62,24 +77,41 @@ export class FormService {
       };
     }
 
-    const formFields = filterObjectFields(
-      formSubmitDTO.attributes,
-      allowedFieldsIds,
+    const formFields = filterObjectFields(attributes, allowedFieldsIds);
+
+    const transformedFormFields = await Promise.all(
+      Object.entries(formFields).map(async ([attributeId, value]) => {
+        if (fileAttributesIds.has(+attributeId)) {
+          const fileName = await this.fileService.storeFile(
+            value as MultipartFile,
+          );
+
+          if (fileName === undefined) {
+            throw new Exception("Error while saving a file");
+          }
+
+          return {
+            attributeId: +attributeId,
+            value: fileName,
+          };
+        }
+
+        return {
+          attributeId: +attributeId,
+          value: value as string,
+        };
+      }),
     );
 
-    const transformedFormFields = Object.entries(formFields).map(
-      ([key, value]) => ({ attributeId: +key, value: value as string }),
-    );
-
-    if (formSubmitDTO.email !== undefined) {
+    if (participantEmail !== undefined) {
       await this.participantService.createParticipant(event.id, {
-        email: formSubmitDTO.email,
+        email: participantEmail,
         participantAttributes: transformedFormFields,
       });
-    } else if (formSubmitDTO.participantSlug !== undefined) {
+    } else if (participantSlug !== undefined) {
       const participant = await Participant.findByOrFail(
         "slug",
-        formSubmitDTO.participantSlug,
+        participantSlug,
       );
       await this.participantService.updateParticipant(
         event.id,

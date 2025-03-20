@@ -51,21 +51,22 @@ export const updateFormValidator = vine.compile(
 );
 
 export const formSubmitValidator = vine.compile(
-  vine.object({
-    email: vine
-      .string()
-      .email()
-      .unique(
-        async (db, value, field) =>
-          (await db
-            .from("participants")
-            .where("email", value)
-            .andWhere("event_id", +field.meta.eventId)
-            .first()) === null,
-      )
-      .optional()
-      .requiredIfMissing("participantSlug"),
-    participantSlug: vine.string().optional().requiredIfMissing("email"),
-    attributes: vine.object({}).allowUnknownProperties(),
-  }),
+  vine
+    .object({
+      email: vine
+        .string()
+        .email()
+        .unique(
+          async (db, value, field) =>
+            (await db
+              .from("participants")
+              .where("email", value)
+              .andWhere("event_id", +field.meta.eventId)
+              .first()) === null,
+        )
+        .optional()
+        .requiredIfMissing("participantSlug"),
+      participantSlug: vine.string().optional().requiredIfMissing("email"),
+    })
+    .allowUnknownProperties(),
 );
