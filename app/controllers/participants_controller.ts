@@ -148,15 +148,26 @@ export default class ParticipantsController {
     const eventId = +params.eventId;
     const participantId = +params.id;
 
+    // console.warn("lol")
+
     const updateParticipantDTO = await request.validateUsing(
       participantsUpdateValidator,
     );
+
+    // console.warn("updateParticipantDTO")
+    // console.warn(updateParticipantDTO)
 
     const updatedParticipant = await this.participantService.updateParticipant(
       eventId,
       participantId,
       updateParticipantDTO,
     );
+
+    // console.warn("updatedParticipant")
+    // console.warn(updatedParticipant)
+
+    // console.warn("updatedParticipant.attributes")
+    // console.warn(updatedParticipant.attributes)
 
     const transformedUpdatedParticipant = {
       id: updatedParticipant.id,
@@ -171,6 +182,8 @@ export default class ParticipantsController {
       created_at:
         updatedParticipant.createdAt?.toFormat("yyyy-MM-dd HH:mm:ss") ?? null,
     };
+
+    // console.warn(transformedUpdatedParticipant)
 
     return transformedUpdatedParticipant;
   }
