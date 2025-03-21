@@ -24,3 +24,6 @@ yarn-error.log
 # Platform specific
 .DS_Store
 
+# Public files
+public/*.*
+!public/.gitkeep
