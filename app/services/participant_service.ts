@@ -44,6 +44,12 @@ export class ParticipantService {
 
     await participant.load("attributes");
 
+    await EmailService.sendOnTrigger(
+      event,
+      participant,
+      "participant_registered",
+    );
+
     return participant;
   }
 

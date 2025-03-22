@@ -115,11 +115,6 @@ export class FormService {
       await EmailService.sendOnTrigger(
         event,
         participant,
-        "participant_registered",
-      );
-      await EmailService.sendOnTrigger(
-        event,
-        participant,
         "form_filled",
         form.id,
       );
