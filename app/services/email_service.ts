@@ -38,7 +38,7 @@ export class EmailService {
     event: Event,
     participant: Participant,
     email: Email,
-    sendBy: string = "system",
+    sendBy = "system",
   ) {
     await participant
       .related("emails")
@@ -46,6 +46,7 @@ export class EmailService {
     await participant.load("attributes", (q) => q.pivotColumns(["value"]));
     await event.load("mainOrganizer");
 
+    // use sendLater if you want to send emails in the background
     await mail.send(async (message) => {
       message
         .to(participant.email)
@@ -66,7 +67,7 @@ export class EmailService {
   static parseContent(event: Event, participant: Participant, email: Email) {
     const content = email.content;
     let parsedContent = content
-      .replace(new RegExp("/event_name"), event.name)
+      .replace(/\/event_name/g, event.name)
       .replace(
         /\/event_start_date/g,
         event.startDate.toFormat("yyyy-MM-dd HH:mm"),
@@ -89,7 +90,7 @@ export class EmailService {
     for (const attribute of participant.attributes) {
       parsedContent = parsedContent.replace(
         new RegExp(`/participant_${attribute.slug}`, "g"),
-        attribute.$extras.pivot_value,
+        attribute.$extras.pivot_value as string,
       );
     }
 

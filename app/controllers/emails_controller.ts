@@ -153,7 +153,7 @@ export default class EmailsController {
       .firstOrFail();
     const participants = await Participant.query()
       .whereIn("id", request.input("participants") as number[])
-      .where("event_id", params.eventId);
+      .where("event_id", event.id);
 
     for (const participant of participants) {
       await EmailService.sendToParticipant(
