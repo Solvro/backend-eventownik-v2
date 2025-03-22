@@ -2,12 +2,14 @@ import { DateTime } from "luxon";
 
 import {
   BaseModel,
+  belongsTo,
   column,
   hasMany,
   hasOne,
   manyToMany,
 } from "@adonisjs/lucid/orm";
 import type {
+  BelongsTo,
   HasMany,
   HasOne,
   ManyToMany,
@@ -57,6 +59,9 @@ export default class Event extends BaseModel {
   declare primaryColor: string | null;
 
   @column()
+  declare contactEmail: string | null;
+
+  @column()
   declare organizer: string | null;
 
   @column()
@@ -80,6 +85,11 @@ export default class Event extends BaseModel {
     pivotTimestamps: true,
   })
   declare admins: ManyToMany<typeof Admin>;
+
+  @belongsTo(() => Admin, {
+    foreignKey: "organizerId",
+  })
+  declare mainOrganizer: BelongsTo<typeof Admin>;
 
   @manyToMany(() => Permission, {
     pivotTable: "admin_permissions",

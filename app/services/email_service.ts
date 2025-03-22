@@ -44,15 +44,16 @@ export class EmailService {
       .related("emails")
       .attach({ [email.id]: { status: "pending", send_by: sendBy } });
     await participant.load("attributes", (q) => q.pivotColumns(["value"]));
+    await event.load("mainOrganizer");
 
     await mail.send(async (message) => {
       message
         .to(participant.email)
-        .from("solvro@eventownik.pl", event.name)
+        .from(event.contactEmail ?? "eventownik@solvro.pl", event.name)
         .subject(email.name)
-        // .replyTo(event.contactEmail)
+        .replyTo(event.contactEmail ?? event.mainOrganizer.email)
         .html(this.parseContent(event, participant, email));
-      console.log(this.parseContent(event, participant, email));
+
       await participant
         .related("emails")
         .sync(
