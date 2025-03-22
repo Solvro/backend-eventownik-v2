@@ -61,6 +61,7 @@ router
             router.resource("attributes", AttributesController).apiOnly();
             router.resource("blocks", BlocksController).apiOnly();
             router.resource("emails", EmailsController).apiOnly();
+            router.post("emails/send/:emailId", [EmailsController, "send"]);
             router.resource("forms", FormsController).apiOnly();
             router.resource("organizers", OrganizersController).apiOnly();
             // Participants/export and participants/import must be defined before the resource route

@@ -2,6 +2,8 @@ import { HttpContext } from "@adonisjs/core/http";
 
 import Email from "#models/email";
 import Event from "#models/event";
+import Participant from "#models/participant";
+import { EmailService } from "#services/email_service";
 import {
   emailsStoreValidator,
   emailsUpdateValidator,
@@ -130,5 +132,38 @@ export default class EmailsController {
     await email.delete();
 
     return { message: "Email successfully deleted" };
+  }
+
+  /**
+   * @send
+   * @operationId sendEmail
+   * @description Send an email to a list of participants.
+   * @requestBody { "participants": [1, 2, 3] }
+   * @tag emails
+   * @responseBody 200 - { message: "Emails successfully sent"}
+   */
+  async send({ params, request, bouncer, auth }: HttpContext) {
+    const emailId = Number(params.emailId);
+    const event = await Event.findOrFail(params.eventId);
+    await bouncer.authorize("manage_email", event);
+
+    const email = await Email.query()
+      .where("event_id", event.id)
+      .where("id", emailId)
+      .firstOrFail();
+    const participants = await Participant.query()
+      .whereIn("id", request.input("participants") as number[])
+      .where("event_id", params.eventId);
+
+    for (const participant of participants) {
+      await EmailService.sendToParticipant(
+        event,
+        participant,
+        email,
+        `${auth.user?.firstName} ${auth.user?.lastName}`,
+      );
+    }
+
+    return { message: "Emails successfully sent" };
   }
 }
