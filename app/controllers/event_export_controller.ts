@@ -7,7 +7,6 @@ import type { HttpContext } from "@adonisjs/core/http";
 import app from "@adonisjs/core/services/app";
 
 import Event from "#models/event";
-import Participant from "#models/participant";
 import { AttributeService } from "#services/attribute_service";
 import env from "#start/env";
 
@@ -48,11 +47,9 @@ export default class EventExportController {
       ...attributesColumns,
     ];
 
-    const sortedParticipants = event.participants
-      .map((participant) => {
-        return { id: participant.id, email: participant.email };
-      })
-      .sort((p1, p2) => p1.id - p2.id);
+    const sortedParticipants = event.participants.sort(
+      (p1, p2) => p1.id - p2.id,
+    );
 
     sheet.getColumn("participants_id").values = ["ID"].concat(
       sortedParticipants.map((participant) => participant.id.toString()),
@@ -61,23 +58,12 @@ export default class EventExportController {
       sortedParticipants.map((participant) => participant.email),
     );
 
-    const participantsAttributes = await Promise.all(
-      sortedParticipants.map(async (participant) => {
-        const participantAttributes = await Participant.query()
-          .where("id", participant.id)
-          .preload("attributes")
-          .firstOrFail();
-
-        return participantAttributes;
-      }),
-    );
-
     for (const attribute of attributesColumns) {
       const attributeValues: string[] = [];
 
       attributeValues.push(attribute.header);
 
-      for (const participantWithAttributes of participantsAttributes) {
+      for (const participantWithAttributes of sortedParticipants) {
         const foundAttribute = participantWithAttributes.attributes.find(
           (participantAttribute) => participantAttribute.name === attribute.key,
         );
