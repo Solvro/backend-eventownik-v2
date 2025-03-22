@@ -5,6 +5,7 @@ import {
   CreateParticipantDTO,
   UpdateParticipantDTO,
 } from "../types/participant_types.js";
+import { EmailService } from "./email_service.js";
 
 export class ParticipantService {
   async createParticipant(
@@ -23,12 +24,20 @@ export class ParticipantService {
       participantAttributes !== undefined &&
       participantAttributes.length > 0
     ) {
-      const transformedAttributes = Object.fromEntries(
-        participantAttributes.map((participantAttribute) => [
-          participantAttribute.attributeId,
-          { value: participantAttribute.value },
-        ]),
-      );
+      const transformedAttributes: Record<number, { value: string }> = [];
+
+      for (const attribute of participantAttributes) {
+        await EmailService.sendOnTrigger(
+          event,
+          participant,
+          "attribute_changed",
+          attribute.attributeId,
+          attribute.value,
+        );
+        transformedAttributes[attribute.attributeId] = {
+          value: attribute.value,
+        };
+      }
 
       await participant.related("attributes").attach(transformedAttributes);
     }
@@ -50,6 +59,8 @@ export class ParticipantService {
       .andWhere("event_id", eventId)
       .firstOrFail();
 
+    const event = await Event.findOrFail(eventId);
+
     participant.merge(updates);
     await participant.save();
 
@@ -57,12 +68,20 @@ export class ParticipantService {
       participantAttributes !== undefined &&
       participantAttributes.length > 0
     ) {
-      const transformedAttributes = Object.fromEntries(
-        participantAttributes.map((participantAttribute) => [
-          participantAttribute.attributeId,
-          { value: participantAttribute.value },
-        ]),
-      );
+      const transformedAttributes: Record<number, { value: string }> = [];
+
+      for (const attribute of participantAttributes) {
+        await EmailService.sendOnTrigger(
+          event,
+          participant,
+          "attribute_changed",
+          attribute.attributeId,
+          attribute.value,
+        );
+        transformedAttributes[attribute.attributeId] = {
+          value: attribute.value,
+        };
+      }
 
       await participant
         .related("attributes")

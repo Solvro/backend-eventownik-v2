@@ -8,6 +8,7 @@ import Participant from "#models/participant";
 
 import { FormSubmitDTO } from "../types/form_types.js";
 import { filterObjectFields } from "../utils/filter_object_fields.js";
+import { EmailService } from "./email_service.js";
 import { FileService } from "./file_service.js";
 import { ParticipantService } from "./participant_service.js";
 
@@ -104,10 +105,24 @@ export class FormService {
     );
 
     if (participantEmail !== undefined) {
-      await this.participantService.createParticipant(event.id, {
-        email: participantEmail,
-        participantAttributes: transformedFormFields,
-      });
+      const participant = await this.participantService.createParticipant(
+        event.id,
+        {
+          email: participantEmail,
+          participantAttributes: transformedFormFields,
+        },
+      );
+      await EmailService.sendOnTrigger(
+        event,
+        participant,
+        "participant_registered",
+      );
+      await EmailService.sendOnTrigger(
+        event,
+        participant,
+        "form_filled",
+        form.id,
+      );
     } else if (participantSlug !== undefined) {
       const participant = await Participant.findByOrFail(
         "slug",
@@ -117,6 +132,12 @@ export class FormService {
         event.id,
         participant.id,
         { email: undefined, participantAttributes: transformedFormFields },
+      );
+      await EmailService.sendOnTrigger(
+        event,
+        participant,
+        "form_filled",
+        form.id,
       );
     }
   }
