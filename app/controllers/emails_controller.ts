@@ -13,7 +13,7 @@ export default class EmailsController {
    * @operationId listEmails
    * @description Retrieve a list of emails for a specific event without content, along with their sending status.
    * @tag emails
-   * @responseBody 200 - [ { "id": 1, "eventId": 5, "name": "test124", "trigger": "participant_registered", "triggerValue": "", "createdAt": "2025-02-22T19:13:10.471+00:00", "updatedAt": "2025-02-22T19:13:10.471+00:00", "meta": { "failedCount": "1", "pendingCount": "1", "sentCount": "0" } } ]
+   * @responseBody 200 - [ { "id": 1, "eventId": 5, "name": "test124", "trigger": "participant_registered", "triggerValue": "", "triggerValue2": "", "createdAt": "2025-02-22T19:13:10.471+00:00", "updatedAt": "2025-02-22T19:13:10.471+00:00", "meta": { "failedCount": "1", "pendingCount": "1", "sentCount": "0" } } ]
    */
   async index({ params, bouncer }: HttpContext) {
     const eventId = Number(params.eventId);
@@ -26,6 +26,7 @@ export default class EmailsController {
         "name",
         "trigger",
         "trigger_value",
+        "trigger_value_2",
         "created_at",
         "updated_at",
       ])
@@ -47,7 +48,7 @@ export default class EmailsController {
    * @operationId getEmail
    * @description Retrieve details of a specific email linked to an event.
    * @tag emails
-   * @responseBody 200 - { "id": 1, "eventId": 5, "name": "test124", "content": "uuuu", "trigger": "participant_registered", "triggerValue": "eeee", "createdAt": "2025-02-22T19:13:10.471+00:00", "updatedAt": "2025-02-22T19:13:10.471+00:00", "participants": [ { "id": 4, "email": "dasd", "eventId": 5, "firstName": "fdf", "lastName": "fddfd", "createdAt": "2025-02-22T19:13:10.471+00:00", "updatedAt":  "2025-02-22T19:13:10.471+00:00", "meta": { "pivot_status": "failed", "pivot_email_id": 1, "pivot_participant_id": 4, "pivot_send_at":  "2025-02-22T19:13:10.471+00:00", "pivot_send_by":  "2025-02-22T19:13:10.471+00:00" } }, { "id": 4, "email": "dasd", "eventId": 5, "firstName": "fdf", "lastName": "fddfd", "createdAt":  "2025-02-22T19:13:10.471+00:00", "updatedAt":  "2025-02-22T19:13:10.471+00:00", "meta": { "pivot_status": "pending", "pivot_email_id": 1, "pivot_participant_id": 4, "pivot_send_at":  "2025-02-22T19:13:10.471+00:00", "pivot_send_by":  "2025-02-22T19:13:10.471+00:00" } } ] }
+   * @responseBody 200 - { "id": 1, "eventId": 5, "name": "test124", "content": "uuuu", "trigger": "participant_registered", "triggerValue": "eeee", "triggerValue2": "", "createdAt": "2025-02-22T19:13:10.471+00:00", "updatedAt": "2025-02-22T19:13:10.471+00:00", "participants": [ { "id": 4, "email": "dasd", "eventId": 5, "firstName": "fdf", "lastName": "fddfd", "createdAt": "2025-02-22T19:13:10.471+00:00", "updatedAt":  "2025-02-22T19:13:10.471+00:00", "meta": { "pivot_status": "failed", "pivot_email_id": 1, "pivot_participant_id": 4, "pivot_send_at":  "2025-02-22T19:13:10.471+00:00", "pivot_send_by":  "2025-02-22T19:13:10.471+00:00" } }, { "id": 4, "email": "dasd", "eventId": 5, "firstName": "fdf", "lastName": "fddfd", "createdAt":  "2025-02-22T19:13:10.471+00:00", "updatedAt":  "2025-02-22T19:13:10.471+00:00", "meta": { "pivot_status": "pending", "pivot_email_id": 1, "pivot_participant_id": 4, "pivot_send_at":  "2025-02-22T19:13:10.471+00:00", "pivot_send_by":  "2025-02-22T19:13:10.471+00:00" } } ] }
    * @responseBody 404 - {"message": "Email not found"}
    */
   async show({ params, bouncer }: HttpContext) {
