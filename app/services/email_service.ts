@@ -13,8 +13,8 @@ export class EmailService {
     event: Event,
     participant: Participant,
     trigger: EmailTriggerType,
-    triggerValue?: string | number,
-    triggerValue2?: string,
+    triggerValue?: string | number, // used for example as attribute id in trigger attribute_changed
+    triggerValue2?: string, // used for example as attribute value in trigger attribute_changed
   ) {
     const email = await Email.query()
       .where("event_id", event.id)
