@@ -58,7 +58,7 @@ export default class Attribute extends BaseModel {
   declare forms: ManyToMany<typeof Form>;
 
   @manyToMany(() => Participant, {
-    pivotTable: "participant_attribute",
+    pivotTable: "participant_attributes",
     pivotColumns: ["value"],
     pivotTimestamps: true,
   })
