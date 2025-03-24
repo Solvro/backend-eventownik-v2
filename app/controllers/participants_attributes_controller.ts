@@ -12,7 +12,7 @@ export default class ParticipantsAttributesController {
   constructor(private fileService: FileService) {}
 
   /**
-   * @downloadPhoto
+   * @downloadFile
    * @operationId downloadFile
    * @description Returns attribute file
    * @tag attributes
