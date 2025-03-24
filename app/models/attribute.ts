@@ -52,7 +52,7 @@ export default class Attribute extends BaseModel {
 
   @manyToMany(() => Form, {
     pivotTable: "form_definition",
-    pivotColumns: ["is_editable"],
+    pivotColumns: ["is_editable", "is_required"],
     pivotTimestamps: true,
   })
   declare forms: ManyToMany<typeof Form>;

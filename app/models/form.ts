@@ -59,7 +59,7 @@ export default class Form extends BaseModel {
 
   @manyToMany(() => Attribute, {
     pivotTable: "form_definitions",
-    pivotColumns: ["is_editable"],
+    pivotColumns: ["is_editable", "is_required"],
     pivotTimestamps: true,
   })
   declare attributes: ManyToMany<typeof Attribute>;
@@ -67,5 +67,17 @@ export default class Form extends BaseModel {
   @beforeCreate()
   static afterSlug(form: Form) {
     form.slug = randomUUID();
+  }
+
+  serializeExtras() {
+    return {
+      attributes: this.attributes.map((attribute) => ({
+        ...attribute.toJSON(),
+        pivot_is_editable: (attribute.$extras as { pivot_is_editable: boolean })
+          .pivot_is_editable,
+        pivot_is_required: (attribute.$extras as { pivot_is_required: boolean })
+          .pivot_is_required,
+      })),
+    };
   }
 }
