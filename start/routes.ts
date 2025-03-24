@@ -11,6 +11,8 @@ const BlocksController = () => import("#controllers/blocks_controller");
 const EventController = () => import("#controllers/events_controller");
 const ParticipantsController = () =>
   import("#controllers/participants_controller");
+const ParticipantsAttributesController = () =>
+  import("#controllers/participants_attributes_controller");
 const AuthController = () => import("#controllers/auth_controller");
 const PermissionsController = () =>
   import("#controllers/permissions_controller");
@@ -68,6 +70,10 @@ router
             // Otherwise, the words "export" and "import" will be treated as ids
             router.get("participants/export", [EventExportController]);
             router.post("participants/import", [EventImportController]);
+            router.get("participants/:participantId/attributes/:attributeId", [
+              ParticipantsAttributesController,
+              "downloadFile",
+            ]);
             router.resource("participants", ParticipantsController).apiOnly();
           })
           .prefix("events/:eventId");
