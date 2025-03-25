@@ -27,6 +27,7 @@ export const createAttributeSchema = vine.object({
     "date",
     "time",
     "datetime",
+    "multiselect",
     "email",
     "tel",
     "color",
