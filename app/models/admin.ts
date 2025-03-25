@@ -47,6 +47,7 @@ export default class Admin extends compose(BaseModel, AuthFinder) {
   declare permissions: ManyToMany<typeof Permission>;
 
   @manyToMany(() => Event, {
+    onQuery: (query) => query.distinctOn("event_id"),
     pivotTable: "admin_permissions",
     pivotColumns: ["permission_id"],
     pivotTimestamps: true,
