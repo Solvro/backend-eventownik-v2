@@ -53,6 +53,7 @@ export const UpdateAttributeSchema = vine.object({
           .from("attributes")
           .where("slug", string.slug(value, { lower: true }))
           .andWhere("event_id", +field.meta.eventId)
+          .andWhereNot("id", +field.meta.attributeId)
           .first()) === null,
     )
     .transform((value) => string.slug(value, { lower: true }))

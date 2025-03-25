@@ -94,7 +94,7 @@ export default class AttributesController {
     await bouncer.authorize("manage_setting", await Event.findOrFail(eventId));
 
     const updates = await request.validateUsing(updateAttributeValidator, {
-      meta: { eventId },
+      meta: { eventId, attributeId },
     });
 
     const updatedAttribute = this.attributeService.updateAttribute(
