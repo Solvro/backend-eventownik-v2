@@ -8,8 +8,8 @@ export default class BlocksController {
    * @index
    * @operationId getBlocks
    * @description Return a list of all blocks.
-   * @responseBody 200 - <Block[]>.paginated()
    * @tag blocks
+   * @responseBody 200 - <Block[]>.paginated()
    */
 
   async index({ request }: HttpContext) {
@@ -23,9 +23,9 @@ export default class BlocksController {
    * @show
    * @operationId showBlock
    * @description Return a block with given ID.
+   * @tag blocks
    * @responseBody 200 - <Block>
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
-   * @tag blocks
    */
 
   async show({ params }: HttpContext) {
@@ -40,28 +40,28 @@ export default class BlocksController {
   /**
    * @store
    * @operationId storeBlock
-   * @summary Store a new block
    * @description Store a new block. Note: parentId can be null.
-   * @requestBody <createBlockValidator>
-   * @responseBody 200 - <Block>
    * @tag blocks
+   * @summary Store a new block
+   * @requestBody <createBlockValidator>
+   * @responseBody 201 - <Block>
    */
 
-  async store({ request }: HttpContext) {
+  async store({ request, response }: HttpContext) {
     const data = await createBlockValidator.validate(request.all());
     const block = await Block.create(data);
 
-    return { message: "Block successfully created.", block };
+    return response.created(block);
   }
 
   /**
    * @update
    * @operationId updateBlock
    * @description Updates a block with given ID
+   * @tag blocks
    * @requestBody <updateBlockValidator>
    * @responseBody 200 - <Block>
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
-   * @tag blocks
    */
 
   async update({ params, request }: HttpContext) {
@@ -70,22 +70,23 @@ export default class BlocksController {
     block.merge(data);
     await block.save();
 
-    return { message: "Block successfully updated.", block };
+    return block;
   }
 
   /**
    * @destroy
    * @operationId destroyBlock
    * @description Destroys a block with given ID
+   * @tag blocks
    * @responseBody 200 - { "message": "Block successfully deleted." }
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
-   * @tag blocks
    */
 
-  async destroy(ctx: HttpContext) {
-    const block = await this.show(ctx);
+  async destroy({ params, response }: HttpContext) {
+    const block = await Block.findOrFail(params.id);
     await block.delete();
+    await block.related("children").query().delete();
 
-    return { message: "Block successfully deleted." };
+    return response.noContent();
   }
 }
