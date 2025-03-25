@@ -81,10 +81,11 @@ export const updateEventValidator = vine.compile(
     slug: vine
       .string()
       .unique(
-        async (db, value) =>
+        async (db, value, field) =>
           (await db
             .from("events")
             .where("slug", string.slug(value, { lower: true }))
+            .whereNot("id", +field.meta.eventId)
             .first()) === null,
       )
       .use(slugMinLength(3))

@@ -126,8 +126,12 @@ export default class EventController {
 
     await bouncer.authorize("manage_setting", event);
 
-    const { photo, ...eventData } =
-      await request.validateUsing(updateEventValidator);
+    const { photo, ...eventData } = await request.validateUsing(
+      updateEventValidator,
+      {
+        meta: { eventId: event.id },
+      },
+    );
 
     let photoUrl: string | null | undefined;
     const photoStoragePath = env.get("PHOTO_STORAGE_URL", "public");
