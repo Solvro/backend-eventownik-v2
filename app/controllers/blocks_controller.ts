@@ -78,7 +78,7 @@ export default class BlocksController {
    * @operationId destroyBlock
    * @description Destroys a block with given ID
    * @tag blocks
-   * @responseBody 200 - { "message": "Block successfully deleted." }
+   * @responseBody 204 - No content
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
 
