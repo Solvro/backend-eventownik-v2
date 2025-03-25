@@ -1,5 +1,6 @@
 import { inject } from "@adonisjs/core";
 import { HttpContext } from "@adonisjs/core/http";
+import db from "@adonisjs/lucid/services/db";
 
 import Admin from "#models/admin";
 import { OrganizerService } from "#services/organizer_service";
@@ -105,6 +106,10 @@ export default class OrganizersController {
     const eventId = +params.eventId;
     const organizerId = +params.id;
 
-    await this.organizerService.removeOrganizer(organizerId, eventId);
+    await db
+      .from("admin_permissions")
+      .where("admin_id", organizerId)
+      .where("event_id", eventId)
+      .delete();
   }
 }
