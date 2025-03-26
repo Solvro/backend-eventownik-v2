@@ -267,11 +267,9 @@ export default class FormsController {
     const eventSlug = params.eventSlug as string;
     const formSlug = params.formSlug as string;
 
-    const event = await Event.findByOrFail("slug", eventSlug);
-
     const form = await Form.query()
-      .where("event_id", event.id)
       .where("slug", formSlug)
+      .whereHas("event", (q) => q.where("slug", eventSlug))
       .preload("attributes")
       .firstOrFail();
 
