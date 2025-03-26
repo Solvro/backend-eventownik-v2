@@ -73,9 +73,9 @@ export default class Form extends BaseModel {
     return {
       attributes: this.attributes.map((attribute) => ({
         ...attribute.toJSON(),
-        pivotIsEditable: (attribute.$extras as { pivot_is_editable: boolean })
+        isEditable: (attribute.$extras as { pivot_is_editable: boolean })
           .pivot_is_editable,
-        pivotIsRequired: (attribute.$extras as { pivot_is_required: boolean })
+        isRequired: (attribute.$extras as { pivot_is_required: boolean })
           .pivot_is_required,
       })),
     };
