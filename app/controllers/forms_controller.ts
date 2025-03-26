@@ -254,4 +254,27 @@ export default class FormsController {
 
     return response.created();
   }
+
+  /**
+   *  @showBySlug
+   * @operationId getFormBySlug
+   * @description Returns a form by slug
+   * @tag forms
+   * @responseBody 200 - <Form>.with(relations, attributes).exclude(event)
+   * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
+   */
+  public async showBySlug({ params }: HttpContext) {
+    const eventSlug = params.eventSlug as string;
+    const formSlug = params.formSlug as string;
+
+    const event = await Event.findByOrFail("slug", eventSlug);
+
+    const form = await Form.query()
+      .where("event_id", event.id)
+      .where("slug", formSlug)
+      .preload("attributes")
+      .firstOrFail();
+
+    return form;
+  }
 }

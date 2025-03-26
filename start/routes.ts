@@ -37,20 +37,22 @@ router.get("/docs", async () => {
 router
   .group(() => {
     router
-      .get("events/:eventSlug", [EventController, "publicShow"])
-      .where("eventSlug", router.matchers.slug());
-    router
       .group(() => {
+        router.get("", [EventController, "publicShow"]);
+        router.get("forms/:formSlug", [FormsController, "showBySlug"]);
         router
-          .get("participants/:participantSlug", [
-            PublicParticipantsController,
-            "index",
-          ])
-          .as("publicParticipants");
+          .group(() => {
+            router
+              .get("participants/:participantSlug", [
+                PublicParticipantsController,
+                "index",
+              ])
+              .as("publicParticipants");
+          })
+          .use(middleware.participantAuth());
       })
       .prefix("events/:eventSlug")
-      .where("eventSlug", router.matchers.slug())
-      .use(middleware.participantAuth());
+      .where("eventSlug", router.matchers.slug());
 
     router
       .group(() => {
