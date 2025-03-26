@@ -39,7 +39,9 @@ router
     router
       .group(() => {
         router.get("", [EventController, "publicShow"]);
-        router.get("forms/:formSlug", [FormsController, "showBySlug"]);
+        router
+          .get("forms/:formSlug", [FormsController, "showBySlug"])
+          .where("formSlug", router.matchers.slug());
         router
           .group(() => {
             router
