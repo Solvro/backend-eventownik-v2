@@ -85,10 +85,14 @@ export default class FormsController {
           acc[attribute.id] = {
             is_required: attribute.isRequired,
             is_editable: attribute.isEditable,
+            order: attribute.order,
           };
           return acc;
         },
-        {} as Record<number, { is_required?: boolean; is_editable?: boolean }>,
+        {} as Record<
+          number,
+          { is_required?: boolean; is_editable?: boolean; order?: number }
+        >,
       ),
     );
 
@@ -169,12 +173,13 @@ export default class FormsController {
             acc[attribute.id] = {
               is_required: attribute.isRequired,
               is_editable: attribute.isEditable,
+              order: attribute.order,
             };
             return acc;
           },
           {} as Record<
             number,
-            { is_required?: boolean; is_editable?: boolean }
+            { is_required?: boolean; is_editable?: boolean; order?: number }
           >,
         ),
       );
@@ -270,7 +275,9 @@ export default class FormsController {
     const form = await Form.query()
       .where("slug", formSlug)
       .whereHas("event", (q) => q.where("slug", eventSlug))
-      .preload("attributes")
+      .preload("attributes", (q) =>
+        q.pivotColumns(["is_editable", "is_required", "order"]),
+      )
       .firstOrFail();
 
     return form;

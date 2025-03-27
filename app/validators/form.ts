@@ -21,6 +21,7 @@ export const createFormValidator = vine.compile(
           id: vine.number(),
           isRequired: vine.boolean().optional(),
           isEditable: vine.boolean().optional(),
+          order: vine.number().optional(),
         }),
       )
       .minLength(1),
@@ -41,6 +42,7 @@ export const updateFormValidator = vine.compile(
           id: vine.number(),
           isRequired: vine.boolean().optional(),
           isEditable: vine.boolean().optional(),
+          order: vine.number().optional(),
         }),
       )
       .minLength(1)
