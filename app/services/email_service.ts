@@ -85,7 +85,8 @@ export class EmailService {
         /\/participant_updated_at/g,
         participant.updatedAt.toFormat("yyyy-MM-dd HH:mm"),
       )
-      .replace(/\/participant_email/g, participant.email);
+      .replace(/\/participant_email/g, participant.email)
+      .replace(/\/participant_slug/g, participant.slug);
 
     for (const attribute of participant.attributes) {
       parsedContent = parsedContent.replace(
