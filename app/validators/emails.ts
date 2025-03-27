@@ -28,7 +28,13 @@ export const emailsUpdateValidator = vine.compile(
     name: vine.string().optional(),
     content: vine.string().optional(),
     trigger: vine
-      .enum(["participant_registered", "form_filled", "attribute_changed"])
+      .enum([
+        "participant_registered",
+        "participant_deleted",
+        "form_filled",
+        "attribute_changed",
+        "manual",
+      ])
       .optional(),
     triggerValue: vine
       .string()
