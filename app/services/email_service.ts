@@ -50,7 +50,7 @@ export class EmailService {
     await mail.send(async (message) => {
       message
         .to(participant.email)
-        .from(event.contactEmail ?? "eventownik@solvro.pl", event.name)
+        .from("eventownik@solvro.pl", event.name)
         .subject(email.name)
         .replyTo(event.contactEmail ?? event.mainOrganizer.email)
         .html(this.parseContent(event, participant, email));
