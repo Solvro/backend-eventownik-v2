@@ -24,7 +24,7 @@ export default class ParticipantsController {
    */
   async index({ params }: HttpContext) {
     const participants = await Participant.query()
-      .select("id", "email", "slug")
+      .select("id", "email", "slug", "created_at")
       .where("event_id", params.eventId as number)
       .preload("attributes", (attributesQuery) =>
         attributesQuery
@@ -44,7 +44,7 @@ export default class ParticipantsController {
           slug: attribute.slug,
           value: attribute.$extras.pivot_value as string,
         })),
-        created_at:
+        createdAt:
           participant.createdAt?.toFormat("yyyy-MM-dd HH:mm:ss") ?? null,
       };
     });
@@ -93,7 +93,7 @@ export default class ParticipantsController {
     }
 
     const participant = await Participant.query()
-      .select("id", "email", "slug")
+      .select("id", "email", "slug", "created_at")
       .where("id", +params.id)
       .andWhere("event_id", +params.eventId)
       .preload("attributes", (attributesQuery) =>
@@ -113,8 +113,7 @@ export default class ParticipantsController {
       id: participant.id,
       email: participant.email,
       slug: participant.slug,
-      created_at:
-        participant.createdAt?.toFormat("yyyy-MM-dd HH:mm:ss") ?? null,
+      createdAt: participant.createdAt?.toFormat("yyyy-MM-dd HH:mm:ss") ?? null,
       attributes: participant.attributes.map((attribute) => ({
         id: attribute.id,
         name: attribute.name,
