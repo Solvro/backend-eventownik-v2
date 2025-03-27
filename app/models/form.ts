@@ -59,7 +59,7 @@ export default class Form extends BaseModel {
 
   @manyToMany(() => Attribute, {
     pivotTable: "form_definitions",
-    pivotColumns: ["is_editable", "is_required"],
+    pivotColumns: ["is_editable", "is_required", "order"],
     pivotTimestamps: true,
   })
   declare attributes: ManyToMany<typeof Attribute>;
@@ -77,6 +77,7 @@ export default class Form extends BaseModel {
           .pivot_is_editable,
         isRequired: (attribute.$extras as { pivot_is_required: boolean })
           .pivot_is_required,
+        order: (attribute.$extras as { pivot_order: number }).pivot_order,
       })),
     };
   }
