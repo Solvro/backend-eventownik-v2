@@ -195,15 +195,27 @@ export default class ParticipantsController {
     return response.noContent();
   }
 
+  /**
+   * @unregister
+   * @tag participants
+   * @summary Removes a participant from an event
+   * @description Removes a participant from an event
+   * @responseBody 204 - {}
+   * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
+   */
   async unregister({ params, response }: HttpContext) {
     const eventSlug = params.eventSlug as string;
     const participantSlug = params.participantSlug as string;
+
     const event = await Event.findByOrFail("slug", eventSlug);
+
     const participant = await Participant.query()
       .where("slug", participantSlug)
       .andWhere("event_id", event.id)
       .firstOrFail();
+
     await EmailService.sendOnTrigger(event, participant, "participant_deleted");
+
     await participant.delete();
 
     return response.noContent();
