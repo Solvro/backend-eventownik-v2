@@ -114,7 +114,7 @@ export default class ParticipantsController {
       id: participant.id,
       email: participant.email,
       slug: participant.slug,
-      createdAt: participant.createdAt?.toFormat("yyyy-MM-dd HH:mm:ss") ?? null,
+      createdAt: participant.createdAt.toFormat("yyyy-MM-dd HH:mm:ss"),
       attributes: participant.attributes.map((attribute) => ({
         id: attribute.id,
         name: attribute.name,
@@ -168,8 +168,7 @@ export default class ParticipantsController {
         slug: attribute.slug,
         value: attribute.$extras.pivot_value as string,
       })),
-      created_at:
-        updatedParticipant.createdAt?.toFormat("yyyy-MM-dd HH:mm:ss") ?? null,
+      created_at: updatedParticipant.createdAt.toFormat("yyyy-MM-dd HH:mm:ss"),
     };
 
     return transformedUpdatedParticipant;

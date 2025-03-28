@@ -239,10 +239,7 @@ export default class FormsController {
     // Transform attributes so that files work properly
     const transformedAttributes = Object.fromEntries(
       Object.entries(attributes).map(([key, value]) => {
-        if (
-          (value as { isMultipartFile?: boolean })?.isMultipartFile ??
-          false
-        ) {
+        if ((value as { isMultipartFile?: boolean }).isMultipartFile ?? false) {
           return [key, request.file(key)];
         }
 
