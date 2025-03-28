@@ -16,6 +16,7 @@ export default class EventImportController {
    * @summary Import participants
    * @operationId importEventSpreadsheet
    * @description Takes given spreadsheet and updates event with :eventId with provided values
+   * @tag participants
    * @paramPath eventId - ID of the event to be imported - @type(number) @required
    * @requestFormDataBody {"spreadsheet":{"type":"file:xlsx","format":"binary"}}
    * @responseBody 200 - {"eventId":"<number>","importedParticipants":"<Participant[]>"}
@@ -23,8 +24,10 @@ export default class EventImportController {
    * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    * @responseBody 500 - {"errors":[{ "message": "Could not process file" }]}
    */
-  public async handle({ params, request, response }: HttpContext) {
-    await Event.findOrFail(params.eventId);
+  public async handle({ params, request, response, bouncer }: HttpContext) {
+    const event = await Event.findOrFail(params.eventId);
+
+    await bouncer.authorize("manage_participant", event);
 
     const spreadsheetFile = request.file("spreadsheet");
 
