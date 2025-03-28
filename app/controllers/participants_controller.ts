@@ -195,23 +195,6 @@ export default class ParticipantsController {
     return response.noContent();
   }
 
-  async attachEmail({ params, request, response }: HttpContext) {
-    const participant = await Participant.findOrFail(params.id);
-
-    const emailId = request.input("email_id") as number;
-    const pivotData = request.only(["send_at", "send_by", "status"]) as {
-      send_at?: string;
-      send_by?: string;
-      status?: string;
-    };
-
-    // const email = await Email.findOrFail(emailId);
-
-    await participant.related("emails").attach({ [emailId]: pivotData });
-
-    return response.status(201).send({ message: "Email successfully sent" });
-  }
-
   async unregister({ params, response }: HttpContext) {
     const eventSlug = params.eventSlug as string;
     const participantSlug = params.participantSlug as string;
