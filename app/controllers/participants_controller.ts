@@ -44,8 +44,9 @@ export default class ParticipantsController {
           slug: attribute.slug,
           value: attribute.$extras.pivot_value as string,
         })),
-        createdAt:
-          participant.createdAt?.toFormat("yyyy-MM-dd HH:mm:ss") ?? null,
+        createdAt: participant.createdAt
+          .setZone("Europe/Warsaw")
+          .toFormat("yyyy-MM-dd HH:mm:ss"),
       };
     });
 
