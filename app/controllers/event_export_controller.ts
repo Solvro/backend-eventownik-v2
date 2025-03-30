@@ -7,6 +7,7 @@ import type { HttpContext } from "@adonisjs/core/http";
 import app from "@adonisjs/core/services/app";
 
 import Event from "#models/event";
+import Participant from "#models/participant";
 import { AttributeService } from "#services/attribute_service";
 import env from "#start/env";
 
@@ -50,9 +51,23 @@ export default class EventExportController {
       ...attributesColumns,
     ];
 
-    const sortedParticipants = event.participants.sort(
+    const queryParams = request.qs();
+
+    let sortedParticipants = event.participants.sort(
       (p1, p2) => p1.id - p2.id,
-    );
+    ) as Participant[];
+
+    if (queryParams.ids !== undefined) {
+      const participantsToFilter = (queryParams.ids as string[])
+        .filter((v) => v.trim() !== "")
+        .map((v) => Number(v))
+        .filter((v) => !Number.isNaN(v));
+
+      sortedParticipants = sortedParticipants.filter(
+        (participant) =>
+          participantsToFilter.findIndex((id) => id === participant.id) === -1,
+      );
+    }
 
     sheet.getColumn("participants_id").values = ["ID"].concat(
       sortedParticipants.map((participant) => participant.id.toString()),
