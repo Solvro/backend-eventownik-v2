@@ -58,7 +58,11 @@ export default class EventExportController {
     ) as Participant[];
 
     if (queryParams.ids !== undefined) {
-      const participantsToFilter = (queryParams.ids as string[])
+      const participantsToFilter = (
+        typeof queryParams.ids === "string"
+          ? queryParams.ids.split(",")
+          : (queryParams.ids as string[])
+      )
         .filter((v) => v.trim() !== "")
         .map((v) => Number(v))
         .filter((v) => !Number.isNaN(v));
