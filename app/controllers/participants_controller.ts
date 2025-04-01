@@ -1,9 +1,7 @@
 import { inject } from "@adonisjs/core";
 import { HttpContext } from "@adonisjs/core/http";
 
-import Event from "#models/event";
 import Participant from "#models/participant";
-import { EmailService } from "#services/email_service";
 import { ParticipantService } from "#services/participant_service";
 import {
   participantsStoreValidator,
@@ -206,16 +204,7 @@ export default class ParticipantsController {
     const eventSlug = params.eventSlug as string;
     const participantSlug = params.participantSlug as string;
 
-    const event = await Event.findByOrFail("slug", eventSlug);
-
-    const participant = await Participant.query()
-      .where("slug", participantSlug)
-      .andWhere("event_id", event.id)
-      .firstOrFail();
-
-    await EmailService.sendOnTrigger(event, participant, "participant_deleted");
-
-    await participant.delete();
+    await this.participantService.unregister(participantSlug, eventSlug);
 
     return response.noContent();
   }

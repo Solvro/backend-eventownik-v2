@@ -107,4 +107,17 @@ export class ParticipantService {
 
     return updatedParticipant;
   }
+
+  async unregister(participantSlug: string, eventSlug: string) {
+    const event = await Event.findByOrFail("slug", eventSlug);
+
+    const participant = await Participant.query()
+      .where("slug", participantSlug)
+      .andWhere("event_id", event.id)
+      .firstOrFail();
+
+    await EmailService.sendOnTrigger(event, participant, "participant_deleted");
+
+    await participant.delete();
+  }
 }
