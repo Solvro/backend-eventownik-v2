@@ -78,6 +78,10 @@ router
               ParticipantsAttributesController,
               "downloadFile",
             ]);
+            router.delete("participants", [
+              ParticipantsController,
+              "unregisterMany",
+            ]);
             router.resource("participants", ParticipantsController).apiOnly();
           })
           .prefix("events/:eventId");

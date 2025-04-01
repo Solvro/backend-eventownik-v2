@@ -120,4 +120,25 @@ export class ParticipantService {
 
     await participant.delete();
   }
+
+  async unregisterMany(participantsToUnregisterIds: number[], eventId: number) {
+    const event = await Event.findOrFail(+eventId);
+
+    const participants = await Participant.query()
+      .whereIn("id", participantsToUnregisterIds)
+      .andWhere("event_id", event.id);
+
+    for (const participant of participants) {
+      await EmailService.sendOnTrigger(
+        event,
+        participant,
+        "participant_deleted",
+      );
+    }
+
+    await Participant.query()
+      .whereIn("id", participantsToUnregisterIds)
+      .andWhere("event_id", event.id)
+      .delete();
+  }
 }

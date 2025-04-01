@@ -6,6 +6,7 @@ import { ParticipantService } from "#services/participant_service";
 import {
   participantsStoreValidator,
   participantsUpdateValidator,
+  unregisterManyParticipantsValidator,
 } from "#validators/participants";
 
 @inject()
@@ -205,6 +206,30 @@ export default class ParticipantsController {
     const participantSlug = params.participantSlug as string;
 
     await this.participantService.unregister(participantSlug, eventSlug);
+
+    return response.noContent();
+  }
+
+  /**
+   * @unregisterMany
+   * @tag participants
+   * @summary Removes many participants from an event
+   * @description Removes many participants from an event
+   * @requestBody <unregisterManyParticipantsValidator>
+   * @responseBody 204 - {}
+   * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
+   */
+  async unregisterMany({ params, request, response }: HttpContext) {
+    const eventId = +params.eventId;
+
+    const { participantsToUnregisterIds } = await request.validateUsing(
+      unregisterManyParticipantsValidator,
+    );
+
+    await this.participantService.unregisterMany(
+      participantsToUnregisterIds,
+      eventId,
+    );
 
     return response.noContent();
   }

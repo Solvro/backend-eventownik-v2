@@ -27,3 +27,9 @@ export const participantsUpdateValidator = vine.compile(
       .optional(),
   }),
 );
+
+export const unregisterManyParticipantsValidator = vine.compile(
+  vine.object({
+    participantsToUnregisterIds: vine.array(vine.number()).minLength(1),
+  }),
+);
