@@ -26,10 +26,7 @@ export default class ParticipantsController {
       .select("id", "email", "slug", "created_at")
       .where("event_id", params.eventId as number)
       .preload("attributes", (attributesQuery) =>
-        attributesQuery
-          .select("id", "name", "slug")
-          .pivotColumns(["value"])
-          .where("show_in_list", true),
+        attributesQuery.select("id", "name", "slug").pivotColumns(["value"]),
       );
 
     const formattedParticipants = participants.map((participant) => {
@@ -97,10 +94,7 @@ export default class ParticipantsController {
       .where("id", +params.id)
       .andWhere("event_id", +params.eventId)
       .preload("attributes", (attributesQuery) =>
-        attributesQuery
-          .select("id", "name", "slug")
-          .pivotColumns(["value"])
-          .where("show_in_list", true),
+        attributesQuery.select("id", "name", "slug").pivotColumns(["value"]),
       )
       .preload("emails", (emailsQuery) =>
         emailsQuery
