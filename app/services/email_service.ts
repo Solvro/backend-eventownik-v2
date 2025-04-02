@@ -46,8 +46,7 @@ export class EmailService {
     await participant.load("attributes", (q) => q.pivotColumns(["value"]));
     await event.load("mainOrganizer");
 
-    // use sendLater if you want to send emails in the background
-    await mail.send(async (message) => {
+    await mail.sendLater(async (message) => {
       message
         .to(participant.email)
         .from("eventownik@solvro.pl", event.name)
