@@ -80,7 +80,7 @@ export default class ParticipantsController {
    * @tag participants
    * @summary Get a participant
    * @description Get a participant and sent emails for specific event
-   * @responseBody 200 - {"id": 1,"email":"john.doe@example.com", "created_at":"yyyy-MM-dd HH:mm:ss", "firstName": "John","lastName": "Doe","slug":"some-unique-slug","createdAt": "2025-02-18T00:56:06.115+01:00","updatedAt": "2025-02-18T00:56:06.115+01:00","emails":[{"id": 1,"name":"Welcome Email","content":"Welcome to our event!","participantEmails":{"status":"sent","sendBy": "admin","sendAt": "2025-02-19T14:43:12.000+01:00"}         }     ] }
+   * @responseBody 200 - {"id": 1,"email":"john.doe@example.com", "created_at":"yyyy-MM-dd HH:mm:ss", "firstName": "John","lastName": "Doe","slug":"some-unique-slug","createdAt": "2025-02-18T00:56:06.115+01:00","updatedAt": "2025-02-18T00:56:06.115+01:00",    "attributes": [{"id": 25,"name": "Sample Attribute","value": "sample value","slug": "sample-slug"}], "emails":[{"id": 1,"name":"Welcome Email","content":"Welcome to our event!","participantEmails":{"status":"sent","sendBy": "admin","sendAt": "2025-02-19T14:43:12.000+01:00"}  } ] }
    * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    */
   async show({ params, response }: HttpContext) {
