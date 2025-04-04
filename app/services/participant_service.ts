@@ -128,17 +128,10 @@ export class ParticipantService {
       .whereIn("id", participantsToUnregisterIds)
       .andWhere("event_id", event.id);
 
-    for (const participant of participants) {
-      await EmailService.sendOnTrigger(
-        event,
-        participant,
-        "participant_deleted",
-      );
-    }
-
-    await Participant.query()
-      .whereIn("id", participantsToUnregisterIds)
-      .andWhere("event_id", event.id)
-      .delete();
+    await Promise.all(
+      participants.map((participant) =>
+        this.unregister(participant.slug, event.slug),
+      ),
+    );
   }
 }
