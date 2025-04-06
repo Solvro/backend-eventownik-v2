@@ -86,6 +86,10 @@ router
               ParticipantsController,
               "unregisterMany",
             ]);
+            router.put("participants/bulk-update", [
+              ParticipantsAttributesController,
+              "bulkUpdate",
+            ]);
             router.resource("participants", ParticipantsController).apiOnly();
           })
           .prefix("events/:eventId");
