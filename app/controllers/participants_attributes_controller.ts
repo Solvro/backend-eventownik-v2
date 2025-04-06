@@ -68,13 +68,10 @@ export default class ParticipantsAttributesController {
     const attributeId = +payload.attribute_id;
     const newValue = payload.value;
     const participantIds = payload.id;
-
-    await bouncer.authorize(
-      "manage_participant",
-      await Event.findOrFail(eventId),
-    );
-
     const event = await Event.findOrFail(eventId);
+
+    await bouncer.authorize("manage_participant", event);
+
     await event
       .related("attributes")
       .query()
