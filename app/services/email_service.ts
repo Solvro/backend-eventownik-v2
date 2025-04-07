@@ -1,5 +1,7 @@
 import { DateTime } from "luxon";
 
+import { cuid } from "@adonisjs/core/helpers";
+import { Message } from "@adonisjs/mail";
 import mail from "@adonisjs/mail/services/main";
 
 import Email from "#models/email";
@@ -52,7 +54,7 @@ export class EmailService {
         .from("eventownik@solvro.pl", event.name)
         .subject(email.name)
         .replyTo(event.contactEmail ?? event.mainOrganizer.email)
-        .html(this.parseContent(event, participant, email));
+        .html(this.parseContent(event, participant, email, message));
 
       await participant
         .related("emails")
@@ -63,7 +65,12 @@ export class EmailService {
     });
   }
 
-  static parseContent(event: Event, participant: Participant, email: Email) {
+  static parseContent(
+    event: Event,
+    participant: Participant,
+    email: Email,
+    message: Message,
+  ) {
     const content = email.content;
     let parsedContent = content
       .replace(/\/event_name/g, event.name)
@@ -86,7 +93,21 @@ export class EmailService {
       )
       .replace(/\/participant_email/g, participant.email)
       .replace(/\/participant_slug/g, participant.slug)
-      .replace(/"/g, '"');
+      .replace(
+        /data:image\/(\w+);base64,([^"]+)/g,
+        (_match, format, base64: string) => {
+          const cid = cuid();
+          message.nodeMailerMessage.attachments =
+            message.nodeMailerMessage.attachments ?? [];
+          message.nodeMailerMessage.attachments.push({
+            content: Buffer.from(base64, "base64"),
+            encoding: "base64",
+            filename: `${cid}.${format}`,
+            cid,
+          });
+          return `cid:${cid}`;
+        },
+      );
 
     for (const attribute of participant.attributes) {
       parsedContent = parsedContent.replace(
