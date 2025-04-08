@@ -1,6 +1,7 @@
 import { inject } from "@adonisjs/core";
 import { HttpContext } from "@adonisjs/core/http";
 
+import Event from "#models/event";
 import Participant from "#models/participant";
 import { ParticipantService } from "#services/participant_service";
 import {
@@ -21,7 +22,12 @@ export default class ParticipantsController {
    * @description Get all participants and their attributes for specific event
    * @responseBody 200 - [{"id":32,"email":"test@test.pl", "created_at":"yyyy-MM-dd HH:mm:ss", "slug":"9081d217-9e13-4642-b7f0-2b8f8f409dfb","createdAt":"2025-02-19 13:56:10","updatedAt":"2025-02-19 13:56:10","attributes":[{"id":25,"name":"Sample Attribute","value":"sample value","slug":"sample-slug"}]}]
    */
-  async index({ params }: HttpContext) {
+  async index({ params, request, bouncer }: HttpContext) {
+    await bouncer.authorize(
+      "manage_participant",
+      await Event.findOrFail(params.eventId),
+    );
+
     const participants = await Participant.query()
       .select("id", "email", "slug", "created_at")
       .where("event_id", params.eventId as number)
@@ -60,8 +66,13 @@ export default class ParticipantsController {
    * @requestBody <participantsStoreValidator>
    * @responseBody 201 - <Participant>
    */
-  async store({ request, params }: HttpContext) {
+  async store({ request, params, bouncer }: HttpContext) {
     const eventId = +params.eventId;
+
+    await bouncer.authorize(
+      "manage_participant",
+      await Event.findOrFail(eventId),
+    );
 
     const participantCreateDTO = await request.validateUsing(
       participantsStoreValidator,
@@ -80,10 +91,15 @@ export default class ParticipantsController {
    * @tag participants
    * @summary Get a participant
    * @description Get a participant and sent emails for specific event
-   * @responseBody 200 - <Participant>.exclude(eventId, updatedAt).append("attributes" : [{"id": 25,"name": "Sample Attribute","value": "sample value","slug": "sample-slug"}], "emails" : [ {"id": 1,"name":"Welcome Email","content":"Welcome to our event!","trigger": "participant_registered", "triggerValue": "Lorem Ipsum", "sendBy": "admin","sendAt": "2025-02-19T14:43:12.000+01:00", "status":"sent"} ])
+   * @responseBody 200 - <Participant>.exclude(eventId, updatedAt).append("attributes": [{ "id": 25, "name": "Sample Attribute", "slug": "sample-slug", "value": "sample value" }], "emails": [{ "id": 1, "name": "Welcome Email", "content": "Welcome to our event!", "trigger": "participant_registered", "triggerValue": "Lorem Ipsum", "sendBy": "admin", "sendAt": "2025-02-19T14:43:12.000+01:00", "status": "sent" }]
    * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    */
-  async show({ params, response }: HttpContext) {
+  async show({ params, response, bouncer }: HttpContext) {
+    await bouncer.authorize(
+      "manage_participant",
+      await Event.findOrFail(params.eventId),
+    );
+
     const findParticipant = await Participant.query().where(
       "id",
       params.id as number,
@@ -140,12 +156,23 @@ export default class ParticipantsController {
    * @requestBody <participantsUpdateValidator>
    * @responseBody 200 - <Participant>
    */
-  async update({ params, request }: HttpContext) {
+  async update({ params, request, bouncer }: HttpContext) {
+    await bouncer.authorize(
+      "manage_participant",
+      await Event.findOrFail(params.eventId),
+    );
+
     const eventId = +params.eventId;
     const participantId = +params.id;
 
     const updateParticipantDTO = await request.validateUsing(
       participantsUpdateValidator,
+      {
+        meta: {
+          eventId,
+          participantId,
+        },
+      },
     );
 
     const updatedParticipant = await this.participantService.updateParticipant(
@@ -178,7 +205,12 @@ export default class ParticipantsController {
    * @responseBody 204 - {}
    * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    */
-  async destroy({ params, response }: HttpContext) {
+  async destroy({ params, response, bouncer }: HttpContext) {
+    await bouncer.authorize(
+      "manage_participant",
+      await Event.findOrFail(params.eventId),
+    );
+
     const participantId = +params.id;
     const eventId = +params.eventId;
 
@@ -198,7 +230,12 @@ export default class ParticipantsController {
    * @responseBody 204 - {}
    * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    */
-  async unregister({ params, response }: HttpContext) {
+  async unregister({ params, response, bouncer }: HttpContext) {
+    await bouncer.authorize(
+      "manage_participant",
+      await Event.findOrFail(params.eventId),
+    );
+
     const eventSlug = params.eventSlug as string;
     const participantSlug = params.participantSlug as string;
 
@@ -216,7 +253,12 @@ export default class ParticipantsController {
    * @responseBody 204 - {}
    * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    */
-  async unregisterMany({ params, request, response }: HttpContext) {
+  async unregisterMany({ params, request, response, bouncer }: HttpContext) {
+    await bouncer.authorize(
+      "manage_participant",
+      await Event.findOrFail(params.eventId),
+    );
+
     const eventId = +params.eventId;
 
     const { participantsToUnregisterIds } = await request.validateUsing(
