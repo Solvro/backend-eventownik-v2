@@ -6,6 +6,7 @@ import mail from "@adonisjs/mail/services/main";
 
 import Email from "#models/email";
 import Event from "#models/event";
+import Form from "#models/form";
 import Participant from "#models/participant";
 
 import { EmailTriggerType } from "../types/trigger_types.js";
@@ -108,6 +109,13 @@ export class EmailService {
           return `cid:${cid}`;
         },
       );
+
+    if (form !== undefined) {
+      parsedContent = parsedContent.replace(
+        /\/form_url/g,
+        `https://www.eventownik.solvro.pl/${event.slug}/${form.slug}/${participant.slug}`,
+      );
+    }
 
     for (const attribute of participant.attributes) {
       parsedContent = parsedContent.replace(
