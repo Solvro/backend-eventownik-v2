@@ -67,16 +67,17 @@ export default class ParticipantsAttributesController {
     const attributeId = +params.attributeId;
     const { newValue, participantIds } = await request.validateUsing(
       participantBulkUpdateValidator,
+      {
+        meta: {
+          attributeId: Number(attributeId),
+        },
+      },
     );
-    const event = await Event.findOrFail(eventId);
 
-    await bouncer.authorize("manage_participant", event);
-
-    await event
-      .related("attributes")
-      .query()
-      .where("id", attributeId)
-      .firstOrFail();
+    await bouncer.authorize(
+      "manage_participant",
+      await Event.findOrFail(eventId),
+    );
 
     const query = db
       .from("participant_attributes")
