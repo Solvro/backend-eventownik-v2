@@ -2,6 +2,7 @@ import { inject } from "@adonisjs/core";
 import type { HttpContext } from "@adonisjs/core/http";
 
 import Block from "#models/block";
+import Event from "#models/event";
 import { BlockService } from "#services/block_service";
 import { createBlockValidator, updateBlockValidator } from "#validators/block";
 
@@ -17,8 +18,11 @@ export default class BlocksController {
    * @tag blocks
    * @responseBody 200 - <Block[]>.paginated()
    */
-  async index({ params }: HttpContext) {
+  async index({ params, bouncer }: HttpContext) {
+    const eventId = +params.eventId;
     const attributeId = +params.attributeId;
+
+    await bouncer.authorize("manage_event", await Event.findOrFail(eventId));
 
     return await this.blockService.getBlockTree(attributeId);
   }
@@ -31,9 +35,12 @@ export default class BlocksController {
    * @responseBody 200 - <Block>
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
-  async show({ params }: HttpContext) {
+  async show({ params, bouncer }: HttpContext) {
+    const eventId = +params.eventId;
     const attributeId = +params.attributeId;
     const blockId = +params.id;
+
+    await bouncer.authorize("manage_event", await Event.findOrFail(eventId));
 
     const block = await Block.query()
       .where("id", blockId)
@@ -54,8 +61,11 @@ export default class BlocksController {
    * @requestBody <createBlockValidator>
    * @responseBody 201 - <Block>
    */
-  async store({ request, params, response }: HttpContext) {
+  async store({ request, params, response, bouncer }: HttpContext) {
+    const eventId = +params.eventId;
     const attributeId = +params.attributeId;
+
+    await bouncer.authorize("manage_event", await Event.findOrFail(eventId));
 
     const data = await request.validateUsing(createBlockValidator);
 
@@ -73,9 +83,12 @@ export default class BlocksController {
    * @responseBody 200 - <Block>
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
-  async update({ params, request }: HttpContext) {
+  async update({ params, request, bouncer }: HttpContext) {
+    const eventId = +params.eventId;
     const attributeId = +params.attributeId;
     const blockId = +params.id;
+
+    await bouncer.authorize("manage_event", await Event.findOrFail(eventId));
 
     const data = await request.validateUsing(updateBlockValidator);
 
@@ -99,9 +112,12 @@ export default class BlocksController {
    * @responseBody 204 - No content
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
-  async destroy({ params, response }: HttpContext) {
+  async destroy({ params, response, bouncer }: HttpContext) {
+    const eventId = +params.eventId;
     const attributeId = +params.attributeId;
     const blockId = +params.id;
+
+    await bouncer.authorize("manage_event", await Event.findOrFail(eventId));
 
     await Block.query()
       .where("id", blockId)
