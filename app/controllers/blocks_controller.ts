@@ -46,10 +46,12 @@ export default class BlocksController {
    * @requestBody <createBlockValidator>
    * @responseBody 201 - <Block>
    */
+  async store({ request, params, response }: HttpContext) {
+    const attributeId = +params.attributeId;
 
-  async store({ request, response }: HttpContext) {
-    const data = await createBlockValidator.validate(request.all());
-    const block = await Block.create(data);
+    const data = await request.validateUsing(createBlockValidator);
+
+    const block = await Block.create({ ...data, attributeId });
 
     return response.created(block);
   }
@@ -63,7 +65,6 @@ export default class BlocksController {
    * @responseBody 200 - <Block>
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
-
   async update({ params, request }: HttpContext) {
     const data = await updateBlockValidator.validate(request.all());
     const block = await Block.findOrFail(params.id);
@@ -81,7 +82,6 @@ export default class BlocksController {
    * @responseBody 204 - No content
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
-
   async destroy({ params, response }: HttpContext) {
     const block = await Block.findOrFail(params.id);
     await block.delete();

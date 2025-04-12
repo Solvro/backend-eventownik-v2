@@ -65,7 +65,11 @@ router
         router
           .group(() => {
             router.resource("attributes", AttributesController).apiOnly();
-            router.resource("blocks", BlocksController).apiOnly();
+            router
+              .group(() => {
+                router.resource("blocks", BlocksController).apiOnly();
+              })
+              .prefix("attributes/:attributeId");
             router.resource("emails", EmailsController).apiOnly();
             router.post("emails/send/:emailId", [EmailsController, "send"]);
             router.resource("forms", FormsController).apiOnly();
