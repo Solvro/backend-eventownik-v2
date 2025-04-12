@@ -1,9 +1,15 @@
+import { inject } from "@adonisjs/core";
 import type { HttpContext } from "@adonisjs/core/http";
 
 import Block from "#models/block";
+import { BlockService } from "#services/block_service";
 import { createBlockValidator, updateBlockValidator } from "#validators/block";
 
+@inject()
 export default class BlocksController {
+  // eslint-disable-next-line no-useless-constructor
+  constructor(private blockService: BlockService) {}
+
   /**
    * @index
    * @operationId getBlocks
@@ -11,12 +17,10 @@ export default class BlocksController {
    * @tag blocks
    * @responseBody 200 - <Block[]>.paginated()
    */
+  async index({ params }: HttpContext) {
+    const attributeId = +params.attributeId;
 
-  async index({ request }: HttpContext) {
-    return await Block.query().paginate(
-      request.input("page", 1) | 1,
-      request.input("perPage", 10) | 10,
-    );
+    return await this.blockService.getBlockTree(attributeId);
   }
 
   /**
