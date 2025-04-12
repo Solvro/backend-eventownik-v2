@@ -22,6 +22,9 @@ export default class Block extends BaseModel {
   declare capacity: number | null;
 
   @column()
+  declare isRootBlock: boolean;
+
+  @column()
   declare attributeId: number;
 
   @hasMany(() => Block, {
