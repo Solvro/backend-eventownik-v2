@@ -34,11 +34,6 @@ export const createAttributeSchema = vine.object({
     "checkbox",
   ]),
   options: vine.array(vine.string()).minLength(2).optional(),
-  rootBlockId: vine
-    .number()
-    .nullable()
-    .optional()
-    .requiredWhen("type", "=", "block"),
   showInList: vine.boolean().optional(),
 });
 
@@ -79,11 +74,6 @@ export const UpdateAttributeSchema = vine.object({
     ])
     .optional(),
   options: vine.array(vine.string()).minLength(2).optional(),
-  rootBlockId: vine
-    .number()
-    .nullable()
-    .optional()
-    .requiredWhen("type", "=", "block"),
   showInList: vine.boolean().optional(),
 });
 

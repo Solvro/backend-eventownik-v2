@@ -1,4 +1,5 @@
 import { inject } from "@adonisjs/core";
+import string from "@adonisjs/core/helpers/string";
 import type { HttpContext } from "@adonisjs/core/http";
 
 import Event from "#models/event";
@@ -52,6 +53,16 @@ export default class AttributesController {
       eventId,
       ...newAttributeData,
     });
+
+    if (newAttribute.type === "block") {
+      await newAttribute.related("blocks").create({
+        name: string.slug(
+          `${newAttribute.slug ?? newAttribute.name}-root-block`,
+          { lower: true },
+        ),
+        isRootBlock: true,
+      });
+    }
 
     return newAttribute;
   }
