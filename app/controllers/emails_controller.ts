@@ -5,6 +5,7 @@ import Event from "#models/event";
 import Participant from "#models/participant";
 import { EmailService } from "#services/email_service";
 import {
+  emailDuplicateValidator,
   emailsStoreValidator,
   emailsUpdateValidator,
 } from "#validators/emails";
@@ -163,5 +164,39 @@ export default class EmailsController {
     }
 
     return { message: "Emails successfully sent" };
+  }
+
+  /**
+   * @duplicate
+   * @operationId duplicateEmail
+   * @description duplicate an email
+   * @requestBody <emailDuplicateValidator>.exclude("trigger").append("trigger" : "participant_registered")
+   * @tag emails
+   * @responseBody 201 - <Email>.append("meta" : {} )
+   */
+  async duplicate({ params, request, response, bouncer }: HttpContext) {
+    const emailId = Number(params.emailId);
+    const event = await Event.findOrFail(params.eventId);
+    await bouncer.authorize("manage_email", event);
+
+    const email = await Email.query()
+      .where("event_id", event.id)
+      .where("id", emailId)
+      .firstOrFail();
+
+    const data = await request.validateUsing(emailDuplicateValidator);
+
+    const emailData = {
+      ...email.$original,
+    };
+    // adonis sam sobie nie usunie tylko podmienia istniejacy rekord
+    delete emailData.id, emailData.created_at, emailData.updated_at;
+
+    const newEmail = await event.related("emails").create({
+      ...emailData,
+      ...data,
+    });
+
+    return response.status(201).send(newEmail);
   }
 }
