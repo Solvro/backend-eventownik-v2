@@ -1,8 +1,21 @@
 import { DateTime } from "luxon";
 
-import { BaseModel, belongsTo, column, manyToMany } from "@adonisjs/lucid/orm";
-import type { BelongsTo, ManyToMany } from "@adonisjs/lucid/types/relations";
+import {
+  BaseModel,
+  belongsTo,
+  column,
+  hasMany,
+  hasOne,
+  manyToMany,
+} from "@adonisjs/lucid/orm";
+import type {
+  BelongsTo,
+  HasMany,
+  HasOne,
+  ManyToMany,
+} from "@adonisjs/lucid/types/relations";
 
+import Block from "#models/block";
 import Event from "#models/event";
 import Form from "#models/form";
 
@@ -46,6 +59,14 @@ export default class Attribute extends BaseModel {
     pivotTimestamps: true,
   })
   declare participantAttributes: ManyToMany<typeof Participant>;
+
+  @hasOne(() => Block, {
+    onQuery: (query) => query.where("is_root_block", true),
+  })
+  declare rootBlock: HasOne<typeof Block>;
+
+  @hasMany(() => Block)
+  declare blocks: HasMany<typeof Block>;
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime;
