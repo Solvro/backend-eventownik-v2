@@ -31,12 +31,16 @@ export default class BlocksController {
    * @responseBody 200 - <Block>
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
-
   async show({ params }: HttpContext) {
-    const block = await Block.findOrFail(params.id);
+    const attributeId = +params.attributeId;
+    const blockId = +params.id;
 
-    await block.load("parent");
-    await block.load("children");
+    const block = await Block.query()
+      .where("id", blockId)
+      .where("attribute_id", attributeId)
+      .preload("parent")
+      .preload("children")
+      .firstOrFail();
 
     return block;
   }
@@ -70,9 +74,18 @@ export default class BlocksController {
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
   async update({ params, request }: HttpContext) {
-    const data = await updateBlockValidator.validate(request.all());
-    const block = await Block.findOrFail(params.id);
+    const attributeId = +params.attributeId;
+    const blockId = +params.id;
+
+    const data = await request.validateUsing(updateBlockValidator);
+
+    const block = await Block.query()
+      .where("id", blockId)
+      .andWhere("attribute_id", attributeId)
+      .firstOrFail();
+
     block.merge(data);
+
     await block.save();
 
     return block;
@@ -87,9 +100,13 @@ export default class BlocksController {
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
   async destroy({ params, response }: HttpContext) {
-    const block = await Block.findOrFail(params.id);
-    await block.delete();
-    await block.related("children").query().delete();
+    const attributeId = +params.attributeId;
+    const blockId = +params.id;
+
+    await Block.query()
+      .where("id", blockId)
+      .andWhere("attribute_id", attributeId)
+      .delete();
 
     return response.noContent();
   }
