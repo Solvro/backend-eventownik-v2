@@ -47,9 +47,19 @@ export default class BlocksController {
       .where("attribute_id", attributeId)
       .preload("parent")
       .preload("children")
+      .preload("attribute")
       .firstOrFail();
 
-    return block;
+    let participantsInBlock;
+
+    if (block.capacity !== null) {
+      participantsInBlock = await this.blockService.getBlockParticipants(
+        attributeId,
+        blockId,
+      );
+    }
+
+    return { ...block.serialize(), participantsInBlock };
   }
 
   /**
