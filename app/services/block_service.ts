@@ -62,4 +62,18 @@ export class BlockService {
 
     return +blockParticipantsCount[0].$extras.count;
   }
+
+  async canSignInToBlock(attributeId: number, blockId: number) {
+    const block = await Block.query()
+      .where("id", blockId)
+      .andWhere("attribute_id", attributeId)
+      .firstOrFail();
+
+    const blockParticipantsCount = await this.getBlockParticipantsCount(
+      attributeId,
+      blockId,
+    );
+
+    return block.capacity !== null && block.capacity > blockParticipantsCount;
+  }
 }

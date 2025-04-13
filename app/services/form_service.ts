@@ -8,6 +8,7 @@ import Participant from "#models/participant";
 
 import { FormSubmitDTO } from "../types/form_types.js";
 import { filterObjectFields } from "../utils/filter_object_fields.js";
+import { BlockService } from "./block_service.js";
 import { EmailService } from "./email_service.js";
 import { FileService } from "./file_service.js";
 import { ParticipantService } from "./participant_service.js";
@@ -18,6 +19,7 @@ export class FormService {
   constructor(
     private participantService: ParticipantService,
     private fileService: FileService,
+    private blockService: BlockService,
   ) {}
 
   async submitForm(
@@ -59,6 +61,12 @@ export class FormService {
         .map((attribute) => attribute.id),
     );
 
+    const blockAttributesIds = new Set(
+      form.attributes
+        .filter((attribute) => attribute.type === "block")
+        .map((attribute) => attribute.id),
+    );
+
     const allowedFieldsIds = form.attributes.map((attribute) =>
       attribute.id.toString(),
     );
@@ -95,6 +103,15 @@ export class FormService {
             attributeId: +attributeId,
             value: fileName,
           };
+        } else if (blockAttributesIds.has(+attributeId)) {
+          const canSignInToBlock = await this.blockService.canSignInToBlock(
+            +attributeId,
+            +(value as string),
+          );
+
+          if (!canSignInToBlock) {
+            throw new Exception("Block is full");
+          }
         }
 
         return {
