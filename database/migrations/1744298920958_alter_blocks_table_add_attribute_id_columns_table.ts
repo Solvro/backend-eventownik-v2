@@ -17,7 +17,7 @@ export default class extends BaseSchema {
     this.schema.alterTable(this.tableName, (table) => {
       table.dropColumn("is_root_block");
 
-      this.schema.raw("DROp INDEX IF EXISTS unique_root_block_per_attribute");
+      this.schema.raw("DROP INDEX IF EXISTS unique_root_block_per_attribute");
     });
   }
 }
