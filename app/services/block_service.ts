@@ -19,9 +19,7 @@ export class BlockService {
   async loadBlockTree(block: Block) {
     await block.load("children");
 
-    for (const child of block.children) {
-      await this.loadBlockTree(child);
-    }
+    await Promise.all(block.children.map((child) => this.loadBlockTree(child)));
 
     let participantsInBlockCount;
 
