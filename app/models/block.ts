@@ -45,4 +45,6 @@ export default class Block extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime;
+
+  serializeExtras = true;
 }

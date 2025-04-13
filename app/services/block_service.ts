@@ -23,6 +23,17 @@ export class BlockService {
       await this.loadBlockTree(child);
     }
 
+    let participantsInBlockCount;
+
+    if (block.capacity !== null) {
+      participantsInBlockCount = await this.getBlockParticipantsCount(
+        block.attributeId,
+        block.id,
+      );
+
+      block.$extras.participantsInBlockCount = participantsInBlockCount;
+    }
+
     return block;
   }
 
@@ -36,5 +47,19 @@ export class BlockService {
     );
 
     return participantsInBlock;
+  }
+
+  async getBlockParticipantsCount(
+    attributeId: number,
+    blockId: number,
+  ): Promise<number> {
+    const blockParticipantsCount = await Participant.query()
+      .whereHas("attributes", (query) => {
+        void query.where("attributes.id", attributeId);
+        void query.where("participant_attributes.value", "like", blockId);
+      })
+      .count("*");
+
+    return +blockParticipantsCount[0].$extras.count;
   }
 }
