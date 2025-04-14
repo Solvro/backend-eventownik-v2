@@ -190,7 +190,7 @@ export default class EmailsController {
       ...email.$original,
     };
     // adonis sam sobie nie usunie tylko podmienia istniejacy rekord
-    delete emailData.id, emailData.created_at, emailData.updated_at;
+    delete emailData.id; delete emailData.created_at; delete emailData.updated_at;
 
     const newEmail = await event.related("emails").create({
       ...emailData,
