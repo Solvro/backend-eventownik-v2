@@ -20,6 +20,7 @@ export const emailsStoreValidator = vine.compile(
       .string()
       .optional()
       .requiredWhen("trigger", "=", "attribute_changed"),
+    formId: vine.number().optional(),
   }),
 );
 
@@ -45,5 +46,6 @@ export const emailsUpdateValidator = vine.compile(
       .string()
       .optional()
       .requiredWhen("trigger", "=", "attribute_changed"),
+    formId: vine.number().optional(),
   }),
 );

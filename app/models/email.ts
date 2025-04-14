@@ -4,6 +4,7 @@ import { BaseModel, belongsTo, column, manyToMany } from "@adonisjs/lucid/orm";
 import type { BelongsTo, ManyToMany } from "@adonisjs/lucid/types/relations";
 
 import Event from "#models/event";
+import Form from "#models/form";
 import Participant from "#models/participant";
 
 export default class Email extends BaseModel {
@@ -36,6 +37,12 @@ export default class Email extends BaseModel {
 
   @belongsTo(() => Event)
   declare event: BelongsTo<typeof Event>;
+
+  @column()
+  declare formId: number | null;
+
+  @belongsTo(() => Form)
+  declare form: BelongsTo<typeof Form>;
 
   @manyToMany(() => Participant, {
     pivotTable: "participant_emails",

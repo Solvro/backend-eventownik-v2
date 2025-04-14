@@ -18,6 +18,7 @@ export class EmailService {
     trigger: EmailTriggerType,
     triggerValue?: string | number, // used for example as attribute id in trigger attribute_changed
     triggerValue2?: string, // used for example as attribute value in trigger attribute_changed
+    form?: Form,
   ) {
     const email = await Email.query()
       .where("event_id", event.id)
@@ -28,13 +29,14 @@ export class EmailService {
         // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
         query.where("trigger_value_2", triggerValue2!),
       )
+      .preload("form")
       .first();
 
     if (email === null) {
       return;
     }
 
-    await this.sendToParticipant(event, participant, email);
+    await this.sendToParticipant(event, participant, email, form);
   }
 
   static async sendToParticipant(
@@ -43,6 +45,7 @@ export class EmailService {
     email: Email,
     sendBy = "system",
   ) {
+    console.log(form);
     await participant
       .related("emails")
       .attach({ [email.id]: { status: "pending", send_by: sendBy } });
@@ -113,7 +116,7 @@ export class EmailService {
     if (form !== undefined) {
       parsedContent = parsedContent.replace(
         /\/form_url/g,
-        `https://www.eventownik.solvro.pl/${event.slug}/${form.slug}/${participant.slug}`,
+        `${process.env.DOMAIN}/${event.slug}/${form.slug}/${participant.slug}`,
       );
     }
 

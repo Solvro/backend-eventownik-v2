@@ -82,9 +82,7 @@ export default class EmailsController {
 
     const data = await request.validateUsing(emailsStoreValidator);
 
-    const email = await event
-      .related("emails")
-      .create({ eventId: event.id, ...data });
+    const email = await Email.create({ eventId: event.id, ...data });
 
     return response.status(201).send(email);
   }

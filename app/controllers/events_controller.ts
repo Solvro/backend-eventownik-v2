@@ -55,7 +55,6 @@ export default class EventController {
         );
       }
     }
-
     const event = await Event.create({
       ...eventData,
       photoUrl,
