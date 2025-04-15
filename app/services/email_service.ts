@@ -6,7 +6,6 @@ import mail from "@adonisjs/mail/services/main";
 
 import Email from "#models/email";
 import Event from "#models/event";
-import Form from "#models/form";
 import Participant from "#models/participant";
 
 import { EmailTriggerType } from "../types/trigger_types.js";
@@ -18,7 +17,6 @@ export class EmailService {
     trigger: EmailTriggerType,
     triggerValue?: string | number, // used for example as attribute id in trigger attribute_changed
     triggerValue2?: string, // used for example as attribute value in trigger attribute_changed
-    form?: Form,
   ) {
     const email = await Email.query()
       .where("event_id", event.id)
@@ -36,7 +34,7 @@ export class EmailService {
       return;
     }
 
-    await this.sendToParticipant(event, participant, email, email.form);
+    await this.sendToParticipant(event, participant, email);
   }
 
   static async sendToParticipant(
@@ -45,6 +43,7 @@ export class EmailService {
     email: Email,
     sendBy = "system",
   ) {
+    await email.load("form");
     await participant
       .related("emails")
       .attach({ [email.id]: { status: "pending", send_by: sendBy } });
@@ -75,6 +74,7 @@ export class EmailService {
     message: Message,
   ) {
     const content = email.content;
+    const { form } = email;
     let parsedContent = content
       .replace(/\/event_name/g, event.name)
       .replace(
