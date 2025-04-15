@@ -1,6 +1,5 @@
 import { inject } from "@adonisjs/core";
 import type { HttpContext } from "@adonisjs/core/http";
-import db from "@adonisjs/lucid/services/db";
 
 import Attribute from "#models/attribute";
 import Event from "#models/event";
@@ -69,7 +68,7 @@ export default class ParticipantsAttributesController {
       participantBulkUpdateValidator,
       {
         meta: {
-          attributeId: Number(attributeId),
+          eventId,
         },
       },
     );
@@ -79,14 +78,16 @@ export default class ParticipantsAttributesController {
       await Event.findOrFail(eventId),
     );
 
-    const query = db
-      .from("participant_attributes")
-      .where("attribute_id", attributeId)
-      .andWhereIn("participant_id", participantIds);
+    const pivotMap = participantIds.reduce<Record<number, { value: string }>>(
+      (acc, id) => {
+        acc[id] = { value: newValue };
+        return acc;
+      },
+      {},
+    );
 
-    await query.update({
-      value: newValue,
-    });
+    const attribute = await Attribute.findOrFail(attributeId);
+    await attribute.related("participantAttributes").sync(pivotMap, false);
 
     return response.noContent();
   }
