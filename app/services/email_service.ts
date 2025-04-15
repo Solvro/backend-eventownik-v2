@@ -36,7 +36,7 @@ export class EmailService {
       return;
     }
 
-    await this.sendToParticipant(event, participant, email, form);
+    await this.sendToParticipant(event, participant, email, email.form);
   }
 
   static async sendToParticipant(
@@ -45,7 +45,6 @@ export class EmailService {
     email: Email,
     sendBy = "system",
   ) {
-    console.log(form);
     await participant
       .related("emails")
       .attach({ [email.id]: { status: "pending", send_by: sendBy } });
@@ -123,7 +122,7 @@ export class EmailService {
     for (const attribute of participant.attributes) {
       parsedContent = parsedContent.replace(
         new RegExp(`/participant_${attribute.slug}`, "g"),
-        attribute.$extras.pivot_value as string,
+        attribute.$extras.pivot_vaclue as string,
       );
     }
 
