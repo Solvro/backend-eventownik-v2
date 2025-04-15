@@ -122,7 +122,7 @@ export class EmailService {
     for (const attribute of participant.attributes) {
       parsedContent = parsedContent.replace(
         new RegExp(`/participant_${attribute.slug}`, "g"),
-        attribute.$extras.pivot_vaclue as string,
+        attribute.$extras.pivot_value as string,
       );
     }
 
