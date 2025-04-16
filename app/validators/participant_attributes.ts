@@ -8,33 +8,30 @@ const checkParticipantExists = vine.createRule(
     const participantIds = Array.isArray(value)
       ? (value as number[])
       : [value as number];
-    return await db
+    const foundParticipants = await db
       .from("participants")
       .select("id")
       .whereIn("id", participantIds)
-      .andWhere("event_id", +field.meta.eventId)
-      .then((row: { id: number }[]) => {
-        const foundParticipants = row.map((participant) => participant.id);
-        const notFoundParticipants = participantIds.filter(
-          (participantId) => !foundParticipants.includes(participantId),
-        );
-        for (const participantId of notFoundParticipants) {
-          field.report(
-            `Participant with ID don't ${participantId} exists`,
-            "exists",
-            field,
-          );
-        }
-      });
+      .andWhere("event_id", +field.meta.eventId);
+    const foundParticipantIds = foundParticipants.map(
+      (participant: { id: number }) => participant.id,
+    );
+    const notFoundParticipantsIds = participantIds.filter(
+      (participantId) => !foundParticipantIds.includes(participantId),
+    );
+    for (const participantId of notFoundParticipantsIds) {
+      field.report(
+        `Participant with ID ${participantId} does not exist.`,
+        "exists",
+        field,
+      );
+    }
   },
 );
 
 export const participantBulkUpdateValidator = vine.compile(
   vine.object({
-    participantIds: vine
-      .array(vine.number())
-
-      .use(checkParticipantExists()),
+    participantIds: vine.array(vine.number()).use(checkParticipantExists()),
     newValue: vine.string(),
   }),
 );

@@ -78,16 +78,17 @@ export default class ParticipantsAttributesController {
       await Event.findOrFail(eventId),
     );
 
-    const pivotMap = participantIds.reduce<Record<number, { value: string }>>(
-      (acc, id) => {
-        acc[id] = { value: newValue };
-        return acc;
-      },
-      {},
-    );
+    const updatedParticipantAttributes = participantIds.reduce<
+      Record<number, { value: string }>
+    >((acc, id) => {
+      acc[id] = { value: newValue };
+      return acc;
+    }, {});
 
     const attribute = await Attribute.findOrFail(attributeId);
-    await attribute.related("participantAttributes").sync(pivotMap, false);
+    await attribute
+      .related("participantAttributes")
+      .sync(updatedParticipantAttributes, false);
 
     return response.noContent();
   }
