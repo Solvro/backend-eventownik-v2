@@ -56,6 +56,8 @@ export class AttributeService {
       attributeId,
     );
 
+    const previousType = attributeToUpdate.type;
+
     const optionsJSON: string | undefined =
       updates.options !== undefined
         ? JSON.stringify(updates.options)
@@ -70,7 +72,18 @@ export class AttributeService {
 
     const updatedAttribute = await this.getEventAttribute(eventId, attributeId);
 
-    return updatedAttribute;
+    if (updatedAttribute.type === "block") {
+      await this.blockService.createRootBlock(updatedAttribute.id);
+    } else if (previousType === "block") {
+      await updatedAttribute.load("rootBlock");
+
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (updatedAttribute.rootBlock !== null) {
+        await updatedAttribute.rootBlock.delete();
+      }
+    }
+
+    return await this.getEventAttribute(eventId, attributeId);
   }
 
   async deleteAttribute(eventId: number, attributeId: number) {
