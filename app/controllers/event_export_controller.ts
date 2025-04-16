@@ -23,6 +23,7 @@ export default class EventExportController {
    * @description Returns file to download of spreadsheet with all participants of given :eventId
    * @tag participants
    * @paramPath eventId - ID of the event to be exported - @type(number) @required
+   * @paramQuery ids - Users to only include in export file - @type(number[].join(",")) @example(?ids=2, or ?ids=3,4)
    * @responseBody 200 - file:xlsx - Spreadsheet download with xlsx extension
    * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404 },
    */
@@ -93,7 +94,7 @@ export default class EventExportController {
         if (foundAttribute !== undefined) {
           attributeValues.push(foundAttribute.$extras.pivot_value as string);
         } else {
-          attributeValues.push("undefined");
+          attributeValues.push("N/A");
         }
       }
 
