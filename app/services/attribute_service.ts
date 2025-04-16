@@ -1,11 +1,18 @@
+import { inject } from "@adonisjs/core";
+
 import Attribute from "#models/attribute";
 
 import {
   CreateAttributeDTO,
   UpdateAttributeDTO,
 } from "../types/attribute_types.js";
+import { BlockService } from "./block_service.js";
 
+@inject()
 export class AttributeService {
+  // eslint-disable-next-line no-useless-constructor
+  constructor(private blockService: BlockService) {}
+
   async getEventAttributes(eventId: number) {
     const attributes = await Attribute.findManyBy("event_id", eventId);
 
@@ -31,6 +38,10 @@ export class AttributeService {
       ...createAttributeDTO,
       options: optionsJSON,
     });
+
+    if (newAttribute.type === "block") {
+      await this.blockService.createRootBlock(newAttribute.id);
+    }
 
     return newAttribute;
   }

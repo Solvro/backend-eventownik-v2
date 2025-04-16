@@ -1,3 +1,5 @@
+import string from "@adonisjs/core/helpers/string";
+
 import Attribute from "#models/attribute";
 import Block from "#models/block";
 import Participant from "#models/participant";
@@ -73,5 +75,16 @@ export class BlockService {
     );
 
     return block.capacity !== null && block.capacity > blockParticipantsCount;
+  }
+
+  async createRootBlock(attributeId: number) {
+    const attribute = await Attribute.findOrFail(attributeId);
+
+    await attribute.related("blocks").create({
+      name: string.slug(`${attribute.slug ?? attribute.name}-root-block`, {
+        lower: true,
+      }),
+      isRootBlock: true,
+    });
   }
 }
