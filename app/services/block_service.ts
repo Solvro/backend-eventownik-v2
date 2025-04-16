@@ -78,7 +78,15 @@ export class BlockService {
   }
 
   async createRootBlock(attributeId: number) {
-    const attribute = await Attribute.findOrFail(attributeId);
+    const attribute = await Attribute.query()
+      .where("id", attributeId)
+      .preload("rootBlock")
+      .firstOrFail();
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (attribute.rootBlock !== null) {
+      await attribute.rootBlock.delete();
+    }
 
     await attribute.related("blocks").create({
       name: string.slug(`${attribute.slug ?? attribute.name}-root-block`, {
