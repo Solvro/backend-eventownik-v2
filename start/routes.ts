@@ -68,6 +68,10 @@ router
             router
               .group(() => {
                 router.resource("blocks", BlocksController).apiOnly();
+                router.put("bulk-update", [
+                  ParticipantsAttributesController,
+                  "bulkUpdate",
+                ]);
               })
               .prefix("attributes/:attributeId");
             router.resource("emails", EmailsController).apiOnly();
@@ -85,10 +89,6 @@ router
             router.delete("participants", [
               ParticipantsController,
               "unregisterMany",
-            ]);
-            router.put("attributes/:attributeId/bulk-update", [
-              ParticipantsAttributesController,
-              "bulkUpdate",
             ]);
             router.resource("participants", ParticipantsController).apiOnly();
           })
