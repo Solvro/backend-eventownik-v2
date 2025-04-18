@@ -5,7 +5,7 @@ export const participantsStoreValidator = vine.compile(
     email: vine
       .string()
       .email()
-      .exists(async (db, value, field) => {
+      .unique(async (db, value, field) => {
         const participantEmail = (await db
           .from("participants")
           .select("email", "id")
@@ -31,7 +31,7 @@ export const participantsUpdateValidator = vine.compile(
     email: vine
       .string()
       .email()
-      .exists(async (db, value, field) => {
+      .unique(async (db, value, field) => {
         const participantEmail = (await db
           .from("participants")
           .select("email", "id")
