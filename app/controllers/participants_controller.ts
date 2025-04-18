@@ -76,6 +76,11 @@ export default class ParticipantsController {
 
     const participantCreateDTO = await request.validateUsing(
       participantsStoreValidator,
+      {
+        meta: {
+          eventId,
+        },
+      },
     );
 
     const participant = await this.participantService.createParticipant(
