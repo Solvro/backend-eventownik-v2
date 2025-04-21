@@ -137,8 +137,8 @@ export default class EmailsController {
    * @send
    * @operationId sendEmail
    * @description Send an email to a list of participants.
-   * @requestBody { "participants": [1, 2, 3] }
    * @tag emails
+   * @requestBody { "participants": [1, 2, 3] }
    * @responseBody 200 - { message: "Emails successfully sent"}
    */
   async send({ params, request, bouncer, auth }: HttpContext) {
@@ -170,8 +170,8 @@ export default class EmailsController {
    * @duplicate
    * @operationId duplicateEmail
    * @description duplicate an email
-   * @requestBody <emailDuplicateValidator>.exclude("trigger").append("trigger" : "participant_registered")
    * @tag emails
+   * @requestBody <emailDuplicateValidator>.exclude("trigger").append("trigger" : "participant_registered")
    * @responseBody 201 - <Email>.append("meta" : {} )
    */
   async duplicate({ params, request, response, bouncer }: HttpContext) {
@@ -186,17 +186,17 @@ export default class EmailsController {
 
     const data = await request.validateUsing(emailDuplicateValidator);
 
+    // Copy + cleanup of oryginal data so adonis does create a new record instead of overwriting
     const emailData = {
       ...email.$original,
     };
-    // adonis sam sobie nie usunie tylko podmienia istniejacy rekord
-    delete emailData.id; delete emailData.created_at; delete emailData.updated_at;
+    delete emailData.id, delete emailData.created_at, delete emailData.updated_at;
 
     const newEmail = await event.related("emails").create({
       ...emailData,
       ...data,
     });
 
-    return response.status(201).send(newEmail);
+    return response.created(newEmail);
   }
 }
