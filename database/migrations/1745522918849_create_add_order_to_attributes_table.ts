@@ -1,11 +1,11 @@
 import { BaseSchema } from "@adonisjs/lucid/schema";
 
 export default class extends BaseSchema {
-  protected tableName = "add_order_to_attributes";
+  protected tableName = "attributes";
 
   async up() {
     this.schema.alterTable("attributes", (table) => {
-      table.integer("order").unsigned().nullable().defaultTo(0);
+      table.integer("order").unsigned().notNullable().defaultTo(0);
     });
   }
 
