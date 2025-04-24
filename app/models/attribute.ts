@@ -43,6 +43,9 @@ export default class Attribute extends BaseModel {
   @column()
   declare showInList: boolean;
 
+  @column()
+  declare order: number;
+
   @belongsTo(() => Event)
   declare event: BelongsTo<typeof Event>;
 
