@@ -1,3 +1,5 @@
+import vine from "@vinejs/vine";
+
 import { HttpContext } from "@adonisjs/core/http";
 
 import Email from "#models/email";
@@ -5,7 +7,6 @@ import Event from "#models/event";
 import Participant from "#models/participant";
 import { EmailService } from "#services/email_service";
 import {
-  emailDuplicateValidator,
   emailsStoreValidator,
   emailsUpdateValidator,
 } from "#validators/emails";
@@ -171,7 +172,7 @@ export default class EmailsController {
    * @operationId duplicateEmail
    * @description duplicate an email
    * @tag emails
-   * @requestBody <emailDuplicateValidator>.exclude("trigger").append("trigger" : "participant_registered")
+   * @requestBody { "name": "New Email Name" }
    * @responseBody 201 - <Email>.append("meta" : {} )
    */
   async duplicate({ params, request, response, bouncer }: HttpContext) {
@@ -184,13 +185,21 @@ export default class EmailsController {
       .where("id", emailId)
       .firstOrFail();
 
-    const data = await request.validateUsing(emailDuplicateValidator);
+    const data = await request.validateUsing(
+      vine.compile(
+        vine.object({
+          name: vine.string(),
+        }),
+      ),
+    );
 
-    // Copy + cleanup of oryginal data so adonis does create a new record instead of overwriting
+    // Copy + cleanup of original data so adonis does create a new record instead of overwriting
     const emailData = {
       ...email.$original,
     };
-    delete emailData.id, delete emailData.created_at, delete emailData.updated_at;
+    delete emailData.id;
+    delete emailData.created_at;
+    delete emailData.updated_at;
 
     const newEmail = await event.related("emails").create({
       ...emailData,
