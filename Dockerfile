@@ -28,5 +28,6 @@ COPY --from=build /app/build /app
 COPY swagger.yml /app/swagger.yml
 VOLUME /app/public
 VOLUME /public
+VOLUME /app/uploads
 EXPOSE 8080
 CMD ["node", "./bin/server.js"]
