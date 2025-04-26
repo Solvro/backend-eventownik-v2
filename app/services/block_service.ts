@@ -45,7 +45,6 @@ export class BlockService {
         return {
           id: participant.id,
           email: participant.email,
-          slug: participant.slug,
           name: participant.attributes.reduce(
             (a: string, b) => `${a} ${b.$extras.pivot_value ?? ""}`,
             "",
