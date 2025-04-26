@@ -1,6 +1,7 @@
 import { inject } from "@adonisjs/core";
 
 import Attribute from "#models/attribute";
+import Block from "#models/block";
 
 import {
   CreateAttributeDTO,
@@ -87,6 +88,7 @@ export class AttributeService {
   }
 
   async deleteAttribute(eventId: number, attributeId: number) {
+    await Block.query().where("attribute_id", attributeId).delete();
     await Attribute.query()
       .where("event_id", eventId)
       .andWhere("id", attributeId)
