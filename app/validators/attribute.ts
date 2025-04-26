@@ -33,7 +33,7 @@ export const createAttributeSchema = vine.object({
     "color",
     "checkbox",
   ]),
-  options: vine.array(vine.string()).minLength(2).optional(),
+  options: vine.array(vine.string()).minLength(1).optional(),
   showInList: vine.boolean().optional(),
 });
 
@@ -73,7 +73,7 @@ export const UpdateAttributeSchema = vine.object({
       "checkbox",
     ])
     .optional(),
-  options: vine.array(vine.string()).minLength(2).optional(),
+  options: vine.array(vine.string()).minLength(1).optional(),
   showInList: vine.boolean().optional(),
 });
 
