@@ -47,7 +47,7 @@ export default class Attribute extends BaseModel {
   declare event: BelongsTo<typeof Event>;
 
   @manyToMany(() => Form, {
-    pivotTable: "form_definition",
+    pivotTable: "form_definitions",
     pivotColumns: ["is_editable", "is_required", "order"],
     pivotTimestamps: true,
   })
@@ -73,4 +73,6 @@ export default class Attribute extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime;
+
+  public serializeExtras = true;
 }

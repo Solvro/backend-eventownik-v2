@@ -7,10 +7,17 @@ export default class PublicParticipantsController {
    * @summary Get participant
    * @operationId getPublicParticipant
    * @description Get participant with :participantSlug and :eventSlug
-   * @responseBody 200 - <Participant>
+   * @paramQuery <attributes[]> - Array of attributes id to fetch
+   * @responseBody 200 - <Participant.with(attributes)>
    * @responseBody 401 - { errors: [{ message: "Unauthorized access" }] }
    */
-  async index({ participant }: HttpContext) {
+  async index({ participant, request }: HttpContext) {
+    await participant.load("attributes", (q) =>
+      q
+        .has("forms")
+        .pivotColumns(["value", "created_at"])
+        .whereIn("attributes.id", request.input("attributes", []) as number[]),
+    );
     return participant;
   }
 }
