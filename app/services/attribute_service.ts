@@ -73,15 +73,15 @@ export class AttributeService {
 
     const updatedAttribute = await this.getEventAttribute(eventId, attributeId);
 
-    if (updatedAttribute.type === "block") {
-      await this.blockService.createRootBlock(updatedAttribute.id);
-    } else if (previousType === "block") {
+    if (previousType === "block") {
       await updatedAttribute.load("rootBlock");
 
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (updatedAttribute.rootBlock !== null) {
         await updatedAttribute.rootBlock.delete();
       }
+    } else if (updatedAttribute.type === "block") {
+      await this.blockService.createRootBlock(updatedAttribute.id);
     }
 
     return await this.getEventAttribute(eventId, attributeId);
