@@ -76,8 +76,7 @@ export class AttributeService {
     if (previousType === "block") {
       await updatedAttribute.load("rootBlock");
 
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      if (updatedAttribute.rootBlock !== null) {
+      if (updatedAttribute.type !== "block") {
         await updatedAttribute.rootBlock.delete();
       }
     } else if (updatedAttribute.type === "block") {
