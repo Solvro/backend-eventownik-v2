@@ -71,8 +71,25 @@ export class FormService {
       attribute.id.toString(),
     );
 
+    let participant: Participant | null = null;
+
+    if (participantSlug !== undefined) {
+      participant = await Participant.findByOrFail("slug", participantSlug);
+
+      await participant.load("attributes", (q) => {
+        void q.pivotColumns(["value"]);
+        void q.whereIn("id", allowedFieldsIds);
+      });
+    }
+
     const missingRequiredFields = form.attributes
-      .filter((attribute) => attribute.$extras.pivot_is_required === true)
+      .filter(
+        (attribute): boolean =>
+          attribute.$extras.pivot_is_required === true &&
+          !(
+            participant?.attributes.some((x) => x.id === attribute.id) ?? false
+          ),
+      )
       .filter((attribute) => !(attribute.id in attributes))
       .map((attribute) => ({
         id: attribute.id,
@@ -130,13 +147,10 @@ export class FormService {
     );
 
     if (participantEmail !== undefined) {
-      const participant = await this.participantService.createParticipant(
-        event.id,
-        {
-          email: participantEmail,
-          participantAttributes: transformedFormFields,
-        },
-      );
+      participant = await this.participantService.createParticipant(event.id, {
+        email: participantEmail,
+        participantAttributes: transformedFormFields,
+      });
       await EmailService.sendOnTrigger(
         event,
         participant,
@@ -144,10 +158,7 @@ export class FormService {
         form.id,
       );
     } else if (participantSlug !== undefined) {
-      const participant = await Participant.findByOrFail(
-        "slug",
-        participantSlug,
-      );
+      participant = await Participant.findByOrFail("slug", participantSlug);
       await this.participantService.updateParticipant(
         event.id,
         participant.id,
