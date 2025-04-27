@@ -90,7 +90,11 @@ export class FormService {
 
     const transformedFormFields = await Promise.all(
       Object.entries(formFields).map(async ([attributeId, value]) => {
-        if (fileAttributesIds.has(+attributeId) && value !== null) {
+        if (
+          fileAttributesIds.has(+attributeId) &&
+          value !== null &&
+          value !== "null"
+        ) {
           const fileName = await this.fileService.storeFile(
             value as MultipartFile,
           );
@@ -103,7 +107,11 @@ export class FormService {
             attributeId: +attributeId,
             value: fileName,
           };
-        } else if (blockAttributesIds.has(+attributeId) && value !== null) {
+        } else if (
+          blockAttributesIds.has(+attributeId) &&
+          value !== null &&
+          value !== "null"
+        ) {
           const canSignInToBlock = await this.blockService.canSignInToBlock(
             +attributeId,
             +(value as string),
