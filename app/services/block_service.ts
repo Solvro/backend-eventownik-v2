@@ -97,7 +97,11 @@ export class BlockService {
       blockId,
     );
 
-    return block.capacity !== null && block.capacity > blockParticipantsCount;
+    return (
+      block.capacity !== null &&
+      block.capacity !== 0 &&
+      block.capacity > blockParticipantsCount
+    );
   }
 
   async createRootBlock(attributeId: number) {
