@@ -24,7 +24,8 @@ export class ParticipantService {
       participantAttributes !== undefined &&
       participantAttributes.length > 0
     ) {
-      const transformedAttributes: Record<number, { value: string }> = {};
+      const transformedAttributes: Record<number, { value: string | null }> =
+        {};
 
       for (const attribute of participantAttributes) {
         await EmailService.sendOnTrigger(
@@ -74,7 +75,8 @@ export class ParticipantService {
       participantAttributes !== undefined &&
       participantAttributes.length > 0
     ) {
-      const transformedAttributes: Record<number, { value: string }> = {};
+      const transformedAttributes: Record<number, { value: string | null }> =
+        {};
 
       for (const attribute of participantAttributes) {
         await EmailService.sendOnTrigger(
