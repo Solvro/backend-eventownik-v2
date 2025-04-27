@@ -98,8 +98,8 @@ export class BlockService {
     );
 
     return (
-      block.capacity !== null &&
-      block.capacity !== 0 &&
+      block.capacity === null ||
+      block.capacity === 0 ||
       block.capacity > blockParticipantsCount
     );
   }
