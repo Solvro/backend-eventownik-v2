@@ -78,7 +78,7 @@ export class FormService {
 
       await participant.load("attributes", (q) => {
         void q.pivotColumns(["value"]);
-        void q.whereIn("id", allowedFieldsIds);
+        void q.whereIn("attributes.id", allowedFieldsIds);
       });
     }
 
