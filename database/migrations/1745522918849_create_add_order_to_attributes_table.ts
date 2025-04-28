@@ -10,7 +10,7 @@ export default class extends BaseSchema {
   }
 
   async down() {
-    this.schema.alterTable("attributes", (table) => {
+    this.schema.alterTable(this.tableName, (table) => {
       table.dropColumn("order");
     });
   }
