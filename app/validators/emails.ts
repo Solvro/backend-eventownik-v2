@@ -49,3 +49,9 @@ export const emailsUpdateValidator = vine.compile(
     formId: vine.number().optional(),
   }),
 );
+
+export const emailDuplicateValidator = vine.compile(
+  vine.object({
+    name: vine.string(),
+  }),
+);
