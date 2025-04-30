@@ -30,7 +30,9 @@ export class BlockService {
       ),
     );
 
-    block.children.sort((a, b) => a.name.localeCompare(b.name));
+    block.children.sort(
+      (a, b) => a.createdAt.toMillis() - b.createdAt.toMillis(),
+    );
 
     const participants = await Participant.query()
       .whereHas("attributes", (query) => {
