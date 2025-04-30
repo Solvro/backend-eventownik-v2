@@ -30,6 +30,8 @@ export class BlockService {
       ),
     );
 
+    block.children.sort((a, b) => a.name.localeCompare(b.name));
+
     const participants = await Participant.query()
       .whereHas("attributes", (query) => {
         void query.where("attributes.id", block.attributeId);
