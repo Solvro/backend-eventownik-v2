@@ -33,7 +33,7 @@ export default class ParticipantsController {
       .where("event_id", params.eventId as number)
       .preload("attributes", (attributesQuery) =>
         attributesQuery
-          .select("id", "name", "slug")
+          .select("id", "name", "slug", "created_at", "updated_at")
           .pivotColumns(["value"])
           .where("show_in_list", true),
       );
@@ -48,6 +48,8 @@ export default class ParticipantsController {
           name: attribute.name,
           slug: attribute.slug,
           value: attribute.$extras.pivot_value as string,
+          createdAt: attribute.createdAt,
+          updatedAt: attribute.updatedAt,
         })),
         createdAt: participant.createdAt
           .setZone("Europe/Warsaw")
