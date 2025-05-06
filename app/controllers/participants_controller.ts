@@ -120,7 +120,9 @@ export default class ParticipantsController {
       .where("id", +params.id)
       .andWhere("event_id", +params.eventId)
       .preload("attributes", (attributesQuery) =>
-        attributesQuery.select("id", "name", "slug").pivotColumns(["value"]),
+        attributesQuery
+          .select("id", "name", "slug", "created_at", "updated_at")
+          .pivotColumns(["value"]),
       )
       .preload("emails", (emailsQuery) =>
         emailsQuery
@@ -139,6 +141,8 @@ export default class ParticipantsController {
         name: attribute.name,
         slug: attribute.slug,
         value: attribute.$extras.pivot_value as string,
+        createdAt: attribute.createdAt,
+        updatedAt: attribute.updatedAt,
       })),
       emails: participant.emails.map((email) => {
         const { $extras, $original } = email;
