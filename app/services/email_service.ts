@@ -4,6 +4,7 @@ import { cuid } from "@adonisjs/core/helpers";
 import { Message } from "@adonisjs/mail";
 import mail from "@adonisjs/mail/services/main";
 
+import Block from "#models/block";
 import Email from "#models/email";
 import Event from "#models/event";
 import Participant from "#models/participant";
@@ -56,7 +57,7 @@ export class EmailService {
         .from("eventownik@solvro.pl", event.name)
         .subject(email.name)
         .replyTo(event.contactEmail ?? event.mainOrganizer.email)
-        .html(this.parseContent(event, participant, email, message));
+        .html(await this.parseContent(event, participant, email, message));
 
       await participant
         .related("emails")
@@ -67,7 +68,7 @@ export class EmailService {
     });
   }
 
-  static parseContent(
+  static async parseContent(
     event: Event,
     participant: Participant,
     email: Email,
@@ -120,6 +121,11 @@ export class EmailService {
     }
 
     for (const attribute of participant.attributes) {
+      if (attribute.type === "block") {
+        const block = await Block.find(attribute.$extras.pivot_value);
+        attribute.$extras.pivot_value =
+          block?.name ?? (attribute.$extras.pivot_value as string);
+      }
       parsedContent = parsedContent.replace(
         new RegExp(`/participant_${attribute.slug}`, "g"),
         attribute.$extras.pivot_value as string,
