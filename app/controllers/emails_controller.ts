@@ -5,9 +5,9 @@ import Event from "#models/event";
 import Participant from "#models/participant";
 import { EmailService } from "#services/email_service";
 import {
+  emailDuplicateValidator,
   emailsStoreValidator,
   emailsUpdateValidator,
-  emailDuplicateValidator,
 } from "#validators/emails";
 
 export default class EmailsController {
