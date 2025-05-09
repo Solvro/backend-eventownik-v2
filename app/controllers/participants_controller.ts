@@ -29,9 +29,10 @@ export default class ParticipantsController {
       await Event.findOrFail(params.eventId),
     );
 
-    const paramAttributes = request.qs().bonus_attributes || "";
+    const paramAttributes = request.qs().bonus_attributes as string | undefined;
 
-    const bonusAttributes = paramAttributes ? paramAttributes.split(",") : [];
+    const bonusAttributes: string[] =
+      typeof paramAttributes === "string" ? paramAttributes.split(",") : [];
 
     const participants = await Participant.query()
       .select("id", "email", "slug", "created_at")
