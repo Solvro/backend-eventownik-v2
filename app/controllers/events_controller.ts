@@ -81,12 +81,9 @@ export default class EventController {
    * @responseBody 401 - Unauthorized access
    * @tag event
    */
-  public async show({ params, auth, bouncer }: HttpContext) {
+  public async show({ params, bouncer }: HttpContext) {
     const event = await Event.query()
       .where("id", Number(params.id))
-      .preload("permissions", (q) =>
-        q.where("admin_permissions.admin_id", auth.user?.id ?? 0),
-      )
       .preload("firstForm")
       .first();
 
