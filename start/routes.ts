@@ -42,7 +42,7 @@ router
           BlocksController,
           "publicIndex",
         ]);
-        router.get("", [EventController, "publicShow"]);
+        router.get("public", [EventController, "publicShow"]);
         router
           .get("forms/:formSlug", [FormsController, "showBySlug"])
           .where("formSlug", router.matchers.slug());
