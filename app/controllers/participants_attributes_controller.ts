@@ -61,6 +61,17 @@ export default class ParticipantsAttributesController {
     }
   }
 
+  /**
+   * @bulkUpdate
+   * @operationId bulkUpdate
+   * @description Update many participants attributes at once.
+   * @tag participants
+   * @requestBody {"participantIds": [1, 2, 3], "newValue": "new value"}
+   * @responseBody 204 - No Content
+   * @responseBody 401 - Unauthorized access
+   * @responseBody 404 - Event not found
+   */
+
   async bulkUpdate({ params, request, bouncer, response }: HttpContext) {
     const eventId = +params.eventId;
     const attributeId = +params.attributeId;
