@@ -38,30 +38,6 @@ router
   .group(() => {
     router
       .group(() => {
-        router.get("attributes/:attributeId/blocks", [
-          BlocksController,
-          "publicIndex",
-        ]);
-        router.get("public", [EventController, "publicShow"]);
-        router
-          .get("forms/:formSlug", [FormsController, "showBySlug"])
-          .where("formSlug", router.matchers.slug());
-        router
-          .group(() => {
-            router
-              .get("participants/:participantSlug", [
-                PublicParticipantsController,
-                "index",
-              ])
-              .as("publicParticipants");
-          })
-          .use(middleware.participantAuth());
-      })
-      .prefix("events/:eventSlug")
-      .where("eventSlug", router.matchers.slug());
-
-    router
-      .group(() => {
         router.resource("admins", AdminsController).apiOnly();
         router.resource("events", EventController).apiOnly();
         router.resource("permissions", PermissionsController).apiOnly();
@@ -107,6 +83,25 @@ router
 
     router
       .group(() => {
+        router.get("attributes/:attributeId/blocks", [
+          BlocksController,
+          "publicIndex",
+        ]);
+        router.get("public", [EventController, "publicShow"]);
+        router
+          .get("forms/:formSlug", [FormsController, "showBySlug"])
+          .where("formSlug", router.matchers.slug());
+        router
+          .group(() => {
+            router
+              .get("participants/:participantSlug", [
+                PublicParticipantsController,
+                "index",
+              ])
+              .as("publicParticipants");
+          })
+          .use(middleware.participantAuth());
+
         router.post("forms/:id/submit", [FormsController, "submitForm"]);
         router
           .delete("participants/:participantSlug", [
