@@ -118,4 +118,7 @@ export default class Event extends BaseModel {
 
   @column()
   declare socialMediaLinks: string[] | null;
+
+  @column()
+  declare termsLink: string | null;
 }
