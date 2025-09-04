@@ -1,3 +1,8 @@
+import {
+  ATTR_SERVICE_NAME,
+  ATTR_SERVICE_VERSION,
+} from "@opentelemetry/semantic-conventions";
+
 import { defineConfig, targets } from "@adonisjs/core/logger";
 import app from "@adonisjs/core/services/app";
 
@@ -17,6 +22,21 @@ const loggerConfig = defineConfig({
       level: env.get("LOG_LEVEL"),
       transport: {
         targets: targets()
+          .push({
+            target: "pino-opentelemetry-transport",
+            options: {
+              logRecordProcessorOptions: {
+                exporterOptions: {
+                  url: `${env.get("SIGNOZ_HOST")}/v1/logs`,
+                },
+              },
+              resourceAttributes: {
+                [ATTR_SERVICE_NAME]: "eventownik-backend-adonis",
+                [ATTR_SERVICE_VERSION]: "1.0.0",
+              },
+            },
+            level: env.get("LOG_LEVEL"),
+          })
           .pushIf(!app.inProduction, targets.pretty())
           .pushIf(app.inProduction, targets.file({ destination: 1 }))
           .toArray(),
