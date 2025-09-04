@@ -41,6 +41,7 @@ export default defineConfig({
     () => import("#providers/app_provider"),
     () => import("@adonisjs/static/static_provider"),
     () => import("@adonisjs/mail/mail_provider"),
+    () => import("#providers/open_telemetry_provider"),
   ],
 
   /*
@@ -51,11 +52,7 @@ export default defineConfig({
   | List of modules to import before starting the application.
   |
   */
-  preloads: [
-    () => import("#start/routes"),
-    () => import("#start/kernel"),
-    () => import("#start/opentelemetry"),
-  ],
+  preloads: [() => import("#start/routes"), () => import("#start/kernel")],
 
   /*
   |--------------------------------------------------------------------------
