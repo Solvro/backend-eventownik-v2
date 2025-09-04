@@ -1,3 +1,5 @@
+import { SpanStatusCode, context, trace } from "@opentelemetry/api";
+
 import { ExceptionHandler, HttpContext } from "@adonisjs/core/http";
 import app from "@adonisjs/core/services/app";
 
@@ -23,6 +25,15 @@ export default class HttpExceptionHandler extends ExceptionHandler {
    * @note You should not attempt to send a response from this method.
    */
   async report(error: unknown, ctx: HttpContext) {
-    return super.report(error, ctx);
+    const span = trace.getSpan(context.active());
+    if (span !== undefined) {
+      span.recordException(error as Error);
+      span.setStatus({
+        code: SpanStatusCode.ERROR,
+        message: (error as Error).message,
+      });
+    }
+
+    await super.report(error, ctx);
   }
 }

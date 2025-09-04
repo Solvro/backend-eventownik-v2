@@ -12,9 +12,6 @@ import { ClientRequest, IncomingMessage } from "node:http";
 import env from "#start/env";
 
 export default class OpenTelemetryProvider {
-  /**
-   * The boot method is called after the provider has been registered
-   */
   async boot() {
     const traceExporter = new OTLPTraceExporter({
       url: `${env.get("SIGNOZ_HOST")}/v1/traces`,
