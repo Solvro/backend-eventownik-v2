@@ -40,9 +40,6 @@
   "resolutions": {
     "strtok3": "8.0.1"
   },
-  "overrides": {
-    "strtok3": "8.0.1"
-  },
   "dependencies": {
     "@adonisjs/auth": "^9.3.0",
     "@adonisjs/bouncer": "^3.1.4",
@@ -99,5 +96,8 @@
       "./app/controllers/**/*.ts",
       "./app/middleware/*.ts"
     ]
+  },
+  "overrides": {
+    "strtok3": "8.0.1"
   }
 }
