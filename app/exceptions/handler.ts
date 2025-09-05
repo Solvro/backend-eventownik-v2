@@ -27,7 +27,9 @@ export default class HttpExceptionHandler extends ExceptionHandler {
   async report(error: unknown, ctx: HttpContext) {
     const span = trace.getSpan(context.active());
     if (span !== undefined) {
-      span.recordException(error instanceof Error ? error : new Error(String(error)));
+      span.recordException(
+        error instanceof Error ? error : new Error(String(error)),
+      );
       span.setStatus({
         code: SpanStatusCode.ERROR,
         message: (error as Error).message,
