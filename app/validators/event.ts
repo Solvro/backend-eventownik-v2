@@ -71,6 +71,7 @@ export const createEventValidator = vine.compile(
       )
       .nullable()
       .optional(),
+    termsLink: vine.string().nullable().optional(),
   }),
 );
 
@@ -118,5 +119,6 @@ export const updateEventValidator = vine.compile(
       )
       .nullable()
       .optional(),
+    termsLink: vine.string().nullable().optional(),
   }),
 );
