@@ -62,12 +62,9 @@ export const createEventValidator = vine.compile(
       .optional(),
     socialMediaLinks: vine
       .array(
-        vine.string().normalizeUrl({
-          normalizeProtocol: true,
-          forceHttps: true,
-          stripWWW: false,
-          removeExplicitPort: true,
-        }),
+        vine
+          .string()
+          .regex(/^(https?:\/\/[^\s]+|\[.*\]\(https?:\/\/[^\s)]+\))$/),
       )
       .nullable()
       .optional(),
@@ -110,12 +107,9 @@ export const updateEventValidator = vine.compile(
       .optional(),
     socialMediaLinks: vine
       .array(
-        vine.string().normalizeUrl({
-          normalizeProtocol: true,
-          forceHttps: true,
-          stripWWW: false,
-          removeExplicitPort: true,
-        }),
+        vine
+          .string()
+          .regex(/^(https?:\/\/[^\s]+|\[.*\]\(https?:\/\/[^\s)]+\))$/),
       )
       .nullable()
       .optional(),
