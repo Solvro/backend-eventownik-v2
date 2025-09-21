@@ -13,6 +13,7 @@ export default class extends BaseSeeder {
         { action: "manage", subject: "form" },
         { action: "manage", subject: "participant" },
         { action: "manage", subject: "email" },
+        { action: "manage", subject: "organizer" },
       ],
     );
   }
