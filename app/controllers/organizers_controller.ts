@@ -25,7 +25,7 @@ export default class OrganizersController {
   async index(context: HttpContext) {
     const eventId = +context.params.eventId;
     await context.bouncer.authorize(
-      "manage_organizer",
+      "manage_event",
       await Event.findOrFail(eventId),
     );
 
@@ -46,10 +46,7 @@ export default class OrganizersController {
    */
   async store({ params, request, bouncer }: HttpContext) {
     const eventId = +params.eventId;
-    await bouncer.authorize(
-      "manage_organizer",
-      await Event.findOrFail(eventId),
-    );
+    await bouncer.authorize("manage_setting", await Event.findOrFail(eventId));
 
     const organizerData = await addOrganizerValidator.validate(request.all());
 
@@ -67,10 +64,7 @@ export default class OrganizersController {
   async show({ params, bouncer }: HttpContext) {
     const eventId = +params.eventId;
     const organizerId = +params.id;
-    await bouncer.authorize(
-      "manage_organizer",
-      await Event.findOrFail(eventId),
-    );
+    await bouncer.authorize("manage_event", await Event.findOrFail(eventId));
 
     const organizer = await Admin.query()
       .where("id", organizerId)
@@ -95,10 +89,7 @@ export default class OrganizersController {
   async update({ params, request, bouncer }: HttpContext) {
     const eventId = +params.eventId;
     const organizerId = +params.id;
-    await bouncer.authorize(
-      "manage_organizer",
-      await Event.findOrFail(eventId),
-    );
+    await bouncer.authorize("manage_setting", await Event.findOrFail(eventId));
 
     const { permissionsIds } =
       await updateOrganizerPermissionsValidator.validate(request.body());
@@ -121,10 +112,7 @@ export default class OrganizersController {
    */
   async destroy({ params, bouncer, response }: HttpContext) {
     const eventId = +params.eventId;
-    await bouncer.authorize(
-      "manage_organizer",
-      await Event.findOrFail(eventId),
-    );
+    await bouncer.authorize("manage_setting", await Event.findOrFail(eventId));
     const organizerId = +params.id;
 
     await db
