@@ -46,6 +46,12 @@ export default class Attribute extends BaseModel {
   @column()
   declare order: number;
 
+  @column()
+  declare isSensitiveData: boolean;
+
+  @column()
+  declare reason: string;
+
   @belongsTo(() => Event)
   declare event: BelongsTo<typeof Event>;
 
