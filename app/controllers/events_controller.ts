@@ -117,7 +117,7 @@ export default class EventController {
    * @description Shows all event basic data without login
    * @paramQuery from - filtering from event start date - @type(Date)
    * @paramQuery to - filtering from to end date - @type(Date)
-   * @responseBody 201 - <Event[]>.exclude(organizerId,lat,long,contactEmail,createdAt,id,updatedAt,termsLink,socialMediaLinks)
+   * @responseBody 200 - <Event[]>.exclude(organizerId,lat,long,contactEmail,createdAt,id,updatedAt,termsLink,socialMediaLinks)
    * @tag event
    */
   public async publicIndex({ request }: HttpContext) {
