@@ -116,3 +116,10 @@ export const updateEventValidator = vine.compile(
     termsLink: vine.string().nullable().optional(),
   }),
 );
+
+export const displayEvents = vine.compile(
+  vine.object({
+    from: vine.date().optional().transform(dateTimeTransform),
+    to: vine.date().optional().transform(dateTimeTransform),
+  }),
+);

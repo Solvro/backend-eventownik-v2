@@ -36,6 +36,7 @@ router.get("/docs", async () => {
 
 router
   .group(() => {
+    router.get("events/public", [EventController, "publicIndex"]);
     router
       .group(() => {
         router.resource("admins", AdminsController).apiOnly();
