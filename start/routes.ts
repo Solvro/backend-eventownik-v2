@@ -41,6 +41,7 @@ router
       .group(() => {
         router.resource("admins", AdminsController).apiOnly();
         router.resource("events", EventController).apiOnly();
+        router.put("events/:id/activate", [EventController, "toggleActive"]);
         router.resource("permissions", PermissionsController).apiOnly();
 
         router

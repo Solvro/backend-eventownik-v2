@@ -2,6 +2,7 @@ import { DateTime } from "luxon";
 
 import {
   BaseModel,
+  beforeCreate,
   belongsTo,
   column,
   hasMany,
@@ -70,6 +71,9 @@ export default class Event extends BaseModel {
   @column()
   declare location: string | null;
 
+  @column()
+  declare isActive: boolean;
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime;
 
@@ -121,4 +125,9 @@ export default class Event extends BaseModel {
 
   @column()
   declare termsLink: string | null;
+
+  @beforeCreate()
+  static disactivateNewEvent(event: Event) {
+    event.isActive = false;
+  }
 }

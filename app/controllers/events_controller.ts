@@ -200,6 +200,30 @@ export default class EventController {
   }
 
   /**
+   * @update
+   * @operationId activateEvent
+   * @paramPath id - Event identifier - @type(number) @required
+   * @description Allows superadmin to activate new event.
+   * @responseBody 200 - <Event>.with(permissions, forms)
+   * @responseBody 401 - Unauthorized access
+   * @tag event
+   */
+  public async toggleActive({ params, response, auth }: HttpContext) {
+    const event = await Event.findOrFail(params.id);
+
+    if (auth.user?.type !== "superadmin") {
+      return response.unauthorized({
+        message: "You don't have permissions to this actions",
+      });
+    }
+
+    event.isActive = true;
+    await event.save();
+
+    return response.ok(event);
+  }
+
+  /**
    * @destroy
    * @operationId deleteEvent
    * @description Deletes an event if user has permission
