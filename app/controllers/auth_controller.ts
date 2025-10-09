@@ -1,9 +1,17 @@
 import assert from "node:assert";
+import crypto from "node:crypto";
 
 import type { HttpContext } from "@adonisjs/core/http";
+import mail from "@adonisjs/mail/services/main";
 
 import Admin from "#models/admin";
-import { loginValidator, registerAdminValidator } from "#validators/auth";
+import PasswordReset from "#models/password_reset";
+import {
+  loginValidator,
+  registerAdminValidator,
+  resetPasswordValidator,
+  sendPasswordResetTokenValidator,
+} from "#validators/auth";
 
 export default class AuthController {
   /**
@@ -65,5 +73,55 @@ export default class AuthController {
    */
   async me({ auth }: HttpContext) {
     return auth.getUserOrFail();
+  }
+
+  /**
+   * @sendPasswordResetToken
+   * @operationId sendPasswordResetToken
+   * @description Sends an email with a token to reset a password
+   * @tag auth
+   * @requestBody <sendPasswordResetTokenValidator>
+   */
+  async sendPasswordResetToken({ request }: HttpContext) {
+    const { email } = await request.validateUsing(
+      sendPasswordResetTokenValidator,
+    );
+
+    const passwordResetToken = crypto.randomBytes(20).toString("hex");
+
+    await mail.sendLater(async (message) => {
+      message
+        .to(email)
+        .from("eventownik@solvro.pl")
+        .subject("Reset hasła")
+        .htmlView("resetPassword", { passwordResetToken });
+
+      await PasswordReset.create({ email, token: passwordResetToken });
+    });
+
+    return passwordResetToken;
+  }
+
+  /**
+   * @resetPassword
+   * @operationId resetPassword
+   * @description Resets admin's password
+   * @tag auth
+   * @requestBody <resetPasswordValidator>
+   */
+  async resetPassword({ request }: HttpContext) {
+    const { token, newPassword } = await request.validateUsing(
+      resetPasswordValidator,
+    );
+
+    const passwordReset = await PasswordReset.findByOrFail("token", token);
+
+    //TODO: validate token
+
+    const admin = await Admin.findByOrFail("email", passwordReset.email);
+
+    admin.password = newPassword;
+
+    await admin.save();
   }
 }

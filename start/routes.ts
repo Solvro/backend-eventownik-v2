@@ -119,6 +119,11 @@ router
         router.post("login", [AuthController, "login"]);
         router.post("register", [AuthController, "register"]);
         router.get("me", [AuthController, "me"]).use(middleware.auth());
+        router.post("sendPasswordResetToken", [
+          AuthController,
+          "sendPasswordResetToken",
+        ]);
+        router.post("resetPassword", [AuthController, "resetPassword"]);
       })
       .prefix("auth");
   })
