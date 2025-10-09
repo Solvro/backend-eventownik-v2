@@ -106,9 +106,11 @@ export default class EventController {
    * @tag event
    */
   public async publicShow({ params }: HttpContext) {
-    const event = await Event.findByOrFail("slug", params.eventSlug);
-    await event.load("firstForm");
-    return event;
+    return await Event.query()
+      .where("slug", String(params.eventSlug))
+      .preload("firstForm")
+      .preload("attributes")
+      .firstOrFail();
   }
 
   /**
