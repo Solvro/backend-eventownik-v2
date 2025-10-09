@@ -12,6 +12,7 @@ import env from "#start/env";
 import {
   createEventValidator,
   displayEvents,
+  toggleEventActivation,
   updateEventValidator,
 } from "#validators/event";
 
@@ -203,22 +204,24 @@ export default class EventController {
    * @update
    * @operationId activateEvent
    * @paramPath id - Event identifier - @type(number) @required
+   * @requestFormDataBody <toggleEventActivation>
    * @description Allows superadmin to activate new event.
-   * @responseBody 200 - <Event>.with(permissions, forms)
+   * @responseBody 200 - <Event>
    * @responseBody 401 - Unauthorized access
    * @tag event
    */
-  public async toggleActive({ params, response, auth }: HttpContext) {
+  public async toggleActive({ request, params, response, auth }: HttpContext) {
     const event = await Event.findOrFail(params.id);
+
+    const payload = await request.validateUsing(toggleEventActivation);
 
     if (auth.user?.type !== "superadmin") {
       return response.unauthorized({
-        message: "You don't have permissions to this actions",
+        message: "You don't have permission to perform this action",
       });
     }
 
-    event.isActive = true;
-    await event.save();
+    event.merge({ isActive: payload.isActive });
 
     return response.ok(event);
   }

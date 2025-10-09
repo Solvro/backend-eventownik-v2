@@ -123,3 +123,9 @@ export const displayEvents = vine.compile(
     to: vine.date().optional().transform(dateTimeTransform),
   }),
 );
+
+export const toggleEventActivation = vine.compile(
+  vine.object({
+    isActive: vine.boolean(),
+  }),
+);

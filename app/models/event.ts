@@ -127,7 +127,7 @@ export default class Event extends BaseModel {
   declare termsLink: string | null;
 
   @beforeCreate()
-  static disactivateNewEvent(event: Event) {
+  static deactivateNewEvent(event: Event) {
     event.isActive = false;
   }
 }
