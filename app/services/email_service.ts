@@ -69,11 +69,17 @@ export class EmailService {
   }
 
   static async parseContent(
-    event: Event,
+    event: Event | null,
     participant: Participant,
     email: Email,
     message: Message,
   ) {
+    if (event === null) {
+      return email.content;
+    }
+
+    await event.load("forms").catch(() => {});
+
     let parsedContent = email.content;
 
     const tagRegex = /<span[^>]*data-id="([^"]+)"[^>]*>.*?<\/span>/g;
@@ -94,7 +100,6 @@ export class EmailService {
             return event.primaryColor ?? "";
           case "/event_location":
             return event.location ?? "";
-
           case "/participant_id":
             return String(participant.id);
           case "/participant_created_at":
@@ -105,7 +110,6 @@ export class EmailService {
             return participant.email;
           case "/participant_slug":
             return participant.slug;
-
           default:
             return dataId;
         }
@@ -135,6 +139,7 @@ export class EmailService {
         attribute.$extras.pivot_value =
           block?.name ?? (attribute.$extras.pivot_value as string);
       }
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const value = attribute.$extras.pivot_value ?? "";
       const attrRegex = new RegExp(
         `<span[^>]*data-id="/participant_${attribute.slug}"[^>]*>.*?<\\/span>`,
@@ -143,13 +148,14 @@ export class EmailService {
       parsedContent = parsedContent.replace(attrRegex, value as string);
     }
 
-    for (const form of event.forms) {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    for (const [, form] of (event.forms ?? []).entries()) {
       const formUrl = `${env.get("APP_DOMAIN")}/${event.slug}/${form.slug}/${participant.slug}`;
-      const formRegex = new RegExp(
-        `<span[^>]*data-id="/form_${form.slug}"[^>]*>.*?<\\/span>`,
-        "g",
+      const formRegex = new RegExp(`/form_${form.slug}`, "g");
+      parsedContent = parsedContent.replace(
+        formRegex,
+        `<a href="${formUrl}">Formularz</a>`,
       );
-      parsedContent = parsedContent.replace(formRegex, formUrl);
     }
 
     return parsedContent;
