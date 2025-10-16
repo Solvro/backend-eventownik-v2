@@ -120,7 +120,7 @@ export default class AuthController {
     const passwordReset = await PasswordReset.findByOrFail("token", token);
 
     if (passwordReset.expiryDate < DateTime.now() || passwordReset.used) {
-      response.unauthorized({
+      return response.unauthorized({
         message: "Invalid or expired token",
       });
     }
