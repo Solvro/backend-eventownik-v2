@@ -90,18 +90,18 @@ export default class AuthController {
 
     const passwordResetToken = crypto.randomBytes(20).toString("hex");
 
+    const passwordReset = await PasswordReset.create({
+      email,
+      token: passwordResetToken,
+      expiryDate: DateTime.local().plus({ minute: 30 }),
+    });
+
     await mail.sendLater(async (message) => {
       message
         .to(email)
         .from("eventownik@solvro.pl")
         .subject("Reset hasła")
-        .htmlView("resetPassword", { passwordResetToken });
-
-      await PasswordReset.create({
-        email,
-        token: passwordResetToken,
-        expiryDate: DateTime.local().plus({ minute: 30 }),
-      });
+        .htmlView("resetPassword", { passwordResetToken: passwordReset.token });
     });
   }
 
