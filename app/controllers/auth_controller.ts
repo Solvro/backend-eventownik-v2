@@ -96,7 +96,11 @@ export default class AuthController {
         .subject("Reset hasła")
         .htmlView("resetPassword", { passwordResetToken });
 
-      await PasswordReset.create({ email, token: passwordResetToken });
+      await PasswordReset.create({
+        email,
+        token: passwordResetToken,
+        expiryDate: DateTime.local().plus({ minute: 30 }),
+      });
     });
 
     return passwordResetToken;
