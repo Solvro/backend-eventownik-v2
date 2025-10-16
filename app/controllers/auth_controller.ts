@@ -1,3 +1,4 @@
+import { DateTime } from "luxon";
 import assert from "node:assert";
 import crypto from "node:crypto";
 
@@ -113,19 +114,25 @@ export default class AuthController {
    * @tag auth
    * @requestBody <resetPasswordValidator>
    */
-  async resetPassword({ request }: HttpContext) {
+  async resetPassword({ request, response }: HttpContext) {
     const { token, newPassword } = await request.validateUsing(
       resetPasswordValidator,
     );
 
     const passwordReset = await PasswordReset.findByOrFail("token", token);
 
-    //TODO: validate token
+    if (passwordReset.expiryDate < DateTime.now() || passwordReset.used) {
+      response.unauthorized({
+        message: "Invalid or expired token",
+      });
+    }
 
     const admin = await Admin.findByOrFail("email", passwordReset.email);
 
     admin.password = newPassword;
-
     await admin.save();
+
+    passwordReset.used = true;
+    await passwordReset.save();
   }
 }
