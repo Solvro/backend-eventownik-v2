@@ -103,8 +103,6 @@ export default class AuthController {
         expiryDate: DateTime.local().plus({ minute: 30 }),
       });
     });
-
-    return passwordResetToken;
   }
 
   /**
