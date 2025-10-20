@@ -212,6 +212,7 @@ export default class EventController {
    */
   public async toggleActive({ request, params, response, auth }: HttpContext) {
     const event = await Event.findOrFail(params.id);
+
     const payload = await request.validateUsing(toggleEventActivation);
 
     if (auth.user?.type !== "superadmin") {
