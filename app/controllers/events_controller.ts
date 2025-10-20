@@ -221,7 +221,7 @@ export default class EventController {
       });
     }
 
-    event.merge({ isActive: payload.isActive });
+    event.isActive = payload.isActive;
     await event.save();
 
     return response.ok(event);
