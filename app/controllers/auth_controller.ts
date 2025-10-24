@@ -96,12 +96,17 @@ export default class AuthController {
       expiryDate: DateTime.local().plus({ minute: 30 }),
     });
 
-    await mail.sendLater(async (message) => {
+    const admin = await Admin.findByOrFail("email", email);
+
+    await mail.send(async (message) => {
       message
         .to(email)
         .from("eventownik@solvro.pl")
         .subject("Reset hasła")
-        .htmlView("resetPassword", { passwordResetToken: passwordReset.token });
+        .htmlView("emails/password_reset_email_html", {
+          passwordResetUrl: passwordReset.token,
+          userName: admin.firstName,
+        });
     });
   }
 
