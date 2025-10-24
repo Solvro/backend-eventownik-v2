@@ -78,8 +78,7 @@ export class EmailService {
       return email.content;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    await event.load("forms").catch(() => {});
+    await event.load("forms");
 
     let parsedContent = email.content;
 
