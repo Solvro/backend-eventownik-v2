@@ -32,7 +32,6 @@ export const sendPasswordResetTokenValidator = vine.compile(
 export const resetPasswordValidator = vine.compile(
   vine.object({
     token: vine.string().exists({ table: "password_resets", column: "token" }),
-
     newPassword: vine.string().minLength(8),
   }),
 );
