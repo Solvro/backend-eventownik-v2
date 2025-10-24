@@ -135,6 +135,14 @@ export default class AuthController {
     admin.password = newPassword;
     await admin.save();
 
+    const accessTokens = await Admin.accessTokens.all(admin);
+
+    await Promise.all(
+      accessTokens.map((accessToken) =>
+        Admin.accessTokens.delete(admin, accessToken.identifier),
+      ),
+    );
+
     passwordReset.used = true;
     await passwordReset.save();
   }
