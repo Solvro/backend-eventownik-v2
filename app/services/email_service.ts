@@ -139,13 +139,10 @@ export class EmailService {
         attribute.$extras.pivot_value =
           block?.name ?? (attribute.$extras.pivot_value as string);
       }
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const value = attribute.$extras.pivot_value ?? "";
-      const attrRegex = new RegExp(
-        `<span[^>]*data-id="/participant_${attribute.slug}"[^>]*>.*?<\\/span>`,
-        "g",
+      parsedContent = parsedContent.replace(
+        new RegExp(`/participant_${attribute.slug}`, "g"),
+        attribute.$extras.pivot_value as string,
       );
-      parsedContent = parsedContent.replace(attrRegex, value as string);
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -154,7 +151,8 @@ export class EmailService {
       const formRegex = new RegExp(`/form_${form.slug}`, "g");
       parsedContent = parsedContent.replace(
         formRegex,
-        `<a href="${formUrl}">Formularz</a>`,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        `<a href="${formUrl}">${form.name ?? "Formularz"}</a>`,
       );
     }
 
