@@ -42,6 +42,7 @@ export default defineConfig({
     () => import("@adonisjs/static/static_provider"),
     () => import("@adonisjs/mail/mail_provider"),
     () => import("#providers/open_telemetry_provider"),
+    () => import("@adonisjs/core/providers/edge_provider"),
   ],
 
   /*
@@ -81,6 +82,10 @@ export default defineConfig({
   metaFiles: [
     {
       pattern: "public/**",
+      reloadServer: false,
+    },
+    {
+      pattern: "resources/views/**/*.edge",
       reloadServer: false,
     },
   ],
