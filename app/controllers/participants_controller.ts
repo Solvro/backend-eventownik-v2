@@ -23,15 +23,14 @@ export default class ParticipantsController {
    */
   async index({ params }: HttpContext) {
     const participants = await Participant.query()
-      .select("uuid", "email", "slug", "created_at")
-      .where("eventUuid", params.eventId as number)
+      .select("uuid", "email", "createdAt")
+      .where("eventUuid", params.eventId as string)
       .preload("attributes", (attributesQuery) =>
         attributesQuery
-          .select("uuid", "name", "slug", "created_at", "updated_at")
-          .pivotColumns(["value"])
-          .where("show_in_list", true),
+          .select("uuid", "name", "createdAt", "updatedAt")
+          .pivotColumns(["value", "createdAt", "updatedAt"])
+          .where("showInList", true),
       );
-
     const formattedParticipants = participants.map((participant) => {
       return {
         id: participant.uuid,
@@ -63,7 +62,6 @@ export default class ParticipantsController {
    */
   async store({ request, params }: HttpContext) {
     const eventId = String(params.eventId);
-
     const participantCreateDTO = await request.validateUsing(
       participantsStoreValidator,
       {
@@ -92,25 +90,25 @@ export default class ParticipantsController {
   async show({ params, response }: HttpContext) {
     const findParticipant = await Participant.query().where(
       "uuid",
-      params.uuid as number,
+      params.id as string,
     );
     if (findParticipant.length === 0) {
       return response.notFound("Participant not found.");
     }
 
     const participant = await Participant.query()
-      .select("uuid", "email", "slug", "created_at")
-      .where("uuid", +params.uuid)
-      .andWhere("eventUuid", +params.eventId)
+      .select("uuid", "email", "createdAt")
+      .where("uuid", params.id as string)
+      .andWhere("eventUuid", params.eventId as string)
       .preload("attributes", (attributesQuery) =>
         attributesQuery
-          .select("uuid", "name", "slug", "created_at", "updated_at")
+          .select("uuid", "name", "createdAt", "updatedAt")
           .pivotColumns(["value"]),
       )
       .preload("emails", (emailsQuery) =>
         emailsQuery
-          .select("uuid", "name", "content", "trigger", "trigger_value")
-          .pivotColumns(["send_by", "send_at", "status"]),
+          .select("uuid", "name", "content", "trigger", "triggerValue")
+          .pivotColumns(["sendBy", "sendAt", "status"]),
       )
       .firstOrFail();
 

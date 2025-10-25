@@ -83,7 +83,7 @@ export class EmailService {
         event.startDate.toFormat("yyyy-MM-dd HH:mm"),
       )
       .replace(/\/event_end_date/g, event.endDate.toFormat("yyyy-MM-dd HH:mm"))
-      .replace(/\/event_slug/g, event.slug)
+      // .replace(/\/event_slug/g, event.slug)
       .replace(/\/event_primary_color/g, event.primaryColor ?? "")
       .replace(/\/event_location/g, event.location ?? "")
       .replace(/\/participant_id/g, String(participant.uuid))

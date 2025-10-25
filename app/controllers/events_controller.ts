@@ -83,9 +83,12 @@ export default class EventController {
    */
   public async show({ params, auth, bouncer }: HttpContext) {
     const event = await Event.query()
-      .where("uuid", Number(params.uuid))
+      .where("uuid", params.id as string)
       .preload("permissions", (q) =>
-        q.where("AdminPermissions.adminUuid", auth.user?.uuid ?? 0),
+        q.where(
+          "AdminsPermissions.adminUuid",
+          auth.user?.uuid ?? "50d1312e-3fad-4c83-b167-7c77db186db3",
+        ),
       )
       .preload("registerForm")
       .first();
@@ -121,7 +124,7 @@ export default class EventController {
    * @tag event
    */
   public async update({ params, request, bouncer }: HttpContext) {
-    const event = await Event.findOrFail(params.uuid);
+    const event = await Event.findOrFail(params.id);
 
     await bouncer.authorize("manage_setting", event);
 
@@ -170,14 +173,14 @@ export default class EventController {
    * @tag event
    */
   public async destroy({ response, params, auth }: HttpContext) {
-    const event = await Event.findOrFail(params.uuid);
+    const event = await Event.findOrFail(params.id);
     if ((auth.user?.uuid ?? null) !== event.organizerUuid) {
       return response.unauthorized({
         message: "You don't have permissions to this actions",
       });
     }
-    await db.from("admin_permissions").where("event_id", event.uuid).delete();
+    await db.from("AdminsPermissions").where("eventUuid", event.uuid).delete();
     await event.delete();
-    return { message: "Event successfully deleted" };
+    return response.noContent();
   }
 }

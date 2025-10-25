@@ -11,8 +11,8 @@ export class OrganizerService {
   constructor(private adminService: AdminService) {}
 
   async addOrganizer(
-    eventId: number,
-    organizerData: { email: string; permissionsIds: number[] },
+    eventId: string,
+    organizerData: { email: string; permissionsIds: string[] },
   ) {
     const admin = await Admin.findBy("email", organizerData.email);
 
@@ -20,7 +20,7 @@ export class OrganizerService {
       organizerData.permissionsIds.forEach(async (permissionId) => {
         await admin
           .related("permissions")
-          .attach({ [permissionId]: { event_id: eventId } });
+          .attach({ [permissionId]: { eventUuid: eventId } });
       });
     } else {
       const newAdminData = await createAdminValidator.validate(organizerData);
@@ -29,7 +29,7 @@ export class OrganizerService {
     }
   }
 
-  async getOrganizerWithPermissions(organizerId: number, eventId: number) {
+  async getOrganizerWithPermissions(organizerId: string, eventId: string) {
     return await Admin.query()
       .where("uuid", organizerId)
       .whereHas("events", (eventsQuery) =>
@@ -42,9 +42,9 @@ export class OrganizerService {
   }
 
   async updateOrganizerPermissions(
-    organizerId: number,
-    eventId: number,
-    newPermissionsIds: number[],
+    organizerId: string,
+    eventId: string,
+    newPermissionsIds: string[],
   ) {
     const organizer = await this.getOrganizerWithPermissions(
       organizerId,

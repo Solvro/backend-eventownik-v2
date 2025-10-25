@@ -36,9 +36,6 @@ export default class Event extends BaseModel {
   @column()
   declare description: string | null;
 
-  @column()
-  declare slug: string;
-
   @column.dateTime({
     serialize: (value: DateTime) => value.toISO({ includeOffset: false }),
   })
@@ -95,7 +92,7 @@ export default class Event extends BaseModel {
   declare registerFormUuid: string | null;
 
   @manyToMany(() => Admin, {
-    pivotTable: "AdminPermission",
+    pivotTable: "AdminsPermissions",
     pivotColumns: ["permissionUuid"],
     pivotTimestamps: true,
   })
@@ -107,9 +104,12 @@ export default class Event extends BaseModel {
   declare mainOrganizer: BelongsTo<typeof Admin>;
 
   @manyToMany(() => Permission, {
-    pivotTable: "AdminPermission",
+    pivotTable: "AdminsPermissions",
     pivotColumns: ["adminUuid"],
-    pivotTimestamps: true,
+    pivotTimestamps: {
+      createdAt: "createdAt",
+      updatedAt: "updatedAt",
+    },
   })
   declare permissions: ManyToMany<typeof Permission>;
 
@@ -122,7 +122,9 @@ export default class Event extends BaseModel {
   @hasMany(() => Form)
   declare forms: HasMany<typeof Form>;
 
-  @belongsTo(() => Form)
+  @belongsTo(() => Form, {
+    foreignKey: "registerFormUuid",
+  })
   declare registerForm: BelongsTo<typeof Form>;
 
   @hasMany(() => Attribute)

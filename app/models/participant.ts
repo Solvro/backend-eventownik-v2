@@ -42,16 +42,22 @@ export default class Participant extends BaseModel {
   declare event: BelongsTo<typeof Event>;
 
   @manyToMany(() => Attribute, {
-    pivotTable: "ParticipantAttributes",
+    pivotTable: "ParticipantsAttributes",
     pivotColumns: ["value"],
-    pivotTimestamps: true,
+    pivotTimestamps: {
+      createdAt: "createdAt",
+      updatedAt: "updatedAt",
+    },
   })
   declare attributes: ManyToMany<typeof Attribute>;
 
   @manyToMany(() => Email, {
-    pivotTable: "ParticipantEmails",
+    pivotTable: "ParticipantsEmails",
     pivotColumns: ["sendAt", "sendBy", "status"],
-    pivotTimestamps: true,
+    pivotTimestamps: {
+      createdAt: "createdAt",
+      updatedAt: "updatedAt",
+    },
   })
   declare emails: ManyToMany<typeof Email>;
 

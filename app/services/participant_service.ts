@@ -32,10 +32,10 @@ export class ParticipantService {
           event,
           participant,
           "attribute_changed",
-          attribute.attributeId,
+          attribute.attributeUUID,
           attribute.value,
         );
-        transformedAttributes[attribute.attributeId] = {
+        transformedAttributes[attribute.attributeUUID] = {
           value: attribute.value,
         };
       }

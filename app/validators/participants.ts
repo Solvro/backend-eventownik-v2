@@ -7,18 +7,17 @@ export const participantsStoreValidator = vine.compile(
       .email()
       .unique(async (db, value, field) => {
         const participantEmail = (await db
-          .from("participants")
+          .from("Participants")
           .select("email", "uuid")
           .where("email", value)
-          .andWhere("eventUuid", +field.meta.eventId)
+          .andWhere("eventUuid", field.meta.eventId as string)
           .first()) as { email: string } | null;
-
         return participantEmail === null;
       }),
     participantAttributes: vine
       .array(
         vine.object({
-          attributeId: vine.number(),
+          attributeUUID: vine.string().uuid(),
           value: vine.string().nullable(),
         }),
       )

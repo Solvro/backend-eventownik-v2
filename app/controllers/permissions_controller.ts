@@ -46,7 +46,7 @@ export default class PermissionsController {
    * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    */
   async show({ params }: HttpContext) {
-    return Permission.findOrFail(params.uuid);
+    return Permission.findOrFail(params.id);
   }
 
   /**
@@ -63,7 +63,7 @@ export default class PermissionsController {
       request.body(),
     );
 
-    const permission = await Permission.findOrFail(params.uuid);
+    const permission = await Permission.findOrFail(params.id);
     permission.merge(permissionUpdates);
 
     return await permission.save();
@@ -77,7 +77,7 @@ export default class PermissionsController {
    * @responseBody 204 - {}
    */
   async destroy({ params, response }: HttpContext) {
-    const permissionToDelete = await Permission.findOrFail(params.uuid);
+    const permissionToDelete = await Permission.findOrFail(params.id);
     await permissionToDelete.delete();
     return response.noContent();
   }

@@ -23,7 +23,7 @@ export default class FormsController {
    * @responseBody 200 - <Form[]>.with(relations, attributes).exclude(event).paginated("data", "meta")
    */
   public async index({ params, request, bouncer }: HttpContext) {
-    const eventId = Number(params.eventId);
+    const eventId = params.eventId as string;
     await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
     const page = Number(request.input("page", 1));
     const perPage = Number(request.input("perPage", 10));
@@ -43,7 +43,7 @@ export default class FormsController {
    * @responseBody 201 - <Form>
    */
   public async store({ params, request, response, bouncer }: HttpContext) {
-    const eventUuid = Number(params.eventUuid);
+    const eventUuid = params.eventId as string;
 
     const event = await Event.query()
       .where("uuid", eventUuid)
@@ -53,17 +53,23 @@ export default class FormsController {
 
     await bouncer.authorize("manage_form", event);
 
-    const { attributes, ...newFormData } =
+    const { isFirstForm, attributes, startDate, endDate, ...newFormData } =
       await request.validateUsing(createFormValidator);
 
+    const renamedFormData = {
+      ...newFormData,
+      openDate: startDate,
+      closeDate: endDate,
+    };
+
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (newFormData.isFirstForm === true && event.registerForm !== null) {
+    if (isFirstForm === true && event.registerForm !== null) {
       return response.badRequest({
         message: "Event already has a registration form",
       });
     }
 
-    const form = await event.related("forms").create(newFormData);
+    const form = await event.related("forms").create(renamedFormData);
 
     const eventAttributesIdsSet = new Set(
       event.attributes.map((attribute) => attribute.uuid),
@@ -113,8 +119,8 @@ export default class FormsController {
    * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    */
   public async show({ params, bouncer }: HttpContext) {
-    const eventId = Number(params.eventId);
-    const formId = Number(params.uuid);
+    const eventId = params.eventId as string;
+    const formId = params.id as string;
     await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
 
     return await Form.query()
@@ -134,8 +140,8 @@ export default class FormsController {
    * @tag forms
    */
   public async update({ params, request, bouncer, response }: HttpContext) {
-    const eventId = Number(params.eventId);
-    const formId = Number(params.uuid);
+    const eventId = params.eventId as string;
+    const formId = params.id as string;
     const event = await Event.query()
       .where("uuid", eventId)
       .preload("registerForm")
@@ -147,21 +153,25 @@ export default class FormsController {
       .where("uuid", formId)
       .firstOrFail();
 
-    const { attributes, ...updates } =
+    const { attributes, isFirstForm, startDate, endDate, ...updates } =
       await request.validateUsing(updateFormValidator);
 
+    const renamedFormData = {
+      ...updates,
+      openDate: startDate,
+      closeDate: endDate,
+    };
     if (
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       event.registerForm !== null &&
-      form.isFirstForm === false &&
-      updates.isFirstForm === true
+      isFirstForm === true
     ) {
       return response.badRequest({
         message: "Event already has a registration form",
       });
     }
 
-    form.merge(updates);
+    form.merge(renamedFormData);
     await form.save();
 
     if (attributes !== undefined) {
@@ -203,8 +213,8 @@ export default class FormsController {
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
   public async destroy({ params, response, bouncer }: HttpContext) {
-    const eventId = Number(params.eventId);
-    const formId = Number(params.uuid);
+    const eventId = params.eventId as string;
+    const formId = params.id as string;
     await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
 
     await Form.query()

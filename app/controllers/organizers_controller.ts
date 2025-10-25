@@ -22,12 +22,12 @@ export default class OrganizersController {
    * @responseBody 200 - <Admin[]>
    */
   async index(context: HttpContext) {
-    const eventId = +context.params.eventId;
+    const eventId = context.params.eventId as string;
 
     return await Admin.query()
       .select("uuid", "firstName", "lastName", "email")
       .preload("permissions", (permissionsQuery) =>
-        permissionsQuery.where("event_id", eventId),
+        permissionsQuery.where("eventUuid", eventId),
       )
       .whereHas("events", (query) => query.where("events.uuid", eventId));
   }
@@ -40,7 +40,7 @@ export default class OrganizersController {
    * @requestBody <addOrganizerValidator>
    */
   async store({ params, request }: HttpContext) {
-    const eventId = +params.eventId;
+    const eventId = params.eventId as string;
 
     const organizerData = await addOrganizerValidator.validate(request.all());
 
@@ -56,14 +56,13 @@ export default class OrganizersController {
    * @responseBody 404 - { error: `Organizer with id {organizerId} does not exist` },
    */
   async show({ params }: HttpContext) {
-    const eventId = +params.eventId;
-    const organizerId = +params.uuid;
-
+    const eventId = params.eventId as string;
+    const organizerId = params.id as string;
     const organizer = await Admin.query()
       .where("uuid", organizerId)
       .whereHas("events", (query) => query.where("events.uuid", eventId))
       .preload("permissions", (permissionsQuery) =>
-        permissionsQuery.where("event_id", eventId),
+        permissionsQuery.where("eventUuid", eventId),
       )
       .firstOrFail();
 
@@ -80,8 +79,8 @@ export default class OrganizersController {
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
   async update({ params, request }: HttpContext) {
-    const eventId = +params.eventId;
-    const organizerId = +params.uuid;
+    const eventId = params.eventId as string;
+    const organizerId = params.uuid as string;
 
     const { permissionsIds } =
       await updateOrganizerPermissionsValidator.validate(request.body());

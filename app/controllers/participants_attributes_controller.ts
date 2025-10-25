@@ -21,9 +21,9 @@ export default class ParticipantsAttributesController {
    * @responseBody 400 - { message: "Event doesn't have a photo" }
    */
   public async downloadFile({ params, response, bouncer }: HttpContext) {
-    const eventId = +params.eventId;
-    const participantId = +params.participantId;
-    const attributeId = +params.attributeId;
+    const eventId = params.eventId as string;
+    const participantId = params.participantId as string;
+    const attributeId = params.attributeId as string;
 
     await bouncer.authorize(
       "manage_participant",
@@ -62,8 +62,8 @@ export default class ParticipantsAttributesController {
   }
 
   async bulkUpdate({ params, request, bouncer, response }: HttpContext) {
-    const eventId = +params.eventId;
-    const attributeId = +params.attributeId;
+    const eventId = params.eventId as string;
+    const attributeId = params.attributeId as string;
     const { newValue, participantIds } = await request.validateUsing(
       participantBulkUpdateValidator,
       {

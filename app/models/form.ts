@@ -35,21 +35,24 @@ export default class Form extends BaseModel {
   @column()
   declare name: string;
 
-  @column()
-  declare isFirstForm: boolean;
-
-  @column({
-    serialize: (value: DateTime) => value.toISO({ includeOffset: false }),
+  @column.dateTime({
+    serialize: (value: DateTime | null) => {
+      return value !== null ? value.toISO({ includeOffset: false }) : value;
+    },
   })
   declare openDate: DateTime;
 
-  @column({
-    serialize: (value: DateTime) => value.toISO({ includeOffset: false }),
+  @column.dateTime({
+    serialize: (value: DateTime | null) => {
+      return value !== null ? value.toISO({ includeOffset: false }) : value;
+    },
   })
   declare closeDate: DateTime;
 
   @column.dateTime({
-    serialize: (value: DateTime) => value.toISO({ includeOffset: false }),
+    serialize: (value: DateTime | null) => {
+      return value !== null ? value.toISO({ includeOffset: false }) : value;
+    },
   })
   declare startDate: DateTime;
 
@@ -70,9 +73,12 @@ export default class Form extends BaseModel {
   declare event: BelongsTo<typeof Event>;
 
   @manyToMany(() => Attribute, {
-    pivotTable: "FormDefinitions",
-    pivotColumns: ["isEditable", "isRequired", "order"],
-    pivotTimestamps: true,
+    pivotTable: "FormsDefinitions",
+    pivotColumns: ["isRequired", "order"],
+    pivotTimestamps: {
+      createdAt: "createdAt",
+      updatedAt: "updatedAt",
+    },
   })
   declare attributes: ManyToMany<typeof Attribute>;
 
