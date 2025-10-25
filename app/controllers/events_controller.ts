@@ -87,7 +87,7 @@ export default class EventController {
       .preload("permissions", (q) =>
         q.where(
           "AdminsPermissions.adminUuid",
-          auth.user?.uuid ?? "50d1312e-3fad-4c83-b167-7c77db186db3",
+          auth.user?.uuid ?? "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
         ),
       )
       .preload("registerForm")
