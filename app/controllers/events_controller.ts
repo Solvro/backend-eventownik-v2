@@ -228,6 +228,24 @@ export default class EventController {
   }
 
   /**
+   * @adminIndex
+   * @operationId getAllEvents
+   * @description Returns all events only for superadmin
+   * @responseBody 200 - <Event[]>
+   * @responseBody 401 - Unauthorized access
+   * @tag event
+   */
+  public async superadminIndex({ auth, response }: HttpContext) {
+    if (auth.user?.type !== "superadmin") {
+      return response.unauthorized({
+        message: "You don't have permission to perform this action",
+      });
+    }
+
+    return Event.query().orderBy("created_at", "desc");
+  }
+
+  /**
    * @destroy
    * @operationId deleteEvent
    * @description Deletes an event if user has permission
