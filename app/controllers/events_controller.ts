@@ -228,7 +228,7 @@ export default class EventController {
   }
 
   /**
-   * @adminIndex
+   * @superadminIndex
    * @operationId getAllEvents
    * @description Returns all events only for superadmin
    * @responseBody 200 - <Event[]>
