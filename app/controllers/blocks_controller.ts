@@ -20,8 +20,13 @@ export default class BlocksController {
    * @responseBody 200 - <Block[]>.paginated()
    */
   async index({ params, bouncer }: HttpContext) {
+<<<<<<< Updated upstream
     const eventUuid = params.eventUuid as string;
     const attributeUuid = params.attributeUuid as string;
+=======
+    const eventId = +params.eventId;
+    const attributeUuid = String(params.attributeUuid);
+>>>>>>> Stashed changes
 
     await bouncer.authorize("manage_event", await Event.findOrFail(eventUuid));
 
