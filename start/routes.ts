@@ -36,10 +36,12 @@ router.get("/docs", async () => {
 
 router
   .group(() => {
+    router.get("events/public", [EventController, "publicIndex"]);
     router
       .group(() => {
         router.resource("admins", AdminsController).apiOnly();
         router.resource("events", EventController).apiOnly();
+        router.put("events/:id/activate", [EventController, "toggleActive"]);
         router.resource("permissions", PermissionsController).apiOnly();
 
         router
@@ -118,6 +120,11 @@ router
         router.post("login", [AuthController, "login"]);
         router.post("register", [AuthController, "register"]);
         router.get("me", [AuthController, "me"]).use(middleware.auth());
+        router.post("sendPasswordResetToken", [
+          AuthController,
+          "sendPasswordResetToken",
+        ]);
+        router.post("resetPassword", [AuthController, "resetPassword"]);
       })
       .prefix("auth");
   })

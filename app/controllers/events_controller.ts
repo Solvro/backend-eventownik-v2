@@ -9,7 +9,12 @@ import Event from "#models/event";
 import Permission from "#models/permission";
 import { PhotoService } from "#services/photo_service";
 import env from "#start/env";
-import { createEventValidator, updateEventValidator } from "#validators/event";
+import {
+  createEventValidator,
+  displayEvents,
+  toggleEventActivation,
+  updateEventValidator,
+} from "#validators/event";
 
 @inject()
 export default class EventController {
@@ -105,9 +110,45 @@ export default class EventController {
    * @tag event
    */
   public async publicShow({ params }: HttpContext) {
-    const event = await Event.findByOrFail("slug", params.eventSlug);
-    await event.load("registerForm");
-    return event;
+    return await Event.query()
+      .where("slug", String(params.eventSlug))
+      .preload("firstForm")
+      .preload("attributes")
+      .firstOrFail();
+  }
+
+  /**
+   * @publicIndex
+   * @operationId indexPublicEvent
+   * @description Shows all event basic data without login
+   * @paramQuery from - filtering from event start date - @type(Date)
+   * @paramQuery to - filtering from to end date - @type(Date)
+   * @responseBody 200 - <Event[]>.exclude(organizerId,lat,long,contactEmail,createdAt,id,updatedAt,termsLink,socialMediaLinks)
+   * @tag event
+   */
+  public async publicIndex({ request }: HttpContext) {
+    const params = await request.validateUsing(displayEvents);
+    const events = await Event.query()
+      .if(params.from, (q) =>
+        q.where("start_date", ">=", params.from.toFormat("yyyy-MM-dd")),
+      )
+      .if(params.to, (q) =>
+        q.where("end_date", "<=", params.to.toFormat("yyyy-MM-dd")),
+      )
+      .select(
+        "name",
+        "description",
+        "slug",
+        "start_date",
+        "end_date",
+        "organizer",
+        "primary_color",
+        "participants_count",
+        "photo_url",
+        "location",
+      );
+
+    return events;
   }
 
   /**
@@ -160,6 +201,33 @@ export default class EventController {
     await event.save();
 
     return event;
+  }
+
+  /**
+   * @update
+   * @operationId activateEvent
+   * @paramPath id - Event identifier - @type(number) @required
+   * @requestFormDataBody <toggleEventActivation>
+   * @description Allows superadmin to activate new event.
+   * @responseBody 200 - <Event>
+   * @responseBody 401 - Unauthorized access
+   * @tag event
+   */
+  public async toggleActive({ request, params, response, auth }: HttpContext) {
+    const event = await Event.findOrFail(params.id);
+
+    const payload = await request.validateUsing(toggleEventActivation);
+
+    if (auth.user?.type !== "superadmin") {
+      return response.unauthorized({
+        message: "You don't have permission to perform this action",
+      });
+    }
+
+    event.isActive = payload.isActive;
+    await event.save();
+
+    return response.ok(event);
   }
 
   /**

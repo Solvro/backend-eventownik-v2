@@ -3,6 +3,7 @@ import { HttpContext } from "@adonisjs/core/http";
 import db from "@adonisjs/lucid/services/db";
 
 import Admin from "#models/admin";
+import Event from "#models/event";
 import { OrganizerService } from "#services/organizer_service";
 import {
   addOrganizerValidator,
@@ -22,7 +23,11 @@ export default class OrganizersController {
    * @responseBody 200 - <Admin[]>
    */
   async index(context: HttpContext) {
-    const eventId = context.params.eventId as string;
+    const eventId = +context.params.eventId;
+    await context.bouncer.authorize(
+      "manage_event",
+      await Event.findOrFail(eventId),
+    );
 
     return await Admin.query()
       .select("uuid", "firstName", "lastName", "email")
@@ -39,8 +44,9 @@ export default class OrganizersController {
    * @tag organizers
    * @requestBody <addOrganizerValidator>
    */
-  async store({ params, request }: HttpContext) {
-    const eventId = params.eventId as string;
+  async store({ params, request, bouncer }: HttpContext) {
+    const eventId = +params.eventId;
+    await bouncer.authorize("manage_setting", await Event.findOrFail(eventId));
 
     const organizerData = await addOrganizerValidator.validate(request.all());
 
@@ -55,9 +61,11 @@ export default class OrganizersController {
    * @responseBody 200 - <Admin>
    * @responseBody 404 - { error: `Organizer with id {organizerId} does not exist` },
    */
-  async show({ params }: HttpContext) {
-    const eventId = params.eventId as string;
-    const organizerId = params.id as string;
+  async show({ params, bouncer }: HttpContext) {
+    const eventId = +params.eventId;
+    const organizerId = +params.id;
+    await bouncer.authorize("manage_event", await Event.findOrFail(eventId));
+
     const organizer = await Admin.query()
       .where("uuid", organizerId)
       .whereHas("events", (query) => query.where("events.uuid", eventId))
@@ -78,9 +86,10 @@ export default class OrganizersController {
    * @responseBody 200 - <Admin>
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
-  async update({ params, request }: HttpContext) {
-    const eventId = params.eventId as string;
-    const organizerId = params.uuid as string;
+  async update({ params, request, bouncer }: HttpContext) {
+    const eventId = +params.eventId;
+    const organizerId = +params.id;
+    await bouncer.authorize("manage_setting", await Event.findOrFail(eventId));
 
     const { permissionsIds } =
       await updateOrganizerPermissionsValidator.validate(request.body());
@@ -101,14 +110,17 @@ export default class OrganizersController {
    * @tag organizers
    * @responseBody 204 - {}
    */
-  async destroy({ params }: HttpContext) {
+  async destroy({ params, bouncer, response }: HttpContext) {
     const eventId = +params.eventId;
-    const organizerId = +params.uuid;
+    await bouncer.authorize("manage_setting", await Event.findOrFail(eventId));
+    const organizerId = +params.id;
 
     await db
       .from("adminPermissions")
       .where("adminUuid", organizerId)
       .where("eventUuid", eventId)
       .delete();
+
+    return response.noContent();
   }
 }

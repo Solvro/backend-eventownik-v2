@@ -73,6 +73,9 @@ export default class Event extends BaseModel {
   @column()
   declare location: string | null;
 
+  @column()
+  declare isActive: boolean;
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime;
 
@@ -136,5 +139,16 @@ export default class Event extends BaseModel {
   @beforeCreate()
   static assignUuid(event: Event) {
     event.uuid = randomUUID();
+  }
+
+  @column()
+  declare socialMediaLinks: string[] | null;
+
+  @column()
+  declare termsLink: string | null;
+
+  @beforeCreate()
+  static deactivateNewEvent(event: Event) {
+    event.isActive = false;
   }
 }
