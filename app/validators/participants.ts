@@ -17,7 +17,7 @@ export const participantsStoreValidator = vine.compile(
     participantAttributes: vine
       .array(
         vine.object({
-          attributeUUID: vine.string().uuid(),
+          attributeUuid: vine.string().uuid(),
           value: vine.string().nullable(),
         }),
       )
@@ -49,7 +49,7 @@ export const participantsUpdateValidator = vine.compile(
     participantAttributes: vine
       .array(
         vine.object({
-          attributeId: vine.number(),
+          attributeUuid: vine.string(),
           value: vine.string().nullable(),
         }),
       )

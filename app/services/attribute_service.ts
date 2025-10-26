@@ -14,30 +14,24 @@ export class AttributeService {
   // eslint-disable-next-line no-useless-constructor
   constructor(private blockService: BlockService) {}
 
-  async getEventAttributes(eventId: number) {
-    const attributes = await Attribute.findManyBy("eventUuid", eventId);
+  async getEventAttributes(eventUuid: string) {
+    const attributes = await Attribute.findManyBy("eventUuid", eventUuid);
 
     return attributes;
   }
 
-  async getEventAttribute(eventId: number, attributeId: number) {
+  async getEventAttribute(eventUuid: string, attributeUuid: string) {
     const attribute = await Attribute.query()
-      .where("eventUuid", eventId)
-      .andWhere("uuid", attributeId)
+      .where("eventUuid", eventUuid)
+      .andWhere("uuid", attributeUuid)
       .firstOrFail();
 
     return attribute;
   }
 
   async createAttribute(createAttributeDTO: CreateAttributeDTO) {
-    const optionsJSON: string | null =
-      createAttributeDTO.options !== undefined
-        ? JSON.stringify(createAttributeDTO.options)
-        : null;
-
     const newAttribute = await Attribute.create({
       ...createAttributeDTO,
-      options: optionsJSON,
     });
 
     if (newAttribute.type === "block") {
@@ -48,30 +42,27 @@ export class AttributeService {
   }
 
   async updateAttribute(
-    eventId: number,
-    attributeId: number,
+    eventUuid: string,
+    attributeUuid: string,
     updates: UpdateAttributeDTO,
   ) {
     const attributeToUpdate = await this.getEventAttribute(
-      eventId,
-      attributeId,
+      eventUuid,
+      attributeUuid,
     );
 
     const previousType = attributeToUpdate.type;
 
-    const optionsJSON: string | undefined =
-      updates.options !== undefined
-        ? JSON.stringify(updates.options)
-        : undefined;
-
     attributeToUpdate.merge({
       ...updates,
-      options: optionsJSON,
     });
 
     await attributeToUpdate.save();
 
-    const updatedAttribute = await this.getEventAttribute(eventId, attributeId);
+    const updatedAttribute = await this.getEventAttribute(
+      eventUuid,
+      attributeUuid,
+    );
 
     if (previousType === "block") {
       await updatedAttribute.load("rootBlock");
@@ -83,14 +74,14 @@ export class AttributeService {
       await this.blockService.createRootBlock(updatedAttribute.uuid);
     }
 
-    return await this.getEventAttribute(eventId, attributeId);
+    return await this.getEventAttribute(eventUuid, attributeUuid);
   }
 
-  async deleteAttribute(eventId: number, attributeId: number) {
-    await Block.query().where("attributeUuid", attributeId).delete();
+  async deleteAttribute(eventUuid: string, attributeUuid: string) {
+    await Block.query().where("attributeUuid", attributeUuid).delete();
     await Attribute.query()
-      .where("eventUuid", eventId)
-      .andWhere("uuid", attributeId)
+      .where("eventUuid", eventUuid)
+      .andWhere("uuid", attributeUuid)
       .delete();
   }
 }

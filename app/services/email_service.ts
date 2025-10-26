@@ -83,7 +83,7 @@ export class EmailService {
         event.startDate.toFormat("yyyy-MM-dd HH:mm"),
       )
       .replace(/\/event_end_date/g, event.endDate.toFormat("yyyy-MM-dd HH:mm"))
-      // .replace(/\/event_slug/g, event.slug)
+      .replace(/\/event_slug/g, event.slug ?? "")
       .replace(/\/event_primary_color/g, event.primaryColor ?? "")
       .replace(/\/event_location/g, event.location ?? "")
       .replace(/\/participant_id/g, String(participant.uuid))
@@ -115,7 +115,7 @@ export class EmailService {
     if (form !== null) {
       parsedContent = parsedContent.replace(
         /\/form_url/g,
-        // TODO:
+        // TODO: w nowej bazie JEST event slug, ale nie polegamy na nim tak bardzo
         `${env.get("APP_DOMAIN")}/${event.slug}/${form.uuid}/${participant.uuid}`,
       );
     }

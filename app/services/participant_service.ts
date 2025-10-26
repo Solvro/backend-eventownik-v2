@@ -24,7 +24,7 @@ export class ParticipantService {
       participantAttributes !== undefined &&
       participantAttributes.length > 0
     ) {
-      const transformedAttributes: Record<number, { value: string | null }> =
+      const transformedAttributes: Record<string, { value: string | null }> =
         {};
 
       for (const attribute of participantAttributes) {
@@ -32,10 +32,10 @@ export class ParticipantService {
           event,
           participant,
           "attribute_changed",
-          attribute.attributeUUID,
+          attribute.attributeUuid,
           attribute.value,
         );
-        transformedAttributes[attribute.attributeUUID] = {
+        transformedAttributes[attribute.attributeUuid] = {
           value: attribute.value,
         };
       }
@@ -75,7 +75,7 @@ export class ParticipantService {
       participantAttributes !== undefined &&
       participantAttributes.length > 0
     ) {
-      const transformedAttributes: Record<number, { value: string | null }> =
+      const transformedAttributes: Record<string, { value: string | null }> =
         {};
 
       for (const attribute of participantAttributes) {
@@ -83,10 +83,10 @@ export class ParticipantService {
           event,
           participant,
           "attribute_changed",
-          attribute.attributeId,
+          attribute.attributeUuid,
           attribute.value,
         );
-        transformedAttributes[attribute.attributeId] = {
+        transformedAttributes[attribute.attributeUuid] = {
           value: attribute.value,
         };
       }

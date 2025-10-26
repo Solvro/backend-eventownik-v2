@@ -36,6 +36,12 @@ export default class Event extends BaseModel {
   @column()
   declare description: string | null;
 
+<<<<<<< Updated upstream
+=======
+  @column()
+  declare slug?: string;
+
+>>>>>>> Stashed changes
   @column.dateTime({
     serialize: (value: DateTime) => value.toISO({ includeOffset: false }),
   })

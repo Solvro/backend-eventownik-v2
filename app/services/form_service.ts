@@ -43,15 +43,10 @@ export class FormService {
       ...attributes
     } = formSubmitDTO;
 
-    if (form.isFirstForm && participantEmail === undefined) {
+    if (participantEmail === undefined) {
       return {
         status: 400,
         error: { missingRequiredFields: { name: "email" } },
-      };
-    } else if (!form.isFirstForm && participantSlug === undefined) {
-      return {
-        status: 400,
-        error: { missingRequiredFields: { name: "participantSlug" } },
       };
     }
 
@@ -122,7 +117,7 @@ export class FormService {
           }
 
           return {
-            attributeId: +attributeUuid,
+            attributeUuid,
             value: fileName,
           };
         } else if (
@@ -131,8 +126,8 @@ export class FormService {
           value !== "null"
         ) {
           const canSignInToBlock = await this.blockService.canSignInToBlock(
-            +attributeUuid,
-            +(value as string),
+            attributeUuid,
+            value as string,
           );
 
           if (!canSignInToBlock) {
@@ -141,7 +136,7 @@ export class FormService {
         }
 
         return {
-          attributeId: +attributeUuid,
+          attributeUuid,
           value: value as string | null,
         };
       }),

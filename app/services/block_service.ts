@@ -5,9 +5,9 @@ import Block from "#models/block";
 import Participant from "#models/participant";
 
 export class BlockService {
-  async getBlockTree(attributeId: string) {
+  async getBlockTree(attributeUuid: string) {
     const blockAttribute = await Attribute.query()
-      .where("uuid", attributeId)
+      .where("uuid", attributeUuid)
       .preload("rootBlock", (q) => q.preload("attribute"))
       .firstOrFail();
 
@@ -64,12 +64,12 @@ export class BlockService {
     return block;
   }
 
-  async getBlockParticipants(attributeId: number, blockId: number) {
+  async getBlockParticipants(attributeUuid: string, blockUuid: string) {
     const participantsInBlock = await Participant.query().whereHas(
       "attributes",
       (query) => {
-        void query.where("attributes.uuid", attributeId);
-        void query.where("participant_attributes.value", "like", blockId);
+        void query.where("attributes.uuid", attributeUuid);
+        void query.where("participant_attributes.value", "like", blockUuid);
       },
     );
 
@@ -77,28 +77,28 @@ export class BlockService {
   }
 
   async getBlockParticipantsCount(
-    attributeId: number,
-    blockId: number,
+    attributeUuid: string,
+    blockUuid: string,
   ): Promise<number> {
     const blockParticipantsCount = await Participant.query()
       .whereHas("attributes", (query) => {
-        void query.where("attributes.uuid", attributeId);
-        void query.where("participant_attributes.value", "like", blockId);
+        void query.where("attributes.uuid", attributeUuid);
+        void query.where("participant_attributes.value", "like", blockUuid);
       })
       .count("*");
 
     return +blockParticipantsCount[0].$extras.count;
   }
 
-  async canSignInToBlock(attributeId: number, blockId: number) {
+  async canSignInToBlock(attributeUuid: string, blockUuid: string) {
     const block = await Block.query()
-      .where("uuid", blockId)
-      .andWhere("attributeUuid", attributeId)
+      .where("uuid", blockUuid)
+      .andWhere("attributeUuid", attributeUuid)
       .firstOrFail();
 
     const blockParticipantsCount = await this.getBlockParticipantsCount(
-      attributeId,
-      blockId,
+      attributeUuid,
+      blockUuid,
     );
 
     return (
@@ -109,9 +109,9 @@ export class BlockService {
     );
   }
 
-  async createRootBlock(attributeId: string) {
+  async createRootBlock(attributeUuid: string) {
     const attribute = await Attribute.query()
-      .where("uuid", attributeId)
+      .where("uuid", attributeUuid)
       .preload("rootBlock")
       .firstOrFail();
 
