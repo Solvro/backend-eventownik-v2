@@ -4,7 +4,7 @@ import Permission from "#models/permission";
 import {
   createPermissionValidator,
   updatePermissionValidator,
-} from "#validators/permission_validators";
+} from "#validators/permission";
 
 export default class PermissionsController {
   /**

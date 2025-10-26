@@ -120,12 +120,12 @@ export default class FormsController {
    */
   public async show({ params, bouncer }: HttpContext) {
     const eventId = params.eventId as string;
-    const formId = params.id as string;
+    const formUuid = params.id as string;
     await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
 
     return await Form.query()
       .where("eventUuid", eventId)
-      .where("uuid", formId)
+      .where("uuid", formUuid)
       .preload("attributes")
       .firstOrFail();
   }
@@ -141,7 +141,7 @@ export default class FormsController {
    */
   public async update({ params, request, bouncer, response }: HttpContext) {
     const eventId = params.eventId as string;
-    const formId = params.id as string;
+    const formUuid = params.id as string;
     const event = await Event.query()
       .where("uuid", eventId)
       .preload("registerForm")
@@ -150,7 +150,7 @@ export default class FormsController {
     await bouncer.authorize("manage_form", event);
     const form = await Form.query()
       .where("eventUuid", eventId)
-      .where("uuid", formId)
+      .where("uuid", formUuid)
       .firstOrFail();
 
     const { attributes, isFirstForm, startDate, endDate, ...updates } =
@@ -197,7 +197,7 @@ export default class FormsController {
 
     const updatedForm = await Form.query()
       .where("eventUuid", eventId)
-      .where("uuid", formId)
+      .where("uuid", formUuid)
       .preload("attributes")
       .firstOrFail();
 
@@ -214,12 +214,12 @@ export default class FormsController {
    */
   public async destroy({ params, response, bouncer }: HttpContext) {
     const eventId = params.eventId as string;
-    const formId = params.id as string;
+    const formUuid = params.id as string;
     await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
 
     await Form.query()
       .where("eventUuid", eventId)
-      .andWhere("uuid", formId)
+      .andWhere("uuid", formUuid)
       .delete();
 
     return response.noContent();
@@ -236,7 +236,7 @@ export default class FormsController {
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
   public async submitForm({ params, request, response }: HttpContext) {
-    const formId = +params.uuid;
+    const formUuid = params.uuid as string;
     const eventSlug = params.eventSlug as string;
 
     const event = await Event.findByOrFail("slug", eventSlug);
@@ -257,7 +257,7 @@ export default class FormsController {
       }),
     );
 
-    const errorObject = await this.formService.submitForm(eventSlug, formId, {
+    const errorObject = await this.formService.submitForm(eventSlug, formUuid, {
       email,
       participantSlug,
       ...transformedAttributes,

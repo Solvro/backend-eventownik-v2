@@ -112,7 +112,6 @@ export default class EventController {
   public async publicShow({ params }: HttpContext) {
     return await Event.query()
       .where("slug", String(params.eventSlug))
-      .preload("firstForm")
       .preload("attributes")
       .firstOrFail();
   }

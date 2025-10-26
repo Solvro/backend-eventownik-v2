@@ -24,13 +24,13 @@ export class FormService {
 
   async submitForm(
     eventSlug: string,
-    formId: number,
+    formUuid: string,
     formSubmitDTO: FormSubmitDTO,
   ): Promise<void | { status: number; error: object }> {
     const event = await Event.findByOrFail("slug", eventSlug);
 
     const form = await Form.query()
-      .where("uuid", formId)
+      .where("uuid", formUuid)
       .andWhere("eventUuid", event.uuid)
       .preload("attributes", async (query) => {
         await query.pivotColumns(["is_required"]);
