@@ -58,7 +58,7 @@ export class OrganizerService {
     for (const permissionId of newPermissionsIds) {
       await organizer
         .related("permissions")
-        .attach({ [permissionId]: { event_id: eventUuid } });
+        .attach({ [permissionId]: { eventUuid } });
     }
 
     const updatedOrganizer = await Admin.query()
