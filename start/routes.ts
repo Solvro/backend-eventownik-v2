@@ -40,7 +40,10 @@ router
     router
       .group(() => {
         router.resource("admins", AdminsController).apiOnly();
-        router.get("admins/events", [EventController, "superadminIndex"]);
+        router.get("admins/events/admin-index", [
+          EventController,
+          "superadminIndex",
+        ]);
         router.resource("events", EventController).apiOnly();
         router.put("events/:id/activate", [EventController, "toggleActive"]);
         router.resource("permissions", PermissionsController).apiOnly();
