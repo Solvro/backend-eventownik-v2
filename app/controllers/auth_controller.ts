@@ -83,7 +83,7 @@ export default class AuthController {
    * @tag auth
    * @requestBody <sendPasswordResetTokenValidator>
    */
-  async sendPasswordResetToken({ request }: HttpContext) {
+  async sendPasswordResetToken({ request, response }: HttpContext) {
     const { email } = await request.validateUsing(
       sendPasswordResetTokenValidator,
     );
@@ -108,6 +108,8 @@ export default class AuthController {
           userName: admin.firstName,
         });
     });
+
+    response.created();
   }
 
   /**
@@ -145,5 +147,7 @@ export default class AuthController {
 
     passwordReset.used = true;
     await passwordReset.save();
+
+    response.created();
   }
 }
