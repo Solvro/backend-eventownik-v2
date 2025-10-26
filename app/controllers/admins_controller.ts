@@ -3,10 +3,7 @@ import type { HttpContext } from "@adonisjs/core/http";
 
 import Admin from "#models/admin";
 import { AdminService } from "#services/admin_service";
-import {
-  createAdminValidator,
-  updateAdminValidator,
-} from "#validators/admin_validators";
+import { createAdminValidator, updateAdminValidator } from "#validators/admin";
 
 @inject()
 export default class AdminsController {
