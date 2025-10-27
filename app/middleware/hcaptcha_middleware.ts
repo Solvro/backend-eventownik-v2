@@ -1,6 +1,7 @@
 import { verifyHCaptcha } from "@solvro/hcaptcha";
 import type { hCaptchaResponse } from "@solvro/hcaptcha";
 
+import { Exception } from "@adonisjs/core/exceptions";
 import type { HttpContext } from "@adonisjs/core/http";
 import type { NextFn } from "@adonisjs/core/types/http";
 
@@ -64,7 +65,7 @@ interface HCaptchaMiddlewareOptions {
 }
 
 // in case someone wanted to bring @solvro/error-handling to this project
-class SensitiveError extends Error {
+class SensitiveError extends Exception {
   sensitive = true;
 }
 
@@ -78,7 +79,9 @@ async function doCaptchaValidation(
   if (typeof token !== "string") {
     // no token found
     if (options.requireToken) {
-      throw new SensitiveError("No hCaptcha token found in request");
+      throw new SensitiveError("No hCaptcha token found in request", {
+        status: 400,
+      });
     }
     ctx.hCaptcha = {
       tokenReceived: false,
@@ -105,7 +108,7 @@ async function doCaptchaValidation(
   }
 
   if (options.requirePass && !ctx.hCaptcha.tokenValid) {
-    throw new SensitiveError("Invalid captcha token");
+    throw new SensitiveError("Invalid captcha token", { status: 403 });
   }
 }
 
