@@ -46,4 +46,7 @@ export default await Env.create(new URL("../", import.meta.url), {
   SMTP_PASSWORD: Env.schema.string(),
 
   SIGNOZ_HOST: Env.schema.string(),
+
+  HCAPTCHA_SECRET: Env.schema.string(),
+  HCAPTCHA_SITEKEY: Env.schema.string(),
 });
