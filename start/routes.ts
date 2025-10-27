@@ -41,7 +41,7 @@ router
       .group(() => {
         router.resource("admins", AdminsController).apiOnly();
         router.resource("events", EventController).apiOnly();
-        router.get("events/superadminIndex", [
+        router.get("events/admins/superadminIndex", [
           EventController,
           "superadminIndex",
         ]);
