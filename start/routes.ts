@@ -130,6 +130,14 @@ router
         ]);
         router.post("resetPassword", [AuthController, "resetPassword"]);
       })
-      .prefix("auth");
+      .prefix("auth")
+      .use(
+        middleware.hCaptcha({
+          requirePass: true,
+          requireToken: false,
+          captchaFieldName: "hCaptchaToken",
+          skipMethods: ["GET"],
+        }),
+      );
   })
   .prefix("api/v1");

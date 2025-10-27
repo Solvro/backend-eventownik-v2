@@ -1,3 +1,5 @@
+import proxyAddr from "proxy-addr";
+
 import { Secret } from "@adonisjs/core/helpers";
 import { defineConfig } from "@adonisjs/core/http";
 import app from "@adonisjs/core/services/app";
@@ -38,4 +40,6 @@ export const http = defineConfig({
     secure: app.inProduction,
     sameSite: "lax",
   },
+
+  trustProxy: proxyAddr.compile(["172.16.0.0/12"]),
 });
