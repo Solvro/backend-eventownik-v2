@@ -12,6 +12,7 @@ import env from "#start/env";
 import {
   createEventValidator,
   displayEvents,
+  toggleEventActivation,
   updateEventValidator,
 } from "#validators/event";
 
@@ -197,6 +198,51 @@ export default class EventController {
     await event.save();
 
     return event;
+  }
+
+  /**
+   * @update
+   * @operationId activateEvent
+   * @paramPath id - Event identifier - @type(number) @required
+   * @requestFormDataBody <toggleEventActivation>
+   * @description Allows superadmin to activate new event.
+   * @responseBody 200 - <Event>
+   * @responseBody 401 - Unauthorized access
+   * @tag event
+   */
+  public async toggleActive({ request, params, response, auth }: HttpContext) {
+    const event = await Event.findOrFail(params.id);
+
+    const payload = await request.validateUsing(toggleEventActivation);
+
+    if (auth.user?.type !== "superadmin") {
+      return response.unauthorized({
+        message: "You don't have permission to perform this action",
+      });
+    }
+
+    event.isActive = payload.isActive;
+    await event.save();
+
+    return response.ok(event);
+  }
+
+  /**
+   * @superadminIndex
+   * @operationId getAllEvents
+   * @description Returns all events only for superadmin
+   * @responseBody 200 - <Event[]>
+   * @responseBody 401 - Unauthorized access
+   * @tag event
+   */
+  public async superadminIndex({ auth, response }: HttpContext) {
+    if (auth.user?.type !== "superadmin") {
+      return response.unauthorized({
+        message: "You don't have permission to perform this action",
+      });
+    }
+
+    return Event.query().orderBy("created_at", "desc");
   }
 
   /**

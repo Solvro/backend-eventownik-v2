@@ -17,11 +17,11 @@ export class OrganizerService {
     const admin = await Admin.findBy("email", organizerData.email);
 
     if (admin !== null) {
-      organizerData.permissionsIds.forEach(async (permissionId) => {
+      for (const permissionId of organizerData.permissionsIds) {
         await admin
           .related("permissions")
           .attach({ [permissionId]: { event_id: eventId } });
-      });
+      }
     } else {
       const newAdminData = await createAdminValidator.validate(organizerData);
 
@@ -55,11 +55,11 @@ export class OrganizerService {
       .related("permissions")
       .detach(organizer.permissions.map((permission) => permission.id));
 
-    newPermissionsIds.forEach(async (permissionId) => {
+    for (const permissionId of newPermissionsIds) {
       await organizer
         .related("permissions")
         .attach({ [permissionId]: { event_id: eventId } });
-    });
+    }
 
     const updatedOrganizer = await Admin.query()
       .where("id", organizerId)
