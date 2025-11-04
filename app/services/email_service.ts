@@ -148,7 +148,10 @@ export class EmailService {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     for (const [, form] of (event.forms ?? []).entries()) {
       const formUrl = `${env.get("APP_DOMAIN")}/${event.slug}/${form.slug}/${participant.slug}`;
-      const formRegex = new RegExp(`/form_${form.slug.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, "g");
+      const formRegex = new RegExp(
+        `/form_${form.slug.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`,
+        "g",
+      );
       parsedContent = parsedContent.replace(
         formRegex,
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
