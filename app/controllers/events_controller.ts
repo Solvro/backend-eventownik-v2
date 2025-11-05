@@ -126,6 +126,7 @@ export default class EventController {
   public async publicIndex({ request }: HttpContext) {
     const params = await request.validateUsing(displayEvents);
     const events = await Event.query()
+      .where("isActive", true)
       .if(params.from, (q) =>
         q.where("start_date", ">=", params.from.toFormat("yyyy-MM-dd")),
       )
