@@ -3,10 +3,7 @@ import type { HttpContext } from "@adonisjs/core/http";
 
 import Admin from "#models/admin";
 import { AdminService } from "#services/admin_service";
-import {
-  createAdminValidator,
-  updateAdminValidator,
-} from "#validators/admin_validators";
+import { createAdminValidator, updateAdminValidator } from "#validators/admin";
 
 @inject()
 export default class AdminsController {
@@ -33,11 +30,10 @@ export default class AdminsController {
    */
   async store({ request, response }: HttpContext) {
     const newAdminData = await createAdminValidator.validate(request.body());
-
     const newAdmin = await this.adminService.createAdmin(newAdminData);
 
     return response
-      .header("Location", `/api/v1/admins/${newAdmin.id}`)
+      .header("Location", `/api/v1/admins/${newAdmin.uuid}`)
       .created();
   }
 
@@ -51,9 +47,10 @@ export default class AdminsController {
    */
   async show({ params }: HttpContext) {
     return await Admin.query()
-      .where("id", +params.id)
+      .where("uuid", String(params.id))
       .preload("events")
       .preload("permissions")
+
       .firstOrFail();
   }
 
@@ -67,7 +64,6 @@ export default class AdminsController {
    */
   async update({ params, request }: HttpContext) {
     const adminUpdates = await updateAdminValidator.validate(request.body());
-
     const admin = await Admin.findOrFail(params.id);
 
     if (adminUpdates === undefined) {
@@ -75,7 +71,7 @@ export default class AdminsController {
     }
 
     const updatedAdmin = await this.adminService.updateAdmin(
-      +params.id,
+      String(params.id),
       adminUpdates,
     );
 
@@ -90,7 +86,8 @@ export default class AdminsController {
    * @responseBody 204 - {}
    */
   async destroy({ params, response }: HttpContext) {
-    await this.adminService.deleteAdmin(+params.id);
+    const adminUuid = params.id as string;
+    await this.adminService.deleteAdmin(adminUuid);
     return response.noContent();
   }
 }

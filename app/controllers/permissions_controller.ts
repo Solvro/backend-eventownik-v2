@@ -4,7 +4,7 @@ import Permission from "#models/permission";
 import {
   createPermissionValidator,
   updatePermissionValidator,
-} from "#validators/permission_validators";
+} from "#validators/permission";
 
 export default class PermissionsController {
   /**
@@ -33,7 +33,7 @@ export default class PermissionsController {
     const newPermission = await Permission.create(newPermissionData);
 
     return response
-      .header("Location", `/api/v1/permissions/${newPermission.id}`)
+      .header("Location", `/api/v1/permissions/${newPermission.uuid}`)
       .created();
   }
 

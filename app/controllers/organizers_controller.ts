@@ -23,18 +23,18 @@ export default class OrganizersController {
    * @responseBody 200 - <Admin[]>
    */
   async index(context: HttpContext) {
-    const eventId = +context.params.eventId;
+    const eventUuid = context.params.eventUuid as string;
     await context.bouncer.authorize(
       "manage_event",
-      await Event.findOrFail(eventId),
+      await Event.findOrFail(eventUuid),
     );
 
     return await Admin.query()
-      .select("id", "firstName", "lastName", "email")
+      .select("uuid", "firstName", "lastName", "email")
       .preload("permissions", (permissionsQuery) =>
-        permissionsQuery.where("event_id", eventId),
+        permissionsQuery.where("eventUuid", eventUuid),
       )
-      .whereHas("events", (query) => query.where("events.id", eventId));
+      .whereHas("events", (query) => query.where("events.uuid", eventUuid));
   }
 
   /**
@@ -45,12 +45,15 @@ export default class OrganizersController {
    * @requestBody <addOrganizerValidator>
    */
   async store({ params, request, bouncer }: HttpContext) {
-    const eventId = +params.eventId;
-    await bouncer.authorize("manage_setting", await Event.findOrFail(eventId));
+    const eventUuid = params.eventUuid as string;
+    await bouncer.authorize(
+      "manage_setting",
+      await Event.findOrFail(eventUuid),
+    );
 
     const organizerData = await addOrganizerValidator.validate(request.all());
 
-    await this.organizerService.addOrganizer(eventId, organizerData);
+    await this.organizerService.addOrganizer(eventUuid, organizerData);
   }
 
   /**
@@ -59,18 +62,18 @@ export default class OrganizersController {
    * @description Returns organizer details
    * @tag organizers
    * @responseBody 200 - <Admin>
-   * @responseBody 404 - { error: `Organizer with id {organizerId} does not exist` },
+   * @responseBody 404 - { error: `Organizer with id {organizerUuid} does not exist` },
    */
   async show({ params, bouncer }: HttpContext) {
-    const eventId = +params.eventId;
-    const organizerId = +params.id;
-    await bouncer.authorize("manage_event", await Event.findOrFail(eventId));
+    const eventUuid = params.eventUuid as string;
+    const organizerUuid = params.id as string;
+    await bouncer.authorize("manage_event", await Event.findOrFail(eventUuid));
 
     const organizer = await Admin.query()
-      .where("id", organizerId)
-      .whereHas("events", (query) => query.where("events.id", eventId))
+      .where("uuid", organizerUuid)
+      .whereHas("events", (query) => query.where("events.uuid", eventUuid))
       .preload("permissions", (permissionsQuery) =>
-        permissionsQuery.where("event_id", eventId),
+        permissionsQuery.where("eventUuid", eventUuid),
       )
       .firstOrFail();
 
@@ -87,16 +90,19 @@ export default class OrganizersController {
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
   async update({ params, request, bouncer }: HttpContext) {
-    const eventId = +params.eventId;
-    const organizerId = +params.id;
-    await bouncer.authorize("manage_setting", await Event.findOrFail(eventId));
+    const eventUuid = params.eventUuid as string;
+    const organizerUuid = params.id as string;
+    await bouncer.authorize(
+      "manage_setting",
+      await Event.findOrFail(eventUuid),
+    );
 
     const { permissionsIds } =
       await updateOrganizerPermissionsValidator.validate(request.body());
 
     const updatedOrganizer = this.organizerService.updateOrganizerPermissions(
-      organizerId,
-      eventId,
+      organizerUuid,
+      eventUuid,
       permissionsIds,
     );
 
@@ -111,14 +117,17 @@ export default class OrganizersController {
    * @responseBody 204 - {}
    */
   async destroy({ params, bouncer, response }: HttpContext) {
-    const eventId = +params.eventId;
-    await bouncer.authorize("manage_setting", await Event.findOrFail(eventId));
-    const organizerId = +params.id;
+    const eventUuid = params.eventUuid as string;
+    await bouncer.authorize(
+      "manage_setting",
+      await Event.findOrFail(eventUuid),
+    );
+    const organizerUuid = params.id as string;
 
     await db
-      .from("admin_permissions")
-      .where("admin_id", organizerId)
-      .where("event_id", eventId)
+      .from("adminPermissions")
+      .where("adminUuid", organizerUuid)
+      .where("eventUuid", eventUuid)
       .delete();
 
     return response.noContent();

@@ -20,63 +20,62 @@ export default class EventExportController {
    * @handle
    * @summary Export participants
    * @operationId exportEventSpreadsheet
-   * @description Returns file to download of spreadsheet with all participants of given :eventId
+   * @description Returns file to download of spreadsheet with all participants of given :eventUuid
    * @tag participants
-   * @paramPath eventId - ID of the event to be exported - @type(number) @required
-   * @paramQuery ids - Users to only include in export file - @type(number[].join(",")) @example(?ids=2, or ?ids=3,4)
+   * @paramPath eventUuid - UUID of the event to be exported - @type(string) @required
+   * @paramQuery ids - Users to only include in export file - @type(string[].join(",")) @example(?ids=4a892c93-b01a-431a-b52b-52c67fe57f1e, or ?ids=d8af5a14-aa0f-4e7b-9362-563b20badb74,a1e2e652-b561-4a94-babd-ab31e7f7db55)
    * @responseBody 200 - file:xlsx - Spreadsheet download with xlsx extension
    * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404 },
    */
   public async handle({ params, response, request }: HttpContext) {
     const event = await Event.query()
-      .where("id", +params.eventId)
+      .where("uuid", params.eventUuid as string)
       .preload("participants", async (participants) => {
         await participants.preload("attributes");
       })
       .firstOrFail();
 
-    const attributes = await this.attributeService.getEventAttributes(event.id);
+    const attributes = await this.attributeService.getEventAttributes(
+      event.uuid,
+    );
 
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet("Export");
 
     const attributesColumns = attributes.map((attribute) => {
-      return { header: attribute.name, key: attribute.name };
+      return { header: attribute.name ?? "", key: attribute.name ?? "" };
     });
 
     sheet.columns = [
-      { header: "id", key: "participants_id" },
+      { header: "uuid", key: "participants_uuid" },
       { header: "email", key: "participants_email" },
       ...attributesColumns,
     ];
 
     const queryParams = request.qs();
 
-    let sortedParticipants = event.participants.sort(
-      (p1, p2) => p1.id - p2.id,
-    ) as Participant[];
+    let participants = event.participants as Participant[];
 
-    if (queryParams.ids !== undefined) {
-      const participantsToFilter = (
-        typeof queryParams.ids === "string"
-          ? queryParams.ids.split(",")
-          : (queryParams.ids as string[])
-      )
-        .filter((v) => v.trim() !== "")
-        .map((v) => Number(v))
-        .filter((v) => !Number.isNaN(v));
+    if (queryParams.uuids !== undefined) {
+      const uuidsOfParticipantsToFilter = (
+        typeof queryParams.uuids === "string"
+          ? queryParams.uuids.split(",")
+          : (queryParams.uuids as string[])
+      ).filter((v) => v.trim() !== "");
 
-      sortedParticipants = sortedParticipants.filter(
+      participants = participants.filter(
         (participant) =>
-          participantsToFilter.findIndex((id) => id === participant.id) > -1,
+          uuidsOfParticipantsToFilter.find(
+            (uuid) => uuid === participant.uuid,
+          ) !== undefined,
       );
     }
 
-    sheet.getColumn("participants_id").values = ["ID"].concat(
-      sortedParticipants.map((participant) => participant.id.toString()),
+    sheet.getColumn("participants_uuid").values = ["uuid"].concat(
+      participants.map((participant) => participant.uuid),
     );
     sheet.getColumn("participants_email").values = ["Email"].concat(
-      sortedParticipants.map((participant) => participant.email),
+      participants.map((participant) => participant.email),
     );
 
     for (const attribute of attributesColumns) {
@@ -84,7 +83,7 @@ export default class EventExportController {
 
       attributeValues.push(attribute.header);
 
-      for (const participantWithAttributes of sortedParticipants) {
+      for (const participantWithAttributes of participants) {
         const foundAttribute = participantWithAttributes.attributes.find(
           (participantAttribute) => participantAttribute.name === attribute.key,
         );

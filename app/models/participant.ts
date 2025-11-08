@@ -17,16 +17,13 @@ import Attribute from "./attribute.js";
 
 export default class Participant extends BaseModel {
   @column({ isPrimary: true })
-  declare id: number;
+  declare uuid: string;
 
   @column()
   declare email: string;
 
   @column()
-  declare eventId: number;
-
-  @column()
-  declare slug: string;
+  declare eventUuid: string;
 
   @column.dateTime({
     autoCreate: true,
@@ -45,22 +42,28 @@ export default class Participant extends BaseModel {
   declare event: BelongsTo<typeof Event>;
 
   @manyToMany(() => Attribute, {
-    pivotTable: "participant_attributes",
+    pivotTable: "ParticipantsAttributes",
     pivotColumns: ["value"],
-    pivotTimestamps: true,
+    pivotTimestamps: {
+      createdAt: "createdAt",
+      updatedAt: "updatedAt",
+    },
   })
   declare attributes: ManyToMany<typeof Attribute>;
 
   @manyToMany(() => Email, {
-    pivotTable: "participant_emails",
-    pivotColumns: ["send_at", "send_by", "status"],
-    pivotTimestamps: true,
+    pivotTable: "ParticipantsEmails",
+    pivotColumns: ["sendAt", "sendBy", "status"],
+    pivotTimestamps: {
+      createdAt: "createdAt",
+      updatedAt: "updatedAt",
+    },
   })
   declare emails: ManyToMany<typeof Email>;
 
   @beforeCreate()
-  static async generateSlug(participant: Participant) {
-    participant.slug = randomUUID();
+  static assignUuid(participant: Participant) {
+    participant.uuid = randomUUID();
   }
 
   serializeExtras = true;

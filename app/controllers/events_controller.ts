@@ -63,7 +63,7 @@ export default class EventController {
     const event = await Event.create({
       ...eventData,
       photoUrl,
-      organizerId: auth.user?.id,
+      organizerUuid: auth.user?.uuid,
     });
 
     const permission = await Permission.query()
@@ -73,7 +73,7 @@ export default class EventController {
 
     await auth.user
       ?.related("permissions")
-      .attach({ [permission.id]: { event_id: event.id } });
+      .attach({ [permission.uuid]: { eventId: event.uuid } });
 
     return response.created(event);
   }
@@ -88,11 +88,14 @@ export default class EventController {
    */
   public async show({ params, auth, bouncer }: HttpContext) {
     const event = await Event.query()
-      .where("id", Number(params.id))
+      .where("uuid", params.id as string)
       .preload("permissions", (q) =>
-        q.where("admin_permissions.admin_id", auth.user?.id ?? 0),
+        q.where(
+          "AdminsPermissions.adminUuid",
+          auth.user?.uuid ?? "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        ),
       )
-      .preload("firstForm")
+      .preload("registerForm")
       .first();
 
     await bouncer.authorize("manage_event", event);
@@ -109,7 +112,6 @@ export default class EventController {
   public async publicShow({ params }: HttpContext) {
     return await Event.query()
       .where("slug", String(params.eventSlug))
-      .preload("firstForm")
       .preload("attributes")
       .firstOrFail();
   }
@@ -170,7 +172,7 @@ export default class EventController {
     const { photo, ...eventData } = await request.validateUsing(
       updateEventValidator,
       {
-        meta: { eventId: event.id },
+        meta: { eventId: event.uuid },
       },
     );
 
@@ -258,13 +260,13 @@ export default class EventController {
    */
   public async destroy({ response, params, auth }: HttpContext) {
     const event = await Event.findOrFail(params.id);
-    if ((auth.user?.id ?? null) !== event.organizerId) {
+    if ((auth.user?.uuid ?? null) !== event.organizerUuid) {
       return response.unauthorized({
         message: "You don't have permissions to this actions",
       });
     }
-    await db.from("admin_permissions").where("event_id", event.id).delete();
+    await db.from("AdminsPermissions").where("eventUuid", event.uuid).delete();
     await event.delete();
-    return { message: "Event successfully deleted" };
+    return response.noContent();
   }
 }

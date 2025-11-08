@@ -21,11 +21,12 @@ export default class AttributesController {
    * @responseBody 200 - <Attribute[]>
    */
   async index({ params, bouncer }: HttpContext) {
-    const eventId = +params.eventId;
+    const eventUuid = params.eventUuid as string;
 
-    await bouncer.authorize("manage_event", await Event.findOrFail(eventId));
+    await bouncer.authorize("manage_event", await Event.findOrFail(eventUuid));
 
-    const attributes = await this.attributeService.getEventAttributes(eventId);
+    const attributes =
+      await this.attributeService.getEventAttributes(eventUuid);
 
     return attributes;
   }
@@ -39,17 +40,20 @@ export default class AttributesController {
    * @responseBody 201 - <Attribute>
    */
   async store({ params, request, bouncer }: HttpContext) {
-    const eventId = +params.eventId;
+    const eventUuid = params.eventUuid as string;
 
-    await bouncer.authorize("manage_setting", await Event.findOrFail(eventId));
+    await bouncer.authorize(
+      "manage_setting",
+      await Event.findOrFail(eventUuid),
+    );
 
     const newAttributeData = await request.validateUsing(
       createAttributeValidator,
-      { meta: { eventId } },
+      { meta: { eventUuid } },
     );
 
     const newAttribute = await this.attributeService.createAttribute({
-      eventId,
+      eventUuid,
       ...newAttributeData,
     });
 
@@ -65,14 +69,14 @@ export default class AttributesController {
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
   async show({ params, bouncer }: HttpContext) {
-    const eventId = +params.eventId;
-    const attributeId = +params.id;
+    const eventUuid = params.eventUuid as string;
+    const attributeUuid = params.uuid as string;
 
-    await bouncer.authorize("manage_event", await Event.findOrFail(eventId));
+    await bouncer.authorize("manage_event", await Event.findOrFail(eventUuid));
 
     const attribute = await this.attributeService.getEventAttribute(
-      eventId,
-      attributeId,
+      eventUuid,
+      attributeUuid,
     );
 
     return attribute;
@@ -88,18 +92,21 @@ export default class AttributesController {
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
   async update({ params, request, bouncer }: HttpContext) {
-    const eventId = +params.eventId;
-    const attributeId = +params.id;
+    const eventUuid = params.eventUuid as string;
+    const attributeUuid = params.uuid as string;
 
-    await bouncer.authorize("manage_setting", await Event.findOrFail(eventId));
+    await bouncer.authorize(
+      "manage_setting",
+      await Event.findOrFail(eventUuid),
+    );
 
     const updates = await request.validateUsing(updateAttributeValidator, {
-      meta: { eventId, attributeId },
+      meta: { eventUuid, attributeUuid },
     });
 
     const updatedAttribute = this.attributeService.updateAttribute(
-      eventId,
-      attributeId,
+      eventUuid,
+      attributeUuid,
       updates,
     );
 
@@ -114,12 +121,15 @@ export default class AttributesController {
    * @responseBody 204 - {}
    */
   async destroy({ params, response, bouncer }: HttpContext) {
-    const eventId = +params.eventId;
-    const attributeId = +params.id;
+    const eventUuid = params.eventUuid as string;
+    const attributeUuid = params.uuid as string;
 
-    await bouncer.authorize("manage_setting", await Event.findOrFail(eventId));
+    await bouncer.authorize(
+      "manage_setting",
+      await Event.findOrFail(eventUuid),
+    );
 
-    await this.attributeService.deleteAttribute(eventId, attributeId);
+    await this.attributeService.deleteAttribute(eventUuid, attributeUuid);
 
     return response.noContent();
   }

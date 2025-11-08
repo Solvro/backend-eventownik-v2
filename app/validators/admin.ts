@@ -18,7 +18,7 @@ export const adminSchema = vine.object({
       vine.object({
         permissionId: vine
           .number()
-          .exists({ table: "admin_permissions", column: "id" }),
+          .exists({ table: "AdminPermissions", column: "uuid" }),
         eventId: vine.number(),
       }),
     )

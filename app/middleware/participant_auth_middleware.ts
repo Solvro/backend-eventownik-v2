@@ -19,7 +19,7 @@ export default class ParticipantAuthMiddleware {
 
     const participant = await Participant.query()
       .where("slug", slug)
-      .where("event_id", event.id)
+      .where("eventUuid", event.uuid)
       .first();
 
     if (participant === null) {

@@ -7,18 +7,17 @@ export const participantsStoreValidator = vine.compile(
       .email()
       .unique(async (db, value, field) => {
         const participantEmail = (await db
-          .from("participants")
-          .select("email", "id")
+          .from("Participants")
+          .select("email", "uuid")
           .where("email", value)
-          .andWhere("event_id", +field.meta.eventId)
+          .andWhere("eventUuid", field.meta.eventId as string)
           .first()) as { email: string } | null;
-
         return participantEmail === null;
       }),
     participantAttributes: vine
       .array(
         vine.object({
-          attributeId: vine.number(),
+          attributeUuid: vine.string().uuid(),
           value: vine.string().nullable(),
         }),
       )
@@ -34,13 +33,13 @@ export const participantsUpdateValidator = vine.compile(
       .unique(async (db, value, field) => {
         const participantEmail = (await db
           .from("participants")
-          .select("email", "id")
+          .select("email", "uuid")
           .where("email", value)
-          .andWhere("event_id", +field.meta.eventId)
-          .first()) as { email: string; id: number } | null;
+          .andWhere("eventUuid", String(field.meta.eventId))
+          .first()) as { email: string; uuid: string } | null;
         if (
           participantEmail !== null &&
-          participantEmail.id === field.meta.participantId
+          participantEmail.uuid === field.meta.participantId
         ) {
           return true;
         }
@@ -50,7 +49,7 @@ export const participantsUpdateValidator = vine.compile(
     participantAttributes: vine
       .array(
         vine.object({
-          attributeId: vine.number(),
+          attributeUuid: vine.string(),
           value: vine.string().nullable(),
         }),
       )

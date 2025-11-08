@@ -16,7 +16,10 @@ export default class PublicParticipantsController {
       q
         .has("forms")
         .pivotColumns(["value", "created_at"])
-        .whereIn("attributes.id", request.input("attributes", []) as number[]),
+        .whereIn(
+          "attributes.uuid",
+          request.input("attributes", []) as number[],
+        ),
     );
     return participant;
   }

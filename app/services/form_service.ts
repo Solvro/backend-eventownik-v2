@@ -24,14 +24,14 @@ export class FormService {
 
   async submitForm(
     eventSlug: string,
-    formId: number,
+    formUuid: string,
     formSubmitDTO: FormSubmitDTO,
   ): Promise<void | { status: number; error: object }> {
     const event = await Event.findByOrFail("slug", eventSlug);
 
     const form = await Form.query()
-      .where("id", formId)
-      .andWhere("event_id", event.id)
+      .where("uuid", formUuid)
+      .andWhere("eventUuid", event.uuid)
       .preload("attributes", async (query) => {
         await query.pivotColumns(["is_required"]);
       })
@@ -43,32 +43,27 @@ export class FormService {
       ...attributes
     } = formSubmitDTO;
 
-    if (form.isFirstForm && participantEmail === undefined) {
+    if (participantEmail === undefined) {
       return {
         status: 400,
         error: { missingRequiredFields: { name: "email" } },
-      };
-    } else if (!form.isFirstForm && participantSlug === undefined) {
-      return {
-        status: 400,
-        error: { missingRequiredFields: { name: "participantSlug" } },
       };
     }
 
     const fileAttributesIds = new Set(
       form.attributes
         .filter((attribute) => attribute.type === "file")
-        .map((attribute) => attribute.id),
+        .map((attribute) => attribute.uuid),
     );
 
     const blockAttributesIds = new Set(
       form.attributes
         .filter((attribute) => attribute.type === "block")
-        .map((attribute) => attribute.id),
+        .map((attribute) => attribute.uuid),
     );
 
     const allowedFieldsIds = form.attributes.map((attribute) =>
-      attribute.id.toString(),
+      attribute.uuid.toString(),
     );
 
     let participant: Participant | null = null;
@@ -78,7 +73,7 @@ export class FormService {
 
       await participant.load("attributes", (q) => {
         void q.pivotColumns(["value"]);
-        void q.whereIn("attributes.id", allowedFieldsIds);
+        void q.whereIn("attributes.uuid", allowedFieldsIds);
       });
     }
 
@@ -87,12 +82,13 @@ export class FormService {
         (attribute): boolean =>
           attribute.$extras.pivot_is_required === true &&
           !(
-            participant?.attributes.some((x) => x.id === attribute.id) ?? false
+            participant?.attributes.some((x) => x.uuid === attribute.uuid) ??
+            false
           ),
       )
-      .filter((attribute) => !(attribute.id in attributes))
+      .filter((attribute) => !(attribute.uuid in attributes))
       .map((attribute) => ({
-        id: attribute.id,
+        id: attribute.uuid,
         name: attribute.name,
       }));
 
@@ -106,9 +102,9 @@ export class FormService {
     const formFields = filterObjectFields(attributes, allowedFieldsIds);
 
     const transformedFormFields = await Promise.all(
-      Object.entries(formFields).map(async ([attributeId, value]) => {
+      Object.entries(formFields).map(async ([attributeUuid, value]) => {
         if (
-          fileAttributesIds.has(+attributeId) &&
+          fileAttributesIds.has(attributeUuid) &&
           value !== null &&
           value !== "null"
         ) {
@@ -121,17 +117,17 @@ export class FormService {
           }
 
           return {
-            attributeId: +attributeId,
+            attributeUuid,
             value: fileName,
           };
         } else if (
-          blockAttributesIds.has(+attributeId) &&
+          blockAttributesIds.has(attributeUuid) &&
           value !== null &&
           value !== "null"
         ) {
           const canSignInToBlock = await this.blockService.canSignInToBlock(
-            +attributeId,
-            +(value as string),
+            attributeUuid,
+            value as string,
           );
 
           if (!canSignInToBlock) {
@@ -140,35 +136,38 @@ export class FormService {
         }
 
         return {
-          attributeId: +attributeId,
+          attributeUuid,
           value: value as string | null,
         };
       }),
     );
 
     if (participantEmail !== undefined) {
-      participant = await this.participantService.createParticipant(event.id, {
-        email: participantEmail,
-        participantAttributes: transformedFormFields,
-      });
+      participant = await this.participantService.createParticipant(
+        event.uuid,
+        {
+          email: participantEmail,
+          participantAttributes: transformedFormFields,
+        },
+      );
       await EmailService.sendOnTrigger(
         event,
         participant,
         "form_filled",
-        form.id,
+        form.uuid,
       );
     } else if (participantSlug !== undefined) {
       participant = await Participant.findByOrFail("slug", participantSlug);
       await this.participantService.updateParticipant(
-        event.id,
-        participant.id,
+        event.uuid,
+        participant.uuid,
         { email: undefined, participantAttributes: transformedFormFields },
       );
       await EmailService.sendOnTrigger(
         event,
         participant,
         "form_filled",
-        form.id,
+        form.uuid,
       );
     }
   }

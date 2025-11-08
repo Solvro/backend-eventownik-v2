@@ -1,10 +1,16 @@
 import { DateTime } from "luxon";
+import { randomUUID } from "node:crypto";
 
 import { DbAccessTokensProvider } from "@adonisjs/auth/access_tokens";
 import { withAuthFinder } from "@adonisjs/auth/mixins/lucid";
 import { compose } from "@adonisjs/core/helpers";
 import hash from "@adonisjs/core/services/hash";
-import { BaseModel, column, manyToMany } from "@adonisjs/lucid/orm";
+import {
+  BaseModel,
+  beforeCreate,
+  column,
+  manyToMany,
+} from "@adonisjs/lucid/orm";
 import type { ManyToMany } from "@adonisjs/lucid/types/relations";
 
 import Event from "#models/event";
@@ -18,7 +24,7 @@ const AuthFinder = withAuthFinder(() => hash.use("scrypt"), {
 
 export default class Admin extends compose(BaseModel, AuthFinder) {
   @column({ isPrimary: true })
-  declare id: number;
+  declare uuid: string;
 
   @column()
   declare firstName: string;
@@ -40,17 +46,23 @@ export default class Admin extends compose(BaseModel, AuthFinder) {
   declare active: boolean;
 
   @manyToMany(() => Permission, {
-    pivotTable: "admin_permissions",
-    pivotColumns: ["event_id"],
-    pivotTimestamps: true,
+    pivotTable: "AdminsPermissions",
+    pivotColumns: ["eventUuid"],
+    pivotTimestamps: {
+      createdAt: "createdAt",
+      updatedAt: "updatedAt",
+    },
   })
   declare permissions: ManyToMany<typeof Permission>;
 
   @manyToMany(() => Event, {
-    onQuery: (query) => query.distinctOn("event_id"),
-    pivotTable: "admin_permissions",
-    pivotColumns: ["permission_id"],
-    pivotTimestamps: true,
+    onQuery: (query) => query.distinctOn("eventUuid"),
+    pivotTable: "AdminsPermissions",
+    pivotColumns: ["permissionUuid"],
+    pivotTimestamps: {
+      createdAt: "createdAt",
+      updatedAt: "updatedAt",
+    },
   })
   declare events: ManyToMany<typeof Event>;
 
@@ -60,5 +72,12 @@ export default class Admin extends compose(BaseModel, AuthFinder) {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime;
 
-  static accessTokens = DbAccessTokensProvider.forModel(Admin);
+  static accessTokens = DbAccessTokensProvider.forModel(Admin, {
+    table: "AuthAccessTokens",
+  });
+
+  @beforeCreate()
+  static assignUuid(admin: Admin) {
+    admin.uuid = randomUUID();
+  }
 }

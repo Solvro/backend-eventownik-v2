@@ -6,9 +6,14 @@ import {
   beforeCreate,
   belongsTo,
   column,
+  hasOne,
   manyToMany,
 } from "@adonisjs/lucid/orm";
-import type { BelongsTo, ManyToMany } from "@adonisjs/lucid/types/relations";
+import type {
+  BelongsTo,
+  HasOne,
+  ManyToMany,
+} from "@adonisjs/lucid/types/relations";
 
 import Event from "#models/event";
 
@@ -16,13 +21,13 @@ import Attribute from "./attribute.js";
 
 export default class Form extends BaseModel {
   @column({ isPrimary: true })
-  declare id: number;
+  declare uuid: string;
 
   @column()
-  declare eventId: number;
+  declare eventUuid: string;
 
   @column()
-  declare isOpen: boolean;
+  declare isEditable: boolean;
 
   @column()
   declare description: string;
@@ -30,14 +35,24 @@ export default class Form extends BaseModel {
   @column()
   declare name: string;
 
-  @column()
-  declare isFirstForm: boolean;
-
-  @column()
-  declare slug: string;
+  @column.dateTime({
+    serialize: (value: DateTime | null) => {
+      return value !== null ? value.toISO({ includeOffset: false }) : value;
+    },
+  })
+  declare openDate: DateTime;
 
   @column.dateTime({
-    serialize: (value: DateTime) => value.toISO({ includeOffset: false }),
+    serialize: (value: DateTime | null) => {
+      return value !== null ? value.toISO({ includeOffset: false }) : value;
+    },
+  })
+  declare closeDate: DateTime;
+
+  @column.dateTime({
+    serialize: (value: DateTime | null) => {
+      return value !== null ? value.toISO({ includeOffset: false }) : value;
+    },
   })
   declare startDate: DateTime;
 
@@ -58,15 +73,23 @@ export default class Form extends BaseModel {
   declare event: BelongsTo<typeof Event>;
 
   @manyToMany(() => Attribute, {
-    pivotTable: "form_definitions",
-    pivotColumns: ["is_editable", "is_required", "order"],
-    pivotTimestamps: true,
+    pivotTable: "FormsDefinitions",
+    pivotColumns: ["isRequired", "order"],
+    pivotTimestamps: {
+      createdAt: "createdAt",
+      updatedAt: "updatedAt",
+    },
   })
   declare attributes: ManyToMany<typeof Attribute>;
 
+  @hasOne(() => Event, {
+    foreignKey: "firstFormUuid",
+  })
+  declare registerEvent: HasOne<typeof Event>;
+
   @beforeCreate()
-  static afterSlug(form: Form) {
-    form.slug = randomUUID();
+  static assignUuid(form: Form) {
+    form.uuid = randomUUID();
   }
 
   serializeExtras() {

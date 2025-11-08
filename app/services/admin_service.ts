@@ -31,7 +31,7 @@ export class AdminService {
     await admin.related("permissions").attach(transformedPermissions);
   }
 
-  async updateAdmin(adminId: number, adminUpdates: AdminUpdateDTO) {
+  async updateAdmin(adminId: string, adminUpdates: AdminUpdateDTO) {
     const admin = await Admin.findOrFail(adminId);
 
     admin.merge(adminUpdates);
@@ -45,7 +45,7 @@ export class AdminService {
     return await Admin.findOrFail(adminId);
   }
 
-  async deleteAdmin(adminId: number) {
+  async deleteAdmin(adminId: string) {
     const adminToDelete = await Admin.findOrFail(adminId);
     await adminToDelete.delete();
   }

@@ -1,8 +1,10 @@
 import { Secret } from "@adonisjs/core/helpers";
 import { defineConfig } from "@adonisjs/core/http";
 import app from "@adonisjs/core/services/app";
+import { BaseModel } from "@adonisjs/lucid/orm";
 
 import env from "#start/env";
+import PrismaNamingStrategy from "#start/strategies/prisma_naming_strategy";
 
 /**
  * The app key is used for encrypting cookies, generating signed URLs,
@@ -39,3 +41,5 @@ export const http = defineConfig({
     sameSite: "lax",
   },
 });
+
+BaseModel.namingStrategy = new PrismaNamingStrategy();

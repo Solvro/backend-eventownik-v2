@@ -1,6 +1,13 @@
 import { DateTime } from "luxon";
+import { randomUUID } from "node:crypto";
 
-import { BaseModel, belongsTo, column, manyToMany } from "@adonisjs/lucid/orm";
+import {
+  BaseModel,
+  beforeCreate,
+  belongsTo,
+  column,
+  manyToMany,
+} from "@adonisjs/lucid/orm";
 import type { BelongsTo, ManyToMany } from "@adonisjs/lucid/types/relations";
 
 import Event from "#models/event";
@@ -9,10 +16,10 @@ import Participant from "#models/participant";
 
 export default class Email extends BaseModel {
   @column({ isPrimary: true })
-  declare id: number;
+  declare uuid: string;
 
   @column()
-  declare eventId: number;
+  declare eventUuid: string;
 
   @column()
   declare name: string;
@@ -24,10 +31,10 @@ export default class Email extends BaseModel {
   declare trigger: string;
 
   @column()
-  declare triggerValue: string;
+  declare triggerValue?: string | null;
 
   @column()
-  declare triggerValue2: string;
+  declare triggerValue2?: string | null;
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime;
@@ -39,16 +46,21 @@ export default class Email extends BaseModel {
   declare event: BelongsTo<typeof Event>;
 
   @column()
-  declare formId: number | null;
+  declare formUuid?: string | null;
 
   @belongsTo(() => Form)
   declare form: BelongsTo<typeof Form>;
 
   @manyToMany(() => Participant, {
-    pivotTable: "participant_emails",
-    pivotColumns: ["send_at", "send_by", "status"],
+    pivotTable: "ParticipantEmails",
+    pivotColumns: ["sendAt", "sendBy", "status"],
   })
   declare participants: ManyToMany<typeof Participant>;
+
+  @beforeCreate()
+  static assignUuid(email: Email) {
+    email.uuid = randomUUID();
+  }
 
   serializeExtras = true;
 }

@@ -23,13 +23,13 @@ export default class FormsController {
    * @responseBody 200 - <Form[]>.with(relations, attributes).exclude(event).paginated("data", "meta")
    */
   public async index({ params, request, bouncer }: HttpContext) {
-    const eventId = Number(params.eventId);
+    const eventId = params.eventId as string;
     await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
     const page = Number(request.input("page", 1));
     const perPage = Number(request.input("perPage", 10));
 
     return await Form.query()
-      .where("event_id", eventId)
+      .where("eventUuid", eventId)
       .preload("attributes")
       .paginate(page, perPage);
   }
@@ -43,46 +43,52 @@ export default class FormsController {
    * @responseBody 201 - <Form>
    */
   public async store({ params, request, response, bouncer }: HttpContext) {
-    const eventId = Number(params.eventId);
+    const eventUuid = params.eventId as string;
 
     const event = await Event.query()
-      .where("id", eventId)
-      .preload("firstForm")
+      .where("uuid", eventUuid)
+      .preload("registerForm")
       .preload("attributes")
       .firstOrFail();
 
     await bouncer.authorize("manage_form", event);
 
-    const { attributes, ...newFormData } =
+    const { isFirstForm, attributes, startDate, endDate, ...newFormData } =
       await request.validateUsing(createFormValidator);
 
+    const renamedFormData = {
+      ...newFormData,
+      openDate: startDate,
+      closeDate: endDate,
+    };
+
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (newFormData.isFirstForm === true && event.firstForm !== null) {
+    if (isFirstForm === true && event.registerForm !== null) {
       return response.badRequest({
         message: "Event already has a registration form",
       });
     }
 
-    const form = await event.related("forms").create(newFormData);
+    const form = await event.related("forms").create(renamedFormData);
 
     const eventAttributesIdsSet = new Set(
-      event.attributes.map((attribute) => attribute.id),
+      event.attributes.map((attribute) => attribute.uuid),
     );
 
     const attributesFromDifferentEvent = attributes.filter(
-      (attribute) => !eventAttributesIdsSet.has(attribute.id),
+      (attribute) => !eventAttributesIdsSet.has(attribute.uuid),
     );
 
     if (attributesFromDifferentEvent.length > 0) {
       return response.badRequest({
-        message: `Attributes with ids ${JSON.stringify(attributesFromDifferentEvent.map((attribute) => attribute.id))}, do not belong to this event`,
+        message: `Attributes with ids ${JSON.stringify(attributesFromDifferentEvent.map((attribute) => attribute.uuid))}, do not belong to this event`,
       });
     }
 
     await form.related("attributes").attach(
       attributes.reduce(
         (acc, attribute) => {
-          acc[attribute.id] = {
+          acc[attribute.uuid] = {
             is_required: attribute.isRequired,
             is_editable: attribute.isEditable,
             order: attribute.order,
@@ -90,7 +96,7 @@ export default class FormsController {
           return acc;
         },
         {} as Record<
-          number,
+          string,
           { is_required?: boolean; is_editable?: boolean; order?: number }
         >,
       ),
@@ -98,8 +104,8 @@ export default class FormsController {
 
     return response.created(
       await Form.query()
-        .where("id", form.id)
-        .andWhere("event_id", eventId)
+        .where("uuid", form.uuid)
+        .andWhere("eventUuid", eventUuid)
         .preload("attributes"),
     );
   }
@@ -113,13 +119,13 @@ export default class FormsController {
    * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    */
   public async show({ params, bouncer }: HttpContext) {
-    const eventId = Number(params.eventId);
-    const formId = Number(params.id);
+    const eventId = params.eventId as string;
+    const formUuid = params.id as string;
     await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
 
     return await Form.query()
-      .where("event_id", eventId)
-      .where("id", formId)
+      .where("eventUuid", eventId)
+      .where("uuid", formUuid)
       .preload("attributes")
       .firstOrFail();
   }
@@ -134,34 +140,38 @@ export default class FormsController {
    * @tag forms
    */
   public async update({ params, request, bouncer, response }: HttpContext) {
-    const eventId = Number(params.eventId);
-    const formId = Number(params.id);
+    const eventId = params.eventId as string;
+    const formUuid = params.id as string;
     const event = await Event.query()
-      .where("id", eventId)
-      .preload("firstForm")
+      .where("uuid", eventId)
+      .preload("registerForm")
       .firstOrFail();
 
     await bouncer.authorize("manage_form", event);
     const form = await Form.query()
-      .where("event_id", eventId)
-      .where("id", formId)
+      .where("eventUuid", eventId)
+      .where("uuid", formUuid)
       .firstOrFail();
 
-    const { attributes, ...updates } =
+    const { attributes, isFirstForm, startDate, endDate, ...updates } =
       await request.validateUsing(updateFormValidator);
 
+    const renamedFormData = {
+      ...updates,
+      openDate: startDate,
+      closeDate: endDate,
+    };
     if (
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      event.firstForm !== null &&
-      form.isFirstForm === false &&
-      updates.isFirstForm === true
+      event.registerForm !== null &&
+      isFirstForm === true
     ) {
       return response.badRequest({
         message: "Event already has a registration form",
       });
     }
 
-    form.merge(updates);
+    form.merge(renamedFormData);
     await form.save();
 
     if (attributes !== undefined) {
@@ -170,7 +180,7 @@ export default class FormsController {
       await form.related("attributes").attach(
         attributes.reduce(
           (acc, attribute) => {
-            acc[attribute.id] = {
+            acc[attribute.uuid] = {
               is_required: attribute.isRequired,
               is_editable: attribute.isEditable,
               order: attribute.order,
@@ -178,7 +188,7 @@ export default class FormsController {
             return acc;
           },
           {} as Record<
-            number,
+            string,
             { is_required?: boolean; is_editable?: boolean; order?: number }
           >,
         ),
@@ -186,8 +196,8 @@ export default class FormsController {
     }
 
     const updatedForm = await Form.query()
-      .where("event_id", eventId)
-      .where("id", formId)
+      .where("eventUuid", eventId)
+      .where("uuid", formUuid)
       .preload("attributes")
       .firstOrFail();
 
@@ -203,13 +213,13 @@ export default class FormsController {
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
   public async destroy({ params, response, bouncer }: HttpContext) {
-    const eventId = Number(params.eventId);
-    const formId = Number(params.id);
+    const eventId = params.eventId as string;
+    const formUuid = params.id as string;
     await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
 
     await Form.query()
-      .where("event_id", eventId)
-      .andWhere("id", formId)
+      .where("eventUuid", eventId)
+      .andWhere("uuid", formUuid)
       .delete();
 
     return response.noContent();
@@ -226,14 +236,14 @@ export default class FormsController {
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
   public async submitForm({ params, request, response }: HttpContext) {
-    const formId = +params.id;
+    const formUuid = params.uuid as string;
     const eventSlug = params.eventSlug as string;
 
     const event = await Event.findByOrFail("slug", eventSlug);
 
     const { email, participantSlug, ...attributes } =
       await request.validateUsing(formSubmitValidator, {
-        meta: { eventId: event.id },
+        meta: { eventId: event.uuid },
       });
 
     // Transform attributes so that files work properly
@@ -247,7 +257,7 @@ export default class FormsController {
       }),
     );
 
-    const errorObject = await this.formService.submitForm(eventSlug, formId, {
+    const errorObject = await this.formService.submitForm(eventSlug, formUuid, {
       email,
       participantSlug,
       ...transformedAttributes,

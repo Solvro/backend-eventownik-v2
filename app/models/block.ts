@@ -1,39 +1,46 @@
 import { DateTime } from "luxon";
+import { randomUUID } from "node:crypto";
 
-import { BaseModel, belongsTo, column, hasMany } from "@adonisjs/lucid/orm";
+import {
+  BaseModel,
+  beforeCreate,
+  belongsTo,
+  column,
+  hasMany,
+} from "@adonisjs/lucid/orm";
 import type { BelongsTo, HasMany } from "@adonisjs/lucid/types/relations";
 
 import Attribute from "./attribute.js";
 
 export default class Block extends BaseModel {
   @column({ isPrimary: true })
-  declare id: number;
+  declare uuid: string;
 
   @column()
   declare name: string;
 
   @column()
-  declare description: string | null;
+  declare description?: string | null;
 
   @column()
-  declare parentId: number | null;
+  declare parentUuid: string | null;
 
   @column()
-  declare capacity: number | null;
+  declare capacity?: number | null;
 
   @column()
-  declare isRootBlock: boolean;
+  declare order?: number | null;
 
   @column()
-  declare attributeId: number;
+  declare attributeUuid?: string | null;
 
   @hasMany(() => Block, {
-    foreignKey: "parentId",
+    foreignKey: "parentUuid",
   })
   declare children: HasMany<typeof Block>;
 
   @belongsTo(() => Block, {
-    foreignKey: "parentId",
+    foreignKey: "parentUuid",
   })
   declare parent: BelongsTo<typeof Block>;
 
@@ -45,6 +52,11 @@ export default class Block extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime;
+
+  @beforeCreate()
+  static assignUuid(block: Block) {
+    block.uuid = randomUUID();
+  }
 
   serializeExtras = true;
 }

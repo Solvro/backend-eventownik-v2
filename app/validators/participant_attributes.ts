@@ -6,15 +6,15 @@ import db from "@adonisjs/lucid/services/db";
 const checkParticipantExists = vine.createRule(
   async (value, _arg, field: FieldContext) => {
     const participantIds = Array.isArray(value)
-      ? (value as number[])
-      : [value as number];
+      ? (value as string[])
+      : [value as string];
     const foundParticipants = await db
       .from("participants")
-      .select("id")
-      .whereIn("id", participantIds)
-      .andWhere("event_id", +field.meta.eventId);
+      .select("uuid")
+      .whereIn("uuid", participantIds)
+      .andWhere("eventUuid", String(field.meta.eventId));
     const foundParticipantIds = foundParticipants.map(
-      (participant: { id: number }) => participant.id,
+      (participant: { uuid: string }) => participant.uuid,
     );
     const notFoundParticipantsIds = participantIds.filter(
       (participantId) => !foundParticipantIds.includes(participantId),

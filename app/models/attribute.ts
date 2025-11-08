@@ -1,17 +1,17 @@
 import { DateTime } from "luxon";
+import { randomUUID } from "node:crypto";
 
 import {
   BaseModel,
+  beforeCreate,
   belongsTo,
   column,
   hasMany,
-  hasOne,
   manyToMany,
 } from "@adonisjs/lucid/orm";
 import type {
   BelongsTo,
   HasMany,
-  HasOne,
   ManyToMany,
 } from "@adonisjs/lucid/types/relations";
 
@@ -23,22 +23,36 @@ import Participant from "./participant.js";
 
 export default class Attribute extends BaseModel {
   @column({ isPrimary: true })
-  declare id: number;
+  declare uuid: string;
 
   @column()
-  declare name: string;
+  declare name: string | null;
 
   @column()
   declare slug: string | null;
 
   @column()
-  declare eventId: number;
+  declare eventUuid: string;
 
   @column({ serialize: (value) => JSON.parse(JSON.stringify(value)) })
-  declare options: string | null;
+  declare options: string[] | null;
 
   @column()
-  declare type: string;
+  declare type:
+    | "text"
+    | "textArea"
+    | "number"
+    | "file"
+    | "select"
+    | "block"
+    | "date"
+    | "time"
+    | "datetime"
+    | "multiSelect"
+    | "email"
+    | "tel"
+    | "color"
+    | "checkbox";
 
   @column()
   declare showInList: boolean;
@@ -56,23 +70,21 @@ export default class Attribute extends BaseModel {
   declare event: BelongsTo<typeof Event>;
 
   @manyToMany(() => Form, {
-    pivotTable: "form_definitions",
-    pivotColumns: ["is_editable", "is_required", "order"],
+    pivotTable: "FormDefinitions",
+    pivotColumns: ["isEditable", "isRequired", "order"],
     pivotTimestamps: true,
   })
   declare forms: ManyToMany<typeof Form>;
 
   @manyToMany(() => Participant, {
-    pivotTable: "participant_attributes",
+    pivotTable: "ParticipantAttributes",
     pivotColumns: ["value"],
     pivotTimestamps: true,
   })
   declare participantAttributes: ManyToMany<typeof Participant>;
 
-  @hasOne(() => Block, {
-    onQuery: (query) => query.where("is_root_block", true),
-  })
-  declare rootBlock: HasOne<typeof Block>;
+  @belongsTo(() => Block)
+  declare rootBlock: BelongsTo<typeof Block>;
 
   @hasMany(() => Block)
   declare blocks: HasMany<typeof Block>;
@@ -82,6 +94,11 @@ export default class Attribute extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime;
+
+  @beforeCreate()
+  static assignUuid(attribute: Attribute) {
+    attribute.uuid = randomUUID();
+  }
 
   public serializeExtras = true;
 }

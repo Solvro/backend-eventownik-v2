@@ -6,7 +6,7 @@ import {
 } from "#validators/attribute";
 
 export type CreateAttributeDTO = Infer<typeof createAttributeSchema> & {
-  eventId: number;
+  eventUuid: string;
 };
 
 export type UpdateAttributeDTO = Infer<typeof UpdateAttributeSchema>;

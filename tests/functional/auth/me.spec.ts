@@ -42,7 +42,7 @@ test.group("Auth: Me", (group) => {
 
     // 5. Check the shape of the response
     response.assertBodyContains({
-      id: admin.id,
+      uuid: admin.uuid,
       firstName: "Dawid",
       lastName: "Linek",
       email: "test@solvro.pl",

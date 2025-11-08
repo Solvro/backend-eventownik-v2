@@ -9,7 +9,7 @@ import { EmailService } from "./email_service.js";
 
 export class ParticipantService {
   async createParticipant(
-    eventId: number,
+    eventId: string,
     createParticipantDTO: CreateParticipantDTO,
   ): Promise<Participant> {
     const { participantAttributes, ...participantData } = createParticipantDTO;
@@ -24,7 +24,7 @@ export class ParticipantService {
       participantAttributes !== undefined &&
       participantAttributes.length > 0
     ) {
-      const transformedAttributes: Record<number, { value: string | null }> =
+      const transformedAttributes: Record<string, { value: string | null }> =
         {};
 
       for (const attribute of participantAttributes) {
@@ -32,10 +32,10 @@ export class ParticipantService {
           event,
           participant,
           "attribute_changed",
-          attribute.attributeId,
+          attribute.attributeUuid,
           attribute.value,
         );
-        transformedAttributes[attribute.attributeId] = {
+        transformedAttributes[attribute.attributeUuid] = {
           value: attribute.value,
         };
       }
@@ -55,15 +55,15 @@ export class ParticipantService {
   }
 
   async updateParticipant(
-    eventId: number,
-    participantId: number,
+    eventId: string,
+    participantId: string,
     updateParticipantDTO: UpdateParticipantDTO,
   ) {
     const { participantAttributes, ...updates } = updateParticipantDTO;
 
     const participant = await Participant.query()
-      .where("id", participantId)
-      .andWhere("event_id", eventId)
+      .where("uuid", participantId)
+      .andWhere("eventUuid", eventId)
       .firstOrFail();
 
     const event = await Event.findOrFail(eventId);
@@ -75,7 +75,7 @@ export class ParticipantService {
       participantAttributes !== undefined &&
       participantAttributes.length > 0
     ) {
-      const transformedAttributes: Record<number, { value: string | null }> =
+      const transformedAttributes: Record<string, { value: string | null }> =
         {};
 
       for (const attribute of participantAttributes) {
@@ -83,10 +83,10 @@ export class ParticipantService {
           event,
           participant,
           "attribute_changed",
-          attribute.attributeId,
+          attribute.attributeUuid,
           attribute.value,
         );
-        transformedAttributes[attribute.attributeId] = {
+        transformedAttributes[attribute.attributeUuid] = {
           value: attribute.value,
         };
       }
@@ -97,11 +97,11 @@ export class ParticipantService {
     }
 
     const updatedParticipant = await Participant.query()
-      .where("id", participantId)
-      .where("event_id", eventId)
+      .where("uuid", participantId)
+      .where("eventUuid", eventId)
       .preload("attributes", (attributesQuery) =>
         attributesQuery
-          .select("id", "name", "slug")
+          .select("uuid", "name", "slug")
           .pivotColumns(["value"])
           .where("show_in_list", true),
       )
@@ -110,12 +110,12 @@ export class ParticipantService {
     return updatedParticipant;
   }
 
-  async unregister(participantSlug: string, eventSlug: string) {
-    const event = await Event.findByOrFail("slug", eventSlug);
+  async unregister(participantUuid: string, eventUuid: string) {
+    const event = await Event.findByOrFail("uuid", eventUuid);
 
     const participant = await Participant.query()
-      .where("slug", participantSlug)
-      .andWhere("event_id", event.id)
+      .where("uuid", participantUuid)
+      .andWhere("eventUuid", event.uuid)
       .firstOrFail();
 
     await EmailService.sendOnTrigger(event, participant, "participant_deleted");
@@ -127,12 +127,12 @@ export class ParticipantService {
     const event = await Event.findOrFail(+eventId);
 
     const participants = await Participant.query()
-      .whereIn("id", participantsToUnregisterIds)
-      .andWhere("event_id", event.id);
+      .whereIn("uuid", participantsToUnregisterIds)
+      .andWhere("eventUuid", event.uuid);
 
     await Promise.all(
       participants.map((participant) =>
-        this.unregister(participant.slug, event.slug),
+        this.unregister(participant.uuid, event.uuid),
       ),
     );
   }

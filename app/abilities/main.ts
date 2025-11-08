@@ -32,7 +32,7 @@ for (const availablePermission of availablePermissions) {
         return true;
       }
 
-      if (admin.id === event.organizerId) {
+      if (admin.uuid === event.organizerUuid) {
         return true;
       }
 
@@ -41,11 +41,11 @@ for (const availablePermission of availablePermissions) {
       const result = await admin
         .related("permissions")
         .query()
-        .where("event_id", event.id)
+        .where("eventUuid", event.uuid)
         .where((query) =>
           query
-            .where("permission_id", availablePermission.id)
-            .orWhere("permission_id", superPermission ?? 0),
+            .where("permissionUuid", availablePermission.uuid)
+            .orWhere("permissionUuid", superPermission ?? 0),
         )
         .first();
 

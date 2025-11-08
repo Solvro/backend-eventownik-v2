@@ -6,7 +6,7 @@ import Event from "#models/event";
 import Participant from "#models/participant";
 
 interface ParticipantData {
-  id: number;
+  uuid: string;
   email: string;
 }
 
@@ -53,11 +53,11 @@ export default class EventImportController {
 
     id.eachCell((cell, rowNumber) => {
       if (cell.value !== null && cell.value !== undefined) {
-        const participantId = +cell.value;
+        const participantUuid = JSON.stringify(cell.value);
         const email = sheet.getCell(`B${rowNumber}`).toString();
 
         participantsData.push({
-          id: participantId,
+          uuid: participantUuid,
           email,
         });
       }
@@ -67,9 +67,9 @@ export default class EventImportController {
 
     for (const data of participantsData) {
       const participant = await Participant.updateOrCreate(
-        { id: data.id },
+        { uuid: data.uuid },
         {
-          eventId: +params.eventId,
+          eventUuid: String(params.eventUuid),
           email: data.email,
         },
       );
@@ -78,7 +78,7 @@ export default class EventImportController {
     }
 
     return {
-      eventId: +params.eventId,
+      eventUuid: String(params.eventUuid),
       importedParticipants,
     };
   }
