@@ -79,13 +79,16 @@ export class EmailService {
     }
 
     //TODO: change to the actual date of tag logic change
-    const tagLogicChangeDate = DateTime.fromObject({
-      year: 2025,
-      month: 11,
-      day: 9,
-      hour: 22,
-      minute: 23,
-    });
+    const tagLogicChangeDate = DateTime.fromObject(
+      {
+        year: 2025,
+        month: 11,
+        day: 9,
+        hour: 23,
+        minute: 23,
+      },
+      { zone: "Europe/Warsaw" },
+    );
 
     if (email.createdAt < tagLogicChangeDate) {
       return await this.parseContentLegacy(event, participant, email, message);
