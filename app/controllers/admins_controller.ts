@@ -23,7 +23,7 @@ export default class AdminsController {
   async index({ response, auth }: HttpContext) {
     const admin = auth.getUserOrFail();
     if (admin.type !== "superadmin") {
-      response.unauthorized();
+      return response.unauthorized();
     }
 
     return await Admin.query().preload("events").preload("permissions");
@@ -39,7 +39,7 @@ export default class AdminsController {
   async store({ request, response, auth }: HttpContext) {
     const admin = auth.getUserOrFail();
     if (admin.type !== "superadmin") {
-      response.unauthorized();
+      return response.unauthorized();
     }
 
     const newAdminData = await createAdminValidator.validate(request.body());
@@ -62,7 +62,7 @@ export default class AdminsController {
   async show({ params, response, auth }: HttpContext) {
     const admin = auth.getUserOrFail();
     if (admin.type !== "superadmin") {
-      response.unauthorized();
+      return response.unauthorized();
     }
 
     return await Admin.query()
@@ -82,7 +82,7 @@ export default class AdminsController {
    */
   async update({ params, request, response, auth }: HttpContext) {
     if (auth.getUserOrFail().type !== "superadmin") {
-      response.unauthorized();
+      return response.unauthorized();
     }
 
     const adminUpdates = await updateAdminValidator.validate(request.body());
@@ -110,7 +110,7 @@ export default class AdminsController {
    */
   async destroy({ params, response, auth }: HttpContext) {
     if (auth.getUserOrFail().type !== "superadmin") {
-      response.unauthorized();
+      return response.unauthorized();
     }
 
     await this.adminService.deleteAdmin(+params.id);
