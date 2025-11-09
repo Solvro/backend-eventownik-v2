@@ -24,8 +24,10 @@ export default class EventImportController {
    * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    * @responseBody 500 - {"errors":[{ "message": "Could not process file" }]}
    */
-  public async handle({ params, request, response }: HttpContext) {
-    await Event.findOrFail(params.eventId);
+  public async handle({ params, request, response, bouncer }: HttpContext) {
+    const event = await Event.findOrFail(params.eventId);
+
+    await bouncer.authorize("manage_participant", event);
 
     const spreadsheetFile = request.file("spreadsheet");
 
