@@ -27,13 +27,15 @@ export default class EventExportController {
    * @responseBody 200 - file:xlsx - Spreadsheet download with xlsx extension
    * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404 },
    */
-  public async handle({ params, response, request }: HttpContext) {
+  public async handle({ params, response, request, bouncer }: HttpContext) {
     const event = await Event.query()
       .where("id", +params.eventId)
       .preload("participants", async (participants) => {
         await participants.preload("attributes");
       })
       .firstOrFail();
+
+    await bouncer.authorize("manage_participant", event);
 
     const attributes = await this.attributeService.getEventAttributes(event.id);
 
