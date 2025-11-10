@@ -116,7 +116,7 @@ async function doCaptchaValidation(
  * Auth middleware is used authenticate HTTP requests and deny
  * access to unauthenticated users.
  */
-export default class AuthMiddleware {
+export default class HCaptchaMiddleware {
   async handle(
     ctx: HttpContext,
     next: NextFn,
