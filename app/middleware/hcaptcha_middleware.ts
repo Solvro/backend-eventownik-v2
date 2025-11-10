@@ -113,8 +113,8 @@ async function doCaptchaValidation(
 }
 
 /**
- * Auth middleware is used authenticate HTTP requests and deny
- * access to unauthenticated users.
+ * HCaptcha middleware validates incoming requests using hCaptcha
+ * to protect public endpoints from automated abuse (e.g., spam, bots).
  */
 export default class HCaptchaMiddleware {
   async handle(
