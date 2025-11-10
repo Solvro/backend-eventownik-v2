@@ -20,7 +20,7 @@ export default class ParticipantsController {
    * @tag participants
    * @summary Get all participants
    * @description Get all participants and their attributes for specific event
-   * @paramQuery bonus_attributes - Array of attribute NAMES to include regardless of their show_in_list value - @type(string[].join(",")) @example(attribute1,attribute2)
+   * @paramQuery bonus_attributes - Array of attribute SLUGS to include regardless of their show_in_list value - @type(string[].join(",")) @example(attribute1,attribute2)
    * @responseBody 200 - <Participant[]>.exclude(eventId, updatedAt).append("attributes": [{ "id": 2, "name": "test", "slug": "test","value": "Lorem Ipsum" }])
    */
   async index({ params, request, bouncer }: HttpContext) {
@@ -31,7 +31,7 @@ export default class ParticipantsController {
 
     const paramAttributes = request.qs().bonus_attributes as string | undefined;
 
-    const bonusAttributes: string[] =
+    const bonusAttributes =
       typeof paramAttributes === "string" ? paramAttributes.split(",") : [];
 
     const participants = await Participant.query()
@@ -42,7 +42,7 @@ export default class ParticipantsController {
           .select("id", "name", "slug", "created_at", "updated_at")
           .pivotColumns(["value"])
           .where("show_in_list", true)
-          .orWhereIn("name", bonusAttributes),
+          .orWhereIn("slug", bonusAttributes),
       );
 
     const formattedParticipants = participants.map((participant) => {
