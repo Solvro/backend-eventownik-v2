@@ -108,13 +108,28 @@ router
           })
           .use(middleware.participantAuth());
 
-        router.post("forms/:id/submit", [FormsController, "submitForm"]);
+        router.post("forms/:id/submit", [FormsController, "submitForm"]).use(
+          middleware.hCaptcha({
+            requirePass: true,
+            requireToken: false,
+            captchaFieldName: "hCaptchaToken",
+            skipMethods: ["GET"],
+          }),
+        );
         router
           .delete("participants/:participantSlug", [
             ParticipantsController,
             "unregister",
           ])
-          .where("participantSlug", router.matchers.slug());
+          .where("participantSlug", router.matchers.slug())
+          .use(
+            middleware.hCaptcha({
+              requirePass: true,
+              requireToken: false,
+              captchaFieldName: "hCaptchaToken",
+              skipMethods: ["GET"],
+            }),
+          );
       })
       .prefix("events/:eventSlug")
       .where("eventSlug", router.matchers.slug());
