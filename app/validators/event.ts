@@ -4,8 +4,8 @@ import { DateTime } from "luxon";
 
 import string from "@adonisjs/core/helpers/string";
 
-function dateTimeTransform(value: Date): DateTime {
-  const parsed = DateTime.fromISO(value.toISOString());
+function dateTimeTransform(value: string): DateTime {
+  const parsed = DateTime.fromISO(value, { setZone: true });
   if (!parsed.isValid) {
     throw new Error("Invalid date");
   }
@@ -46,8 +46,8 @@ export const createEventValidator = vine.compile(
       .use(slugMinLength(3))
       .transform((value) => string.slug(value, { lower: true })),
     // 2025-01-05 12:00:00
-    startDate: vine.date().transform(dateTimeTransform),
-    endDate: vine.date().transform(dateTimeTransform),
+    startDate: vine.string().transform(dateTimeTransform),
+    endDate: vine.string().transform(dateTimeTransform),
     lat: vine.number().nullable().optional(),
     location: vine.string().nullable().optional(),
     long: vine.number().nullable().optional(),
@@ -89,8 +89,8 @@ export const updateEventValidator = vine.compile(
       .use(slugMinLength(3))
       .transform((value) => string.slug(value, { lower: true }))
       .optional(),
-    startDate: vine.date().transform(dateTimeTransform).optional(),
-    endDate: vine.date().transform(dateTimeTransform).optional(),
+    startDate: vine.string().transform(dateTimeTransform).optional(),
+    endDate: vine.string().transform(dateTimeTransform).optional(),
     location: vine.string().nullable().optional(),
     contactEmail: vine.string().nullable().optional(),
     lat: vine.number().nullable().optional(),
@@ -101,7 +101,7 @@ export const updateEventValidator = vine.compile(
     photo: vine
       .file({
         size: "10mb",
-        extnames: ["jpg", "jpeg", "png", "git"],
+        extnames: ["jpg", "jpeg", "png", "gif"],
       })
       .nullable()
       .optional(),
@@ -119,8 +119,8 @@ export const updateEventValidator = vine.compile(
 
 export const displayEvents = vine.compile(
   vine.object({
-    from: vine.date().optional().transform(dateTimeTransform),
-    to: vine.date().optional().transform(dateTimeTransform),
+    from: vine.string().optional().transform(dateTimeTransform),
+    to: vine.string().optional().transform(dateTimeTransform),
   }),
 );
 

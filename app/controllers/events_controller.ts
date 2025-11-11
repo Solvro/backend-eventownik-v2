@@ -36,7 +36,7 @@ export default class EventController {
   /**
    * @store
    * @operationId createEvent
-   * @description Creates a new event for the authenticated user. Date should be in format 2025-01-05 12:00:00
+   * @description Creates a new event for the authenticated user. Date should be in format yyyy-mm-ddThh:mm:ss+/-hh:mm
    * @requestFormDataBody <createEventValidator>
    * @responseBody 201 - <Event>
    * @responseBody 400 - Invalid input data
