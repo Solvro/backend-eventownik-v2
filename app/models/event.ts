@@ -41,12 +41,12 @@ export default class Event extends BaseModel {
   declare slug: string;
 
   @column.dateTime({
-    serialize: (value: DateTime) => value.toISO({ includeOffset: false }),
+    serialize: (value: DateTime) => value.toISO({ includeOffset: true }),
   })
   declare startDate: DateTime;
 
   @column.dateTime({
-    serialize: (value: DateTime) => value.toISO({ includeOffset: false }),
+    serialize: (value: DateTime) => value.toISO({ includeOffset: true }),
   })
   declare endDate: DateTime;
 
