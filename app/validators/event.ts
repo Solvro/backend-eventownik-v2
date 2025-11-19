@@ -128,12 +128,12 @@ export const displayEvents = vine.compile(
   vine.object({
     from: vine
       .date({ formats: { utc: true } })
-      .transform(dateTimeTransform)
-      .optional(),
+      .optional()
+      .transform(dateTimeTransform),
     to: vine
       .date({ formats: { utc: true } })
-      .transform(dateTimeTransform)
-      .optional(),
+      .optional()
+      .transform(dateTimeTransform),
   }),
 );
 
