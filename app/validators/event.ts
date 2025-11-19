@@ -4,8 +4,8 @@ import { DateTime } from "luxon";
 
 import string from "@adonisjs/core/helpers/string";
 
-function dateTimeTransform(value: string): DateTime {
-  const parsed = DateTime.fromISO(value, { setZone: true });
+function dateTimeTransform(value: Date): DateTime {
+  const parsed = DateTime.fromJSDate(value);
   if (!parsed.isValid) {
     throw new Error("Invalid date");
   }
@@ -45,9 +45,10 @@ export const createEventValidator = vine.compile(
       )
       .use(slugMinLength(3))
       .transform((value) => string.slug(value, { lower: true })),
-    // 2025-01-05 12:00:00
-    startDate: vine.string().transform(dateTimeTransform),
-    endDate: vine.string().transform(dateTimeTransform),
+    startDate: vine
+      .date({ formats: { utc: true } })
+      .transform(dateTimeTransform),
+    endDate: vine.date({ formats: { utc: true } }).transform(dateTimeTransform),
     lat: vine.number().nullable().optional(),
     location: vine.string().nullable().optional(),
     long: vine.number().nullable().optional(),
@@ -89,8 +90,14 @@ export const updateEventValidator = vine.compile(
       .use(slugMinLength(3))
       .transform((value) => string.slug(value, { lower: true }))
       .optional(),
-    startDate: vine.string().transform(dateTimeTransform).optional(),
-    endDate: vine.string().transform(dateTimeTransform).optional(),
+    startDate: vine
+      .date({ formats: { utc: true } })
+      .transform(dateTimeTransform)
+      .optional(),
+    endDate: vine
+      .date({ formats: { utc: true } })
+      .transform(dateTimeTransform)
+      .optional(),
     location: vine.string().nullable().optional(),
     contactEmail: vine.string().nullable().optional(),
     lat: vine.number().nullable().optional(),
@@ -119,8 +126,14 @@ export const updateEventValidator = vine.compile(
 
 export const displayEvents = vine.compile(
   vine.object({
-    from: vine.string().optional().transform(dateTimeTransform),
-    to: vine.string().optional().transform(dateTimeTransform),
+    from: vine
+      .date({ formats: { utc: true } })
+      .transform(dateTimeTransform)
+      .optional(),
+    to: vine
+      .date({ formats: { utc: true } })
+      .transform(dateTimeTransform)
+      .optional(),
   }),
 );
 
