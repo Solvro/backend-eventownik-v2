@@ -152,7 +152,7 @@ export default class EventController {
   /**
    * @update
    * @operationId updateEvent
-   * @description Updates an existing event if user has permission. Date should be in format 2025-01-05 12:00:00
+   * @description Updates an existing event if user has permission. Date should be in format yyyy-mm-ddThh:mm:ss+/-hh:mm
    * @paramPath id - Event identifier - @type(number) @required
    * @requestFormDataBody <updateEventValidator>
    * @responseBody 200 - { message: "Event updated successfully", "event":"<Event>" }
