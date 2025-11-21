@@ -21,18 +21,18 @@ export default class ParticipantsAttributesController {
    * @responseBody 400 - { message: "Event doesn't have a photo" }
    */
   public async downloadFile({ params, response, bouncer }: HttpContext) {
-    const eventId = params.eventId as string;
+    const eventUuid = params.eventUuid as string;
     const participantId = params.participantId as string;
-    const attributeId = params.attributeId as string;
+    const attributeUuid = params.attributeUuid as string;
 
     await bouncer.authorize(
       "manage_participant",
-      await Event.findOrFail(eventId),
+      await Event.findOrFail(eventUuid),
     );
 
     const participant = await Participant.query()
       .where("uuid", participantId)
-      .andWhere("eventUuid", eventId)
+      .andWhere("eventUuid", eventUuid)
       .first();
 
     if (participant === null) {
@@ -42,7 +42,7 @@ export default class ParticipantsAttributesController {
     }
 
     const { participantAttributes } = await Attribute.query()
-      .where("uuid", attributeId)
+      .where("uuid", attributeUuid)
       .preload("participantAttributes", (participantAttributesQuery) =>
         participantAttributesQuery
           .where("participantUuid", participantId)
@@ -73,20 +73,20 @@ export default class ParticipantsAttributesController {
    */
 
   async bulkUpdate({ params, request, bouncer, response }: HttpContext) {
-    const eventId = params.eventId as string;
-    const attributeId = params.attributeId as string;
+    const eventUuid = params.eventUuid as string;
+    const attributeUuid = params.attributeUuid as string;
     const { newValue, participantIds } = await request.validateUsing(
       participantBulkUpdateValidator,
       {
         meta: {
-          eventId,
+          eventUuid,
         },
       },
     );
 
     await bouncer.authorize(
       "manage_participant",
-      await Event.findOrFail(eventId),
+      await Event.findOrFail(eventUuid),
     );
 
     const updatedParticipantAttributes = participantIds.reduce<
@@ -96,7 +96,7 @@ export default class ParticipantsAttributesController {
       return acc;
     }, {});
 
-    const attribute = await Attribute.findOrFail(attributeId);
+    const attribute = await Attribute.findOrFail(attributeUuid);
     await attribute
       .related("participantAttributes")
       .sync(updatedParticipantAttributes, false);
