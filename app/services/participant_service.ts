@@ -9,12 +9,12 @@ import { EmailService } from "./email_service.js";
 
 export class ParticipantService {
   async createParticipant(
-    eventId: string,
+    eventUuid: string,
     createParticipantDTO: CreateParticipantDTO,
   ): Promise<Participant> {
     const { participantAttributes, ...participantData } = createParticipantDTO;
 
-    const event = await Event.findOrFail(eventId);
+    const event = await Event.findOrFail(eventUuid);
 
     const participant = await event
       .related("participants")
@@ -31,7 +31,7 @@ export class ParticipantService {
         await EmailService.sendOnTrigger(
           event,
           participant,
-          "attribute_changed",
+          "ATTRIBUTE_CHANGED",
           attribute.attributeUuid,
           attribute.value,
         );
@@ -48,7 +48,7 @@ export class ParticipantService {
     await EmailService.sendOnTrigger(
       event,
       participant,
-      "participant_registered",
+      "PARTICIPANT_REGISTERED",
     );
 
     return participant;
@@ -82,7 +82,7 @@ export class ParticipantService {
         await EmailService.sendOnTrigger(
           event,
           participant,
-          "attribute_changed",
+          "ATTRIBUTE_CHANGED",
           attribute.attributeUuid,
           attribute.value,
         );
@@ -118,7 +118,7 @@ export class ParticipantService {
       .andWhere("eventUuid", event.uuid)
       .firstOrFail();
 
-    await EmailService.sendOnTrigger(event, participant, "participant_deleted");
+    await EmailService.sendOnTrigger(event, participant, "PARTICIPANT_DELETED");
 
     await participant.delete();
   }
