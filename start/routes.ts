@@ -39,53 +39,98 @@ router
     router.get("events/public", [EventController, "publicIndex"]);
     router
       .group(() => {
-        router.resource("admins", AdminsController).apiOnly();
-        router.resource("events", EventController).apiOnly();
-        router.put("events/:id/activate", [EventController, "toggleActive"]);
-        router.resource("permissions", PermissionsController).apiOnly();
+        router
+          .resource("admins", AdminsController)
+          .params({
+            admins: "uuid",
+          })
+          .apiOnly();
+        router
+          .resource("events", EventController)
+          .params({
+            events: "uuid",
+          })
+          .apiOnly();
+        router.put("events/:uuid/activate", [EventController, "toggleActive"]);
+        router
+          .resource("permissions", PermissionsController)
+          .params({
+            permissions: "uuid",
+          })
+          .apiOnly();
 
         router
           .group(() => {
-            router.resource("attributes", AttributesController).apiOnly();
+            router
+              .resource("attributes", AttributesController)
+              .params({
+                attributes: "uuid",
+              })
+              .apiOnly();
             router
               .group(() => {
-                router.resource("blocks", BlocksController).apiOnly();
+                router
+                  .resource("blocks", BlocksController)
+                  .params({
+                    blocks: "uuid",
+                  })
+                  .apiOnly();
                 router.put("bulk-update", [
                   ParticipantsAttributesController,
                   "bulkUpdate",
                 ]);
               })
-              .prefix("attributes/:attributeId");
-            router.resource("emails", EmailsController).apiOnly();
-            router.post("emails/send/:emailId", [EmailsController, "send"]);
-            router.post("emails/duplicate/:emailId", [
+              .prefix("attributes/:attributeUuid");
+            router
+              .resource("emails", EmailsController)
+              .params({
+                emails: "uuid",
+              })
+              .apiOnly();
+            router.post("emails/send/:emailUuid", [EmailsController, "send"]);
+            router.post("emails/duplicate/:emailUuid", [
               EmailsController,
               "duplicate",
             ]);
-            router.resource("forms", FormsController).apiOnly();
-            router.resource("organizers", OrganizersController).apiOnly();
+            router
+              .resource("forms", FormsController)
+              .params({
+                forms: "uuid",
+              })
+              .apiOnly();
+            router
+              .resource("organizers", OrganizersController)
+              .params({
+                organizers: "uuid",
+              })
+              .apiOnly();
             // Participants/export and participants/import must be defined before the resource route
             // Otherwise, the words "export" and "import" will be treated as ids
             router.get("participants/export", [EventExportController]);
             router.post("participants/import", [EventImportController]);
-            router.get("participants/:participantId/attributes/:attributeId", [
-              ParticipantsAttributesController,
-              "downloadFile",
-            ]);
+            router.get(
+              "participants/:participantUuid/attributes/:attributeUuid",
+              [ParticipantsAttributesController, "downloadFile"],
+            );
             router.delete("participants", [
               ParticipantsController,
               "unregisterMany",
             ]);
-            router.resource("participants", ParticipantsController).apiOnly();
+            router
+              .resource("participants", ParticipantsController)
+              .params({
+                participants: "uuid",
+              })
+              .apiOnly();
           })
-          .prefix("events/:eventId")
+          .prefix("events/:eventUuid")
           .where("eventUuid", router.matchers.number());
       })
       .use(middleware.auth());
 
     router
       .group(() => {
-        router.get("attributes/:attributeId/blocks", [
+        router.get("attributes/:attributeUuid/blocks", [
           BlocksController,
           "publicIndex",
         ]);
@@ -104,7 +149,7 @@ router
           })
           .use(middleware.participantAuth());
 
-        router.post("forms/:id/submit", [FormsController, "submitForm"]);
+        router.post("forms/:uuid/submit", [FormsController, "submitForm"]);
         router
           .delete("participants/:participantSlug", [
             ParticipantsController,
