@@ -33,10 +33,10 @@ export default class ParticipantsController {
       );
     const formattedParticipants = participants.map((participant) => {
       return {
-        id: participant.uuid,
+        uuid: participant.uuid,
         email: participant.email,
         attributes: participant.attributes.map((attribute) => ({
-          id: attribute.uuid,
+          uuid: attribute.uuid,
           name: attribute.name,
           slug: attribute.slug,
           value: attribute.$extras.pivot_value as string,
@@ -90,7 +90,7 @@ export default class ParticipantsController {
   async show({ params, response }: HttpContext) {
     const findParticipant = await Participant.query().where(
       "uuid",
-      params.id as string,
+      params.uuid as string,
     );
     if (findParticipant.length === 0) {
       return response.notFound("Participant not found.");
@@ -98,8 +98,8 @@ export default class ParticipantsController {
 
     const participant = await Participant.query()
       .select("uuid", "email", "createdAt")
-      .where("uuid", params.id as string)
-      .andWhere("eventUuid", params.eventId as string)
+      .where("uuid", params.uuid as string)
+      .andWhere("eventUuid", params.eventUuid as string)
       .preload("attributes", (attributesQuery) =>
         attributesQuery
           .select("uuid", "name", "createdAt", "updatedAt")
@@ -113,11 +113,11 @@ export default class ParticipantsController {
       .firstOrFail();
 
     const transformedParticipant = {
-      id: participant.uuid,
+      uuid: participant.uuid,
       email: participant.email,
       createdAt: participant.createdAt.toFormat("yyyy-MM-dd HH:mm:ss"),
       attributes: participant.attributes.map((attribute) => ({
-        id: attribute.uuid,
+        uuid: attribute.uuid,
         name: attribute.name,
         slug: attribute.slug,
         value: attribute.$extras.pivot_value as string,
@@ -148,30 +148,30 @@ export default class ParticipantsController {
    * @responseBody 200 - <Participant>
    */
   async update({ params, request }: HttpContext) {
-    const eventId = String(params.eventId);
-    const participantId = String(params.uuid);
+    const eventUuid = String(params.eventUuid);
+    const participantUuid = String(params.uuid);
 
     const updateParticipantDTO = await request.validateUsing(
       participantsUpdateValidator,
       {
         meta: {
-          eventId,
-          participantId,
+          eventUuid,
+          participantUuid,
         },
       },
     );
 
     const updatedParticipant = await this.participantService.updateParticipant(
-      eventId,
-      participantId,
+      eventUuid,
+      participantUuid,
       updateParticipantDTO,
     );
 
     const transformedUpdatedParticipant = {
-      id: updatedParticipant.uuid,
+      uuid: updatedParticipant.uuid,
       email: updatedParticipant.email,
       attributes: updatedParticipant.attributes.map((attribute) => ({
-        id: attribute.uuid,
+        uuid: attribute.uuid,
         name: attribute.name,
         slug: attribute.slug,
         value: attribute.$extras.pivot_value as string,
@@ -191,12 +191,12 @@ export default class ParticipantsController {
    * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    */
   async destroy({ params, response }: HttpContext) {
-    const participantId = +params.uuid;
-    const eventId = +params.eventId;
+    const participantUuid = params.uuid as string;
+    const eventUuid = params.eventUuid as string;
 
     await Participant.query()
-      .where("uuid", participantId)
-      .andWhere("eventUuid", eventId)
+      .where("uuid", participantUuid)
+      .andWhere("eventUuid", eventUuid)
       .delete();
 
     return response.noContent();
@@ -212,9 +212,9 @@ export default class ParticipantsController {
    */
   async unregister({ params, response }: HttpContext) {
     const eventSlug = params.eventSlug as string;
-    const participantSlug = params.participantSlug as string;
+    const participantUuid = params.participantUuid as string;
 
-    await this.participantService.unregister(participantSlug, eventSlug);
+    await this.participantService.unregister(participantUuid, eventSlug);
 
     return response.noContent();
   }
