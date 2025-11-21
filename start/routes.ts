@@ -66,6 +66,10 @@ router
               EmailsController,
               "duplicate",
             ]);
+            router.post("forms/:formId/toggleOpen", [
+              FormsController,
+              "toggleOpen",
+            ]);
             router.resource("forms", FormsController).apiOnly();
             router.resource("organizers", OrganizersController).apiOnly();
             // Participants/export and participants/import must be defined before the resource route
