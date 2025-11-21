@@ -35,11 +35,11 @@ export const participantsUpdateValidator = vine.compile(
           .from("participants")
           .select("email", "uuid")
           .where("email", value)
-          .andWhere("eventUuid", String(field.meta.eventId))
+          .andWhere("eventUuid", String(field.meta.eventUuid))
           .first()) as { email: string; uuid: string } | null;
         if (
           participantEmail !== null &&
-          participantEmail.uuid === field.meta.participantId
+          participantEmail.uuid === field.meta.participantUuid
         ) {
           return true;
         }

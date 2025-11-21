@@ -55,18 +55,18 @@ export class ParticipantService {
   }
 
   async updateParticipant(
-    eventId: string,
-    participantId: string,
+    eventUuid: string,
+    participantUuid: string,
     updateParticipantDTO: UpdateParticipantDTO,
   ) {
     const { participantAttributes, ...updates } = updateParticipantDTO;
 
     const participant = await Participant.query()
-      .where("uuid", participantId)
-      .andWhere("eventUuid", eventId)
+      .where("uuid", participantUuid)
+      .andWhere("eventUuid", eventUuid)
       .firstOrFail();
 
-    const event = await Event.findOrFail(eventId);
+    const event = await Event.findOrFail(eventUuid);
 
     participant.merge(updates);
     await participant.save();
@@ -97,13 +97,13 @@ export class ParticipantService {
     }
 
     const updatedParticipant = await Participant.query()
-      .where("uuid", participantId)
-      .where("eventUuid", eventId)
+      .where("uuid", participantUuid)
+      .where("eventUuid", eventUuid)
       .preload("attributes", (attributesQuery) =>
         attributesQuery
-          .select("uuid", "name", "slug")
+          .select("uuid", "name")
           .pivotColumns(["value"])
-          .where("show_in_list", true),
+          .where("showInList", true),
       )
       .firstOrFail();
 
