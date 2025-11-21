@@ -123,8 +123,7 @@ router
               })
               .apiOnly();
           })
-          .prefix("events/:eventUuid")
-          .where("eventUuid", router.matchers.number());
+          .prefix("events/:eventUuid");
       })
       .use(middleware.auth());
 
