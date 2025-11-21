@@ -10,7 +10,7 @@ export const participantsStoreValidator = vine.compile(
           .from("Participants")
           .select("email", "uuid")
           .where("email", value)
-          .andWhere("eventUuid", field.meta.eventId as string)
+          .andWhere("eventUuid", field.meta.eventUuid as string)
           .first()) as { email: string } | null;
         return participantEmail === null;
       }),

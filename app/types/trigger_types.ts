@@ -1,6 +1,6 @@
 export type EmailTriggerType =
-  | "participant_registered"
-  | "participant_deleted"
-  | "form_filled"
-  | "attribute_changed"
-  | "manual";
+  | "PARTICIPANT_REGISTERED"
+  | "PARTICIPANT_DELETED"
+  | "FORM_FILLED"
+  | "ATTRIBUTE_CHANGED"
+  | "MANUAL";
