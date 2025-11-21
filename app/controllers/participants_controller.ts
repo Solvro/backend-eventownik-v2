@@ -24,7 +24,7 @@ export default class ParticipantsController {
   async index({ params }: HttpContext) {
     const participants = await Participant.query()
       .select("uuid", "email", "createdAt")
-      .where("eventUuid", params.eventId as string)
+      .where("eventUuid", params.eventUuid as string)
       .preload("attributes", (attributesQuery) =>
         attributesQuery
           .select("uuid", "name", "createdAt", "updatedAt")
@@ -61,18 +61,18 @@ export default class ParticipantsController {
    * @responseBody 201 - <Participant>
    */
   async store({ request, params }: HttpContext) {
-    const eventId = String(params.eventId);
+    const eventUuid = String(params.eventUuid);
     const participantCreateDTO = await request.validateUsing(
       participantsStoreValidator,
       {
         meta: {
-          eventId,
+          eventUuid,
         },
       },
     );
 
     const participant = await this.participantService.createParticipant(
-      eventId,
+      eventUuid,
       participantCreateDTO,
     );
 
