@@ -5,22 +5,22 @@ export const emailsStoreValidator = vine.compile(
     name: vine.string(),
     content: vine.string(),
     trigger: vine.enum([
-      "participant_registered",
-      "participant_deleted",
-      "form_filled",
-      "attribute_changed",
-      "manual",
+      "PARTICIPANT_REGISTERED",
+      "PARTICIPANT_DELETED",
+      "FORM_FILLED",
+      "ATTRIBUTE_CHANGED",
+      "MANUAL",
     ]),
     triggerValue: vine
       .string()
       .optional()
-      .requiredWhen("trigger", "=", "form_filled")
-      .requiredWhen("trigger", "=", "attribute_changed"),
+      .requiredWhen("trigger", "=", "FORM_FILLED")
+      .requiredWhen("trigger", "=", "ATTRIBUTE_CHANGED"),
     triggerValue2: vine
       .string()
       .optional()
-      .requiredWhen("trigger", "=", "attribute_changed"),
-    formId: vine.number().optional(),
+      .requiredWhen("trigger", "=", "ATTRIBUTE_CHANGED"),
+    formUuid: vine.string().optional(),
   }),
 );
 
@@ -30,23 +30,23 @@ export const emailsUpdateValidator = vine.compile(
     content: vine.string().optional(),
     trigger: vine
       .enum([
-        "participant_registered",
-        "participant_deleted",
-        "form_filled",
-        "attribute_changed",
-        "manual",
+        "PARTICIPANT_REGISTERED",
+        "PARTICIPANT_DELETED",
+        "FORM_FILLED",
+        "ATTRIBUTE_CHANGED",
+        "MANUAL",
       ])
       .optional(),
     triggerValue: vine
       .string()
       .optional()
-      .requiredWhen("trigger", "=", "form_filled")
-      .requiredWhen("trigger", "=", "attribute_changed"),
+      .requiredWhen("trigger", "=", "FORM_FILLED")
+      .requiredWhen("trigger", "=", "ATTRIBUTE_CHANGED"),
     triggerValue2: vine
       .string()
       .optional()
-      .requiredWhen("trigger", "=", "attribute_changed"),
-    formId: vine.number().optional(),
+      .requiredWhen("trigger", "=", "ATTRIBUTE_CHANGED"),
+    formUuid: vine.string().optional(),
   }),
 );
 

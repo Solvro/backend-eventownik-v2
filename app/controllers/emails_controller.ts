@@ -29,7 +29,7 @@ export default class EmailsController {
         "name",
         "trigger",
         "triggerValue",
-        "triggerValue_2",
+        "triggerValue2",
         "createdAt",
         "updatedAt",
       ])
@@ -78,7 +78,7 @@ export default class EmailsController {
    * @responseBody 400 - {"message": "Failed to create email"}
    */
   async store({ params, request, response, bouncer }: HttpContext) {
-    const event = await Event.findOrFail(+params.eventUuid);
+    const event = await Event.findOrFail(params.eventUuid);
     await bouncer.authorize("manage_email", event);
 
     const data = await request.validateUsing(emailsStoreValidator);
@@ -103,7 +103,7 @@ export default class EmailsController {
     );
 
     const data = await request.validateUsing(emailsUpdateValidator);
-    const emailUuid = Number(params.uuid);
+    const emailUuid = params.uuid as string;
     const email = await Email.findOrFail(emailUuid);
 
     await email.merge(data).save();
@@ -118,7 +118,7 @@ export default class EmailsController {
    * @tag emails
    * @responseBody 200 - { message: "Email successfully deleted" }
    */
-  async destroy({ params, bouncer }: HttpContext) {
+  async destroy({ params, bouncer, response }: HttpContext) {
     await bouncer.authorize(
       "manage_email",
       await Event.findOrFail(params.eventUuid),
@@ -130,7 +130,7 @@ export default class EmailsController {
     await email.related("participants").detach();
     await email.delete();
 
-    return { message: "Email successfully deleted" };
+    return response.noContent();
   }
 
   /**
