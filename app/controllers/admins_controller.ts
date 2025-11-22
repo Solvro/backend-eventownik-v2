@@ -47,7 +47,7 @@ export default class AdminsController {
    */
   async show({ params }: HttpContext) {
     return await Admin.query()
-      .where("uuid", String(params.id))
+      .where("uuid", String(params.uuid))
       .preload("events")
       .preload("permissions")
 
@@ -64,14 +64,14 @@ export default class AdminsController {
    */
   async update({ params, request }: HttpContext) {
     const adminUpdates = await updateAdminValidator.validate(request.body());
-    const admin = await Admin.findOrFail(params.id);
+    const admin = await Admin.findOrFail(params.uuid);
 
     if (adminUpdates === undefined) {
       return admin;
     }
 
     const updatedAdmin = await this.adminService.updateAdmin(
-      String(params.id),
+      String(params.uuid),
       adminUpdates,
     );
 
@@ -86,7 +86,7 @@ export default class AdminsController {
    * @responseBody 204 - {}
    */
   async destroy({ params, response }: HttpContext) {
-    const adminUuid = params.id as string;
+    const adminUuid = params.uuid as string;
     await this.adminService.deleteAdmin(adminUuid);
     return response.noContent();
   }
