@@ -34,7 +34,7 @@ export default class OrganizersController {
       .preload("permissions", (permissionsQuery) =>
         permissionsQuery.where("eventUuid", eventUuid),
       )
-      .whereHas("events", (query) => query.where("events.uuid", eventUuid));
+      .whereHas("events", (query) => query.where("Events.uuid", eventUuid));
   }
 
   /**
@@ -66,12 +66,12 @@ export default class OrganizersController {
    */
   async show({ params, bouncer }: HttpContext) {
     const eventUuid = params.eventUuid as string;
-    const organizerUuid = params.id as string;
+    const organizerUuid = params.uuid as string;
     await bouncer.authorize("manage_event", await Event.findOrFail(eventUuid));
 
     const organizer = await Admin.query()
       .where("uuid", organizerUuid)
-      .whereHas("events", (query) => query.where("events.uuid", eventUuid))
+      .whereHas("events", (query) => query.where("Events.uuid", eventUuid))
       .preload("permissions", (permissionsQuery) =>
         permissionsQuery.where("eventUuid", eventUuid),
       )
@@ -91,19 +91,19 @@ export default class OrganizersController {
    */
   async update({ params, request, bouncer }: HttpContext) {
     const eventUuid = params.eventUuid as string;
-    const organizerUuid = params.id as string;
+    const organizerUuid = params.uuid as string;
     await bouncer.authorize(
       "manage_setting",
       await Event.findOrFail(eventUuid),
     );
 
-    const { permissionsIds } =
+    const { permissionsUuids } =
       await updateOrganizerPermissionsValidator.validate(request.body());
 
     const updatedOrganizer = this.organizerService.updateOrganizerPermissions(
       organizerUuid,
       eventUuid,
-      permissionsIds,
+      permissionsUuids,
     );
 
     return updatedOrganizer;
@@ -122,10 +122,10 @@ export default class OrganizersController {
       "manage_setting",
       await Event.findOrFail(eventUuid),
     );
-    const organizerUuid = params.id as string;
+    const organizerUuid = params.uuid as string;
 
     await db
-      .from("adminPermissions")
+      .from("AdminsPermissions")
       .where("adminUuid", organizerUuid)
       .where("eventUuid", eventUuid)
       .delete();

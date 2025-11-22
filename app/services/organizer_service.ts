@@ -12,15 +12,15 @@ export class OrganizerService {
 
   async addOrganizer(
     eventUuid: string,
-    organizerData: { email: string; permissionsIds: string[] },
+    organizerData: { email: string; permissionsUuids: string[] },
   ) {
     const admin = await Admin.findBy("email", organizerData.email);
 
     if (admin !== null) {
-      for (const permissionId of organizerData.permissionsIds) {
+      for (const permissionUuid of organizerData.permissionsUuids) {
         await admin
           .related("permissions")
-          .attach({ [permissionId]: { eventUuid } });
+          .attach({ [permissionUuid]: { eventUuid } });
       }
     } else {
       const newAdminData = await createAdminValidator.validate(organizerData);
@@ -42,12 +42,12 @@ export class OrganizerService {
   }
 
   async updateOrganizerPermissions(
-    organizerId: string,
+    organizerUuid: string,
     eventUuid: string,
-    newPermissionsIds: string[],
+    newPermissionsUuids: string[],
   ) {
     const organizer = await this.getOrganizerWithPermissions(
-      organizerId,
+      organizerUuid,
       eventUuid,
     );
 
@@ -55,14 +55,14 @@ export class OrganizerService {
       .related("permissions")
       .detach(organizer.permissions.map((permission) => permission.uuid));
 
-    for (const permissionId of newPermissionsIds) {
+    for (const permissionUuid of newPermissionsUuids) {
       await organizer
         .related("permissions")
-        .attach({ [permissionId]: { eventUuid } });
+        .attach({ [permissionUuid]: { eventUuid } });
     }
 
     const updatedOrganizer = await Admin.query()
-      .where("uuid", organizerId)
+      .where("uuid", organizerUuid)
       .preload("permissions")
       .firstOrFail();
 
