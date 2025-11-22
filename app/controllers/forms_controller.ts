@@ -23,13 +23,13 @@ export default class FormsController {
    * @responseBody 200 - <Form[]>.with(relations, attributes).exclude(event).paginated("data", "meta")
    */
   public async index({ params, request, bouncer }: HttpContext) {
-    const eventId = params.eventId as string;
-    await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
+    const eventUuid = params.eventUuid as string;
+    await bouncer.authorize("manage_form", await Event.findOrFail(eventUuid));
     const page = Number(request.input("page", 1));
     const perPage = Number(request.input("perPage", 10));
 
     return await Form.query()
-      .where("eventUuid", eventId)
+      .where("eventUuid", eventUuid)
       .preload("attributes")
       .paginate(page, perPage);
   }
@@ -43,7 +43,7 @@ export default class FormsController {
    * @responseBody 201 - <Form>
    */
   public async store({ params, request, response, bouncer }: HttpContext) {
-    const eventUuid = params.eventId as string;
+    const eventUuid = params.eventUuid as string;
 
     const event = await Event.query()
       .where("uuid", eventUuid)
@@ -71,17 +71,17 @@ export default class FormsController {
 
     const form = await event.related("forms").create(renamedFormData);
 
-    const eventAttributesIdsSet = new Set(
+    const eventAttributesUuidsSet = new Set(
       event.attributes.map((attribute) => attribute.uuid),
     );
 
     const attributesFromDifferentEvent = attributes.filter(
-      (attribute) => !eventAttributesIdsSet.has(attribute.uuid),
+      (attribute) => !eventAttributesUuidsSet.has(attribute.uuid),
     );
 
     if (attributesFromDifferentEvent.length > 0) {
       return response.badRequest({
-        message: `Attributes with ids ${JSON.stringify(attributesFromDifferentEvent.map((attribute) => attribute.uuid))}, do not belong to this event`,
+        message: `Attributes with Uuids ${JSON.stringify(attributesFromDifferentEvent.map((attribute) => attribute.uuid))}, do not belong to this event`,
       });
     }
 
@@ -119,12 +119,12 @@ export default class FormsController {
    * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    */
   public async show({ params, bouncer }: HttpContext) {
-    const eventId = params.eventId as string;
-    const formUuid = params.id as string;
-    await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
+    const eventUuid = params.eventUuid as string;
+    const formUuid = params.uuid as string;
+    await bouncer.authorize("manage_form", await Event.findOrFail(eventUuid));
 
     return await Form.query()
-      .where("eventUuid", eventId)
+      .where("eventUuid", eventUuid)
       .where("uuid", formUuid)
       .preload("attributes")
       .firstOrFail();
@@ -140,16 +140,16 @@ export default class FormsController {
    * @tag forms
    */
   public async update({ params, request, bouncer, response }: HttpContext) {
-    const eventId = params.eventId as string;
-    const formUuid = params.id as string;
+    const eventUuid = params.eventUuid as string;
+    const formUuid = params.uuid as string;
     const event = await Event.query()
-      .where("uuid", eventId)
+      .where("uuid", eventUuid)
       .preload("registerForm")
       .firstOrFail();
 
     await bouncer.authorize("manage_form", event);
     const form = await Form.query()
-      .where("eventUuid", eventId)
+      .where("eventUuid", eventUuid)
       .where("uuid", formUuid)
       .firstOrFail();
 
@@ -196,7 +196,7 @@ export default class FormsController {
     }
 
     const updatedForm = await Form.query()
-      .where("eventUuid", eventId)
+      .where("eventUuid", eventUuid)
       .where("uuid", formUuid)
       .preload("attributes")
       .firstOrFail();
@@ -213,12 +213,12 @@ export default class FormsController {
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
   public async destroy({ params, response, bouncer }: HttpContext) {
-    const eventId = params.eventId as string;
-    const formUuid = params.id as string;
-    await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
+    const eventUuid = params.eventUuid as string;
+    const formUuid = params.uuid as string;
+    await bouncer.authorize("manage_form", await Event.findOrFail(eventUuid));
 
     await Form.query()
-      .where("eventUuid", eventId)
+      .where("eventUuid", eventUuid)
       .andWhere("uuid", formUuid)
       .delete();
 
