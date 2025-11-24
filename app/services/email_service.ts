@@ -151,9 +151,14 @@ export class EmailService {
 
       for (const attribute of participant.attributes) {
         if (attribute.type === "block") {
-          const block = await Block.find(attribute.$extras.pivot_value);
-          attribute.$extras.pivot_value =
-            block?.name ?? (attribute.$extras.pivot_value as string);
+          if (attribute.$extras.pivot_value !== null) {
+            const block = await Block.find(attribute.$extras.pivot_value);
+
+            attribute.$extras.pivot_value =
+              block?.name ?? (attribute.$extras.pivot_value as string);
+          }
+
+          attribute.$extras.pivot_value = "N/A";
         }
         parsedContent = parsedContent.replace(
           new RegExp(`/participant_${attribute.slug}`, "g"),
