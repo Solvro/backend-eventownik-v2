@@ -65,6 +65,21 @@ export class FormService {
       };
     }
 
+    const normalizedAttributes: Record<string, unknown> = {};
+
+    for (const [key, value] of Object.entries(
+      attributes as Record<string, unknown>,
+    )) {
+      if (
+        !(value === null) &&
+        !(value === "null") &&
+        !(value === "") &&
+        !(value === undefined)
+      ) {
+        normalizedAttributes[key] = value;
+      }
+    }
+
     if (form.isFirstForm && participantEmail === undefined) {
       return {
         status: 400,
@@ -112,7 +127,7 @@ export class FormService {
             participant?.attributes.some((x) => x.id === attribute.id) ?? false
           ),
       )
-      .filter((attribute) => !(attribute.id in attributes))
+      .filter((attribute) => !(attribute.id.toString() in normalizedAttributes))
       .map((attribute) => ({
         id: attribute.id,
         name: attribute.name,
@@ -125,7 +140,10 @@ export class FormService {
       };
     }
 
-    const formFields = filterObjectFields(attributes, allowedFieldsIds);
+    const formFields = filterObjectFields(
+      normalizedAttributes,
+      allowedFieldsIds,
+    );
 
     const transformedFormFields = await Promise.all(
       Object.entries(formFields).map(async ([attributeId, value]) => {
@@ -151,9 +169,15 @@ export class FormService {
           value !== null &&
           value !== "null"
         ) {
+          const blockId = Number(value);
+
+          if (Number.isNaN(blockId)) {
+            throw new Exception("Invalid block ID format");
+          }
+
           const canSignInToBlock = await this.blockService.canSignInToBlock(
             +attributeId,
-            +(value as string),
+            blockId,
           );
 
           if (!canSignInToBlock) {
