@@ -1,3 +1,5 @@
+import db from "@adonisjs/lucid/services/db";
+
 import Block from "#models/block";
 import Event from "#models/event";
 import Participant from "#models/participant";
@@ -88,31 +90,35 @@ export class ParticipantService {
   ): Promise<Participant> {
     const { participantAttributes, ...participantData } = createParticipantDTO;
 
-    const event = await Event.findOrFail(eventId);
+    return await db.transaction(async (trx) => {
+      const event = await Event.findOrFail(eventId, { client: trx });
 
-    const participant = await event
-      .related("participants")
-      .create(participantData);
+      const participant = await event
+        .related("participants")
+        .create(participantData, { client: trx });
 
-    const transformedAttributes = await this.prepareAttributesForSave(
-      event,
-      participant,
-      participantAttributes,
-    );
+      const transformedAttributes = await this.prepareAttributesForSave(
+        event,
+        participant,
+        participantAttributes,
+      );
 
-    if (Object.keys(transformedAttributes).length > 0) {
-      await participant.related("attributes").attach(transformedAttributes);
-    }
+      if (Object.keys(transformedAttributes).length > 0) {
+        await participant
+          .related("attributes")
+          .attach(transformedAttributes, trx);
+      }
 
-    await participant.load("attributes");
+      await participant.load("attributes");
 
-    await EmailService.sendOnTrigger(
-      event,
-      participant,
-      "participant_registered",
-    );
+      await EmailService.sendOnTrigger(
+        event,
+        participant,
+        "participant_registered",
+      );
 
-    return participant;
+      return participant;
+    });
   }
 
   async updateParticipant(
