@@ -1,3 +1,4 @@
+import Block from "#models/block";
 import Event from "#models/event";
 import Participant from "#models/participant";
 
@@ -8,6 +9,79 @@ import {
 import { EmailService } from "./email_service.js";
 
 export class ParticipantService {
+  private async prepareAttributesForSave(
+    event: Event,
+    participant: Participant,
+    participantAttributes?: { attributeId: number; value: string | null }[],
+  ): Promise<Record<number, { value: string | null }>> {
+    const transformedAttributes: Record<number, { value: string | null }> = {};
+
+    if (participantAttributes === undefined) {
+      return transformedAttributes;
+    }
+
+    if (participantAttributes.length === 0) {
+      return transformedAttributes;
+    }
+
+    const attributeIds = participantAttributes.map((attr) => attr.attributeId);
+
+    const attributesQuery = event.related("attributes").query();
+
+    const blockAttributes = await attributesQuery
+      .whereIn("id", attributeIds)
+      .andWhere("type", "block")
+      .select("id");
+
+    const blockAttributeIds = new Set<number>(
+      blockAttributes.map((attr) => attr.id),
+    );
+
+    for (const attribute of participantAttributes) {
+      const isBlock = blockAttributeIds.has(attribute.attributeId);
+      let valueToSave: string | null | undefined = attribute.value;
+
+      if (isBlock) {
+        const raw = attribute.value;
+
+        if (raw === null || raw === undefined || raw === "" || raw === "null") {
+          valueToSave = undefined;
+        } else {
+          const blockId = Number(raw);
+
+          if (!Number.isFinite(blockId)) {
+            throw new Error(`Invalid block ID format: "${raw}"`);
+          }
+
+          const block = await Block.find(blockId);
+          if (block === null) {
+            throw new Error(`Block with ID ${blockId} does not exist.`);
+          }
+
+          valueToSave = blockId.toString();
+        }
+      }
+
+      if (valueToSave === undefined) {
+        continue;
+      }
+
+      await EmailService.sendOnTrigger(
+        event,
+        participant,
+        "attribute_changed",
+        attribute.attributeId,
+        valueToSave,
+      );
+
+      transformedAttributes[attribute.attributeId] = {
+        value: valueToSave,
+      };
+    }
+
+    return transformedAttributes;
+  }
+
   async createParticipant(
     eventId: number,
     createParticipantDTO: CreateParticipantDTO,
@@ -20,26 +94,13 @@ export class ParticipantService {
       .related("participants")
       .create(participantData);
 
-    if (
-      participantAttributes !== undefined &&
-      participantAttributes.length > 0
-    ) {
-      const transformedAttributes: Record<number, { value: string | null }> =
-        {};
+    const transformedAttributes = await this.prepareAttributesForSave(
+      event,
+      participant,
+      participantAttributes,
+    );
 
-      for (const attribute of participantAttributes) {
-        await EmailService.sendOnTrigger(
-          event,
-          participant,
-          "attribute_changed",
-          attribute.attributeId,
-          attribute.value,
-        );
-        transformedAttributes[attribute.attributeId] = {
-          value: attribute.value,
-        };
-      }
-
+    if (Object.keys(transformedAttributes).length > 0) {
       await participant.related("attributes").attach(transformedAttributes);
     }
 
@@ -71,26 +132,13 @@ export class ParticipantService {
     participant.merge(updates);
     await participant.save();
 
-    if (
-      participantAttributes !== undefined &&
-      participantAttributes.length > 0
-    ) {
-      const transformedAttributes: Record<number, { value: string | null }> =
-        {};
+    const transformedAttributes = await this.prepareAttributesForSave(
+      event,
+      participant,
+      participantAttributes,
+    );
 
-      for (const attribute of participantAttributes) {
-        await EmailService.sendOnTrigger(
-          event,
-          participant,
-          "attribute_changed",
-          attribute.attributeId,
-          attribute.value,
-        );
-        transformedAttributes[attribute.attributeId] = {
-          value: attribute.value,
-        };
-      }
-
+    if (Object.keys(transformedAttributes).length > 0) {
       await participant
         .related("attributes")
         .sync(transformedAttributes, false);
@@ -126,9 +174,11 @@ export class ParticipantService {
   async unregisterMany(participantsToUnregisterIds: number[], eventId: number) {
     const event = await Event.findOrFail(+eventId);
 
-    const participants = await Participant.query()
+    const participantsQuery = Participant.query()
       .whereIn("id", participantsToUnregisterIds)
       .andWhere("event_id", event.id);
+
+    const participants = await participantsQuery;
 
     await Promise.all(
       participants.map((participant) =>
