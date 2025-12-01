@@ -72,3 +72,9 @@ export const formSubmitValidator = vine.compile(
     })
     .allowUnknownProperties(),
 );
+
+export const toggleFormOpenValidator = vine.compile(
+  vine.object({
+    isOpen: vine.boolean(),
+  }),
+);

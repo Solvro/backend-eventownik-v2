@@ -70,15 +70,18 @@ export default class Form extends BaseModel {
   }
 
   serializeExtras() {
-    return {
-      attributes: this.attributes.map((attribute) => ({
-        ...attribute.toJSON(),
-        isEditable: (attribute.$extras as { pivot_is_editable: boolean })
-          .pivot_is_editable,
-        isRequired: (attribute.$extras as { pivot_is_required: boolean })
-          .pivot_is_required,
-        order: (attribute.$extras as { pivot_order: number }).pivot_order,
-      })),
-    };
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (this.attributes !== undefined && this.attributes !== null) {
+      return {
+        attributes: this.attributes.map((attribute) => ({
+          ...attribute.toJSON(),
+          isEditable: (attribute.$extras as { pivot_is_editable: boolean })
+            .pivot_is_editable,
+          isRequired: (attribute.$extras as { pivot_is_required: boolean })
+            .pivot_is_required,
+          order: (attribute.$extras as { pivot_order: number }).pivot_order,
+        })),
+      };
+    }
   }
 }

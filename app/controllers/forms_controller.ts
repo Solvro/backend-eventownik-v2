@@ -7,6 +7,7 @@ import { FormService } from "#services/form_service";
 import {
   createFormValidator,
   formSubmitValidator,
+  toggleFormOpenValidator,
   updateFormValidator,
 } from "#validators/form";
 
@@ -192,6 +193,33 @@ export default class FormsController {
       .firstOrFail();
 
     return updatedForm;
+  }
+
+  /**
+   * @toggleOpen
+   * @operationId toggleFormOpen
+   * @description Allows superadmin to open and close forms.
+   * @tag form
+   * @paramPath id - Form identifier - @type(number) @required
+   * @requestFormDataBody <toggleFormOpen>
+   * @responseBody 200 - <Event>
+   * @responseBody 401 - Unauthorized access
+   */
+  public async toggleOpen({ request, params, bouncer }: HttpContext) {
+    const eventId = +params.eventId;
+    const formId = +params.formId;
+
+    await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
+
+    const form = await Form.findOrFail(formId);
+
+    const payload = await request.validateUsing(toggleFormOpenValidator);
+
+    form.isOpen = payload.isOpen;
+
+    await form.save();
+
+    return form;
   }
 
   /**
