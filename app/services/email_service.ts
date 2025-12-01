@@ -13,6 +13,26 @@ import env from "#start/env";
 import { EmailTriggerType } from "../types/trigger_types.js";
 
 export class EmailService {
+  private static async getBlockDisplayValue(
+    raw: string | number | null | undefined,
+  ): Promise<string> {
+    if (raw === null || raw === "null" || raw === undefined || raw === "") {
+      return "N/A";
+    }
+
+    const blockId = Number(raw);
+
+    if (Number.isFinite(blockId)) {
+      const block = await Block.find(blockId);
+
+      if (block !== null) {
+        return block.name;
+      }
+    }
+
+    return "N/A";
+  }
+
   static async sendOnTrigger(
     event: Event,
     participant: Participant,
@@ -150,19 +170,24 @@ export class EmailService {
       );
 
       for (const attribute of participant.attributes) {
+        const raw = attribute.$extras.pivot_value as
+          | string
+          | number
+          | null
+          | undefined;
+
+        let replacementValue: string;
         if (attribute.type === "block") {
-          if (attribute.$extras.pivot_value !== null) {
-            const block = await Block.find(attribute.$extras.pivot_value);
-
-            attribute.$extras.pivot_value =
-              block?.name ?? (attribute.$extras.pivot_value as string);
-          }
-
-          attribute.$extras.pivot_value = "N/A";
+          replacementValue = await EmailService.getBlockDisplayValue(raw);
+        } else if (raw === null || raw === undefined) {
+          replacementValue = "";
+        } else {
+          replacementValue = typeof raw === "string" ? raw : String(raw);
         }
+
         parsedContent = parsedContent.replace(
           new RegExp(`/participant_${attribute.slug}`, "g"),
-          attribute.$extras.pivot_value as string,
+          replacementValue,
         );
       }
 
@@ -242,14 +267,24 @@ export class EmailService {
     }
 
     for (const attribute of participant.attributes) {
+      const raw = attribute.$extras.pivot_value as
+        | string
+        | number
+        | null
+        | undefined;
+
+      let replacementValue: string;
       if (attribute.type === "block") {
-        const block = await Block.find(attribute.$extras.pivot_value);
-        attribute.$extras.pivot_value =
-          block?.name ?? (attribute.$extras.pivot_value as string);
+        replacementValue = await EmailService.getBlockDisplayValue(raw);
+      } else if (raw === null || raw === undefined) {
+        replacementValue = "";
+      } else {
+        replacementValue = typeof raw === "string" ? raw : String(raw);
       }
+
       parsedContent = parsedContent.replace(
         new RegExp(`/participant_${attribute.slug}`, "g"),
-        attribute.$extras.pivot_value as string,
+        replacementValue,
       );
     }
 
