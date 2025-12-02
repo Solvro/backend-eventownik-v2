@@ -200,9 +200,10 @@ export default class FormsController {
    * @operationId toggleFormOpen
    * @description Allows superadmin to open and close forms.
    * @tag form
-   * @paramPath id - Form identifier - @type(number) @required
+   * @paramPath eventId - Event identifier - @type(number) @required
+   * @paramPath formId - Form identifier - @type(number) @required
    * @requestFormDataBody <toggleFormOpen>
-   * @responseBody 200 - <Event>
+   * @responseBody 200 - <Form>
    * @responseBody 401 - Unauthorized access
    */
   public async toggleOpen({ request, params, bouncer }: HttpContext) {
