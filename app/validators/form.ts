@@ -2,7 +2,7 @@ import vine from "@vinejs/vine";
 import { DateTime } from "luxon";
 
 function dateTimeTransform(value: Date): DateTime {
-  const parsed = DateTime.fromISO(value.toISOString());
+  const parsed = DateTime.fromJSDate(value);
   if (!parsed.isValid) {
     throw new Error("Invalid date");
   }
@@ -13,7 +13,9 @@ export const createFormValidator = vine.compile(
   vine.object({
     name: vine.string(),
     description: vine.string(),
-    startDate: vine.date().transform(dateTimeTransform),
+    startDate: vine
+      .date({ formats: { utc: true } })
+      .transform(dateTimeTransform),
     isFirstForm: vine.boolean(),
     attributes: vine
       .array(
@@ -25,7 +27,10 @@ export const createFormValidator = vine.compile(
         }),
       )
       .minLength(1),
-    endDate: vine.date().transform(dateTimeTransform).optional(),
+    endDate: vine
+      .date({ formats: { utc: true } })
+      .transform(dateTimeTransform)
+      .optional(),
     isOpen: vine.boolean().optional(),
   }),
 );
@@ -34,8 +39,14 @@ export const updateFormValidator = vine.compile(
   vine.object({
     name: vine.string().optional(),
     description: vine.string().optional(),
-    startDate: vine.date().transform(dateTimeTransform).optional(),
-    endDate: vine.date().transform(dateTimeTransform).optional(),
+    startDate: vine
+      .date({ formats: { utc: true } })
+      .transform(dateTimeTransform)
+      .optional(),
+    endDate: vine
+      .date({ formats: { utc: true } })
+      .transform(dateTimeTransform)
+      .optional(),
     attributes: vine
       .array(
         vine.object({
