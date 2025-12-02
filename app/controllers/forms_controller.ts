@@ -212,7 +212,10 @@ export default class FormsController {
 
     await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
 
-    const form = await Form.findOrFail(formId);
+    const form = await Form.query()
+      .where("event_id", eventId)
+      .where("id", formId)
+      .firstOrFail();
 
     const payload = await request.validateUsing(toggleFormOpenValidator);
 
