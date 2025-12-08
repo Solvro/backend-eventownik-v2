@@ -222,7 +222,8 @@ export default class FormsController {
    * @tag forms
    * @requestFormDataBody <formSubmitValidator>
    * @responseBody 201 - {}
-   * @responseBody 200 - { missingRequiredFields: { id: number, name: string }[] }
+   * @responseBody 400 - { missingRequiredFields: { id: number, name: string }[] }
+   * @responseBody 400 - { "message": "Form is closed" }
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
   public async submitForm({ params, request, response }: HttpContext) {

@@ -37,6 +37,13 @@ export class FormService {
       })
       .firstOrFail();
 
+    if (!form.isOpen) {
+      return {
+        status: 400,
+        error: { message: "Form is closed" },
+      };
+    }
+
     const {
       email: participantEmail,
       participantSlug,
