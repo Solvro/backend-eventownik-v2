@@ -17,6 +17,7 @@ export const createFormValidator = vine.compile(
       .date({ formats: { utc: true } })
       .transform(dateTimeTransform),
     isFirstForm: vine.boolean(),
+    limit: vine.number().optional(),
     attributes: vine
       .array(
         vine.object({
@@ -47,6 +48,7 @@ export const updateFormValidator = vine.compile(
       .date({ formats: { utc: true } })
       .transform(dateTimeTransform)
       .optional(),
+    limit: vine.number().optional(),
     attributes: vine
       .array(
         vine.object({
