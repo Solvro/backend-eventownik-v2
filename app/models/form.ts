@@ -36,6 +36,9 @@ export default class Form extends BaseModel {
   @column()
   declare slug: string;
 
+  @column()
+  declare limit: number | null;
+
   @column.dateTime()
   declare startDate: DateTime;
 
