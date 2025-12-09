@@ -37,7 +37,7 @@ export default class Form extends BaseModel {
   declare slug: string;
 
   @column()
-  declare limit: number | null;
+  declare submissionsLeft: number | null;
 
   @column.dateTime()
   declare startDate: DateTime;

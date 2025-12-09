@@ -5,13 +5,13 @@ export default class extends BaseSchema {
 
   async up() {
     this.schema.alterTable(this.tableName, (table) => {
-      table.integer("limit").nullable();
+      table.integer("submissions_left").nullable();
     });
   }
 
   async down() {
     this.schema.alterTable(this.tableName, (table) => {
-      table.dropColumn("limit");
+      table.dropColumn("submissions_left");
     });
   }
 }
