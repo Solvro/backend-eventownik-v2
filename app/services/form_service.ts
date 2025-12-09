@@ -22,6 +22,22 @@ export class FormService {
     private blockService: BlockService,
   ) {}
 
+  async checkFormClosure(form: Form): Promise<boolean> {
+    if (!form.isOpen) {
+      return false;
+    }
+    if (form.endDate !== null && form.endDate.toJSDate() < new Date()) {
+      form.isOpen = false;
+      await form.save();
+      return false;
+    } else if (form.submissionsLeft !== null && form.submissionsLeft <= 0) {
+      form.isOpen = false;
+      await form.save();
+      return false;
+    }
+    return true;
+  }
+
   async submitForm(
     eventSlug: string,
     form: Form,
@@ -35,23 +51,7 @@ export class FormService {
       ...attributes
     } = formSubmitDTO;
 
-    if (!form.isOpen) {
-      return {
-        status: 400,
-        error: { message: "Form closed" },
-      };
-    }
-
-    if (form.endDate !== null && form.endDate.toJSDate() < new Date()) {
-      form.isOpen = false;
-      await form.save();
-      return {
-        status: 400,
-        error: { message: "Form closed" },
-      };
-    } else if (form.limit !== null && form.limit <= 0) {
-      form.isOpen = false;
-      await form.save();
+    if (!(await this.checkFormClosure(form))) {
       return {
         status: 400,
         error: { message: "Form closed" },

@@ -35,20 +35,7 @@ export default class FormsController {
       .paginate(page, perPage);
 
     for (const form of forms) {
-      if (form.limit !== null && form.isOpen) {
-        if (form.limit <= 0) {
-          form.isOpen = false;
-          await form.save();
-        }
-      }
-
-      if (form.endDate !== null && form.isOpen) {
-        const now = new Date();
-        if (now > form.endDate.toJSDate()) {
-          form.isOpen = false;
-          await form.save();
-        }
-      }
+      await this.formService.checkFormClosure(form);
     }
 
     return forms;
@@ -143,21 +130,7 @@ export default class FormsController {
       .preload("attributes")
       .firstOrFail();
 
-    if (form.limit !== null && form.isOpen) {
-      if (form.limit <= 0) {
-        form.isOpen = false;
-        await form.save();
-      }
-    }
-
-    if (form.endDate !== null && form.isOpen) {
-      const now = new Date();
-      if (now > form.endDate.toJSDate()) {
-        form.isOpen = false;
-        await form.save();
-      }
-    }
-
+    await this.formService.checkFormClosure(form);
     return form;
   }
 
@@ -333,13 +306,15 @@ export default class FormsController {
       return response.status(errorObject.status).json(errorObject.error);
     }
 
-    if (form.limit !== null) {
-      form.limit -= 1;
-      await form.save();
-      if (form.limit <= 0) {
+    if (
+      (await this.formService.checkFormClosure(form)) &&
+      form.submissionsLeft !== null
+    ) {
+      form.submissionsLeft -= 1;
+      if (form.submissionsLeft <= 0) {
         form.isOpen = false;
-        await form.save();
       }
+      await form.save();
     }
 
     return response.created();
