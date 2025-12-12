@@ -29,10 +29,16 @@ export default class FormsController {
     const page = Number(request.input("page", 1));
     const perPage = Number(request.input("perPage", 10));
 
-    return await Form.query()
+    const forms = await Form.query()
       .where("event_id", eventId)
       .preload("attributes")
       .paginate(page, perPage);
+
+    for (const form of forms) {
+      await this.formService.checkFormClosure(form);
+    }
+
+    return forms;
   }
 
   /**
@@ -118,11 +124,14 @@ export default class FormsController {
     const formId = Number(params.id);
     await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
 
-    return await Form.query()
+    const form = await Form.query()
       .where("event_id", eventId)
       .where("id", formId)
       .preload("attributes")
       .firstOrFail();
+
+    await this.formService.checkFormClosure(form);
+    return form;
   }
 
   /**
@@ -263,6 +272,14 @@ export default class FormsController {
 
     const event = await Event.findByOrFail("slug", eventSlug);
 
+    const form = await Form.query()
+      .where("id", formId)
+      .andWhere("event_id", event.id)
+      .preload("attributes", async (query) => {
+        await query.pivotColumns(["is_required"]);
+      })
+      .firstOrFail();
+
     const { email, participantSlug, ...attributes } =
       await request.validateUsing(formSubmitValidator, {
         meta: { eventId: event.id },
@@ -279,7 +296,7 @@ export default class FormsController {
       }),
     );
 
-    const errorObject = await this.formService.submitForm(eventSlug, formId, {
+    const errorObject = await this.formService.submitForm(eventSlug, form, {
       email,
       participantSlug,
       ...transformedAttributes,
@@ -287,6 +304,17 @@ export default class FormsController {
 
     if (errorObject !== undefined) {
       return response.status(errorObject.status).json(errorObject.error);
+    }
+
+    if (
+      (await this.formService.checkFormClosure(form)) &&
+      form.submissionsLeft !== null
+    ) {
+      form.submissionsLeft -= 1;
+      if (form.submissionsLeft <= 0) {
+        form.isOpen = false;
+      }
+      await form.save();
     }
 
     return response.created();

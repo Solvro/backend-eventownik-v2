@@ -22,26 +22,41 @@ export class FormService {
     private blockService: BlockService,
   ) {}
 
+  async checkFormClosure(form: Form): Promise<boolean> {
+    if (!form.isOpen) {
+      return false;
+    }
+    if (form.endDate !== null && form.endDate.toJSDate() < new Date()) {
+      form.isOpen = false;
+      await form.save();
+      return false;
+    } else if (form.submissionsLeft !== null && form.submissionsLeft <= 0) {
+      form.isOpen = false;
+      await form.save();
+      return false;
+    }
+    return true;
+  }
+
   async submitForm(
     eventSlug: string,
-    formId: number,
+    form: Form,
     formSubmitDTO: FormSubmitDTO,
   ): Promise<void | { status: number; error: object }> {
     const event = await Event.findByOrFail("slug", eventSlug);
-
-    const form = await Form.query()
-      .where("id", formId)
-      .andWhere("event_id", event.id)
-      .preload("attributes", async (query) => {
-        await query.pivotColumns(["is_required"]);
-      })
-      .firstOrFail();
 
     const {
       email: participantEmail,
       participantSlug,
       ...attributes
     } = formSubmitDTO;
+
+    if (!(await this.checkFormClosure(form))) {
+      return {
+        status: 400,
+        error: { message: "Form closed" },
+      };
+    }
 
     if (form.isFirstForm && participantEmail === undefined) {
       return {
