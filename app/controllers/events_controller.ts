@@ -86,9 +86,14 @@ export default class EventController {
    * @responseBody 401 - Unauthorized access
    * @tag event
    */
-  public async show({ params, auth, bouncer }: HttpContext) {
+  public async show({ params, auth, bouncer, response }: HttpContext) {
+    const id = Number(params.id);
+    if (isNaN(id)) {
+      return response.notFound({ message: "Event not found" });
+    }
+
     const event = await Event.query()
-      .where("id", Number(params.id))
+      .where("id", id)
       .preload("permissions", (q) =>
         q.where("admin_permissions.admin_id", auth.user?.id ?? 0),
       )
