@@ -55,9 +55,9 @@ export default class EventController {
       photoUrl = await this.photoService.storePhoto(photo);
 
       if (photoUrl === undefined) {
-        return response.internalServerError(
-          '{ message: "Error while processing the file" }',
-        );
+        return response.internalServerError({
+          message: "Error while processing the file",
+        });
       }
     }
     const event = await Event.create({
@@ -93,7 +93,7 @@ export default class EventController {
         q.where("admin_permissions.admin_id", auth.user?.id ?? 0),
       )
       .preload("firstForm")
-      .first();
+      .firstOrFail();
 
     await bouncer.authorize("manage_event", event);
     return event;

@@ -38,7 +38,7 @@ export default class AttributesController {
    * @requestBody <createAttributeValidator>
    * @responseBody 201 - <Attribute>
    */
-  async store({ params, request, bouncer }: HttpContext) {
+  async store({ params, request, response, bouncer }: HttpContext) {
     const eventId = +params.eventId;
 
     await bouncer.authorize("manage_setting", await Event.findOrFail(eventId));
@@ -53,7 +53,7 @@ export default class AttributesController {
       ...newAttributeData,
     });
 
-    return newAttribute;
+    return response.created(newAttribute);
   }
 
   /**

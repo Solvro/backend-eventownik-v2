@@ -75,7 +75,7 @@ export default class ParticipantsController {
    * @requestBody <participantsStoreValidator>
    * @responseBody 201 - <Participant>
    */
-  async store({ request, params, bouncer }: HttpContext) {
+  async store({ request, response, params, bouncer }: HttpContext) {
     const eventId = +params.eventId;
 
     await bouncer.authorize(
@@ -97,7 +97,7 @@ export default class ParticipantsController {
       participantCreateDTO,
     );
 
-    return participant;
+    return response.created(participant);
   }
 
   /**

@@ -107,7 +107,8 @@ export default class FormsController {
       await Form.query()
         .where("id", form.id)
         .andWhere("event_id", eventId)
-        .preload("attributes"),
+        .preload("attributes")
+        .firstOrFail(),
     );
   }
 
