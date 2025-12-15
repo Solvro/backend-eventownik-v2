@@ -16,7 +16,7 @@ export default class PermissionsController {
    */
   async index({ response, auth }: HttpContext) {
     if (auth.getUserOrFail().type !== "superadmin") {
-      response.unauthorized();
+      return response.unauthorized();
     }
 
     return await Permission.all();
@@ -31,7 +31,7 @@ export default class PermissionsController {
    */
   async store({ request, response, auth }: HttpContext) {
     if (auth.getUserOrFail().type !== "superadmin") {
-      response.unauthorized();
+      return response.unauthorized();
     }
 
     const newPermissionData = await createPermissionValidator.validate(
@@ -55,7 +55,7 @@ export default class PermissionsController {
    */
   async show({ params, response, auth }: HttpContext) {
     if (auth.getUserOrFail().type !== "superadmin") {
-      response.unauthorized();
+      return response.unauthorized();
     }
 
     return Permission.findOrFail(params.id);
@@ -72,7 +72,7 @@ export default class PermissionsController {
    */
   async update({ params, request, response, auth }: HttpContext) {
     if (auth.getUserOrFail().type !== "superadmin") {
-      response.unauthorized();
+      return response.unauthorized();
     }
 
     const permissionUpdates = await updatePermissionValidator.validate(
@@ -94,7 +94,7 @@ export default class PermissionsController {
    */
   async destroy({ params, response, auth }: HttpContext) {
     if (auth.getUserOrFail().type !== "superadmin") {
-      response.unauthorized();
+      return response.unauthorized();
     }
 
     const permissionToDelete = await Permission.findOrFail(params.id);
