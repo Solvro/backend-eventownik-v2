@@ -306,17 +306,6 @@ export default class FormsController {
       return response.status(errorObject.status).json(errorObject.error);
     }
 
-    if (
-      (await this.formService.checkFormClosure(form)) &&
-      form.submissionsLeft !== null
-    ) {
-      form.submissionsLeft -= 1;
-      if (form.submissionsLeft <= 0) {
-        form.isOpen = false;
-      }
-      await form.save();
-    }
-
     return response.created();
   }
 
