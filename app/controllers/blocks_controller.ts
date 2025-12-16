@@ -19,13 +19,21 @@ export default class BlocksController {
    * @tag blocks
    * @responseBody 200 - <Block[]>.paginated()
    */
-  async index({ params, bouncer }: HttpContext) {
+  async index({ params, bouncer, response }: HttpContext) {
     const eventId = +params.eventId;
     const attributeId = +params.attributeId;
 
     await bouncer.authorize("manage_event", await Event.findOrFail(eventId));
 
-    return await this.blockService.getBlockTree(attributeId);
+    const blockTree = await this.blockService.getBlockTree(attributeId);
+
+    if (!blockTree) {
+      return response.notFound({
+        message: "Row not found",
+      });
+    }
+
+    return blockTree;
   }
 
   /**
