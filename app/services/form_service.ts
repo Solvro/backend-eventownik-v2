@@ -40,7 +40,6 @@ export class FormService {
       return false;
     } else if (form.submissionsLeft !== null && form.submissionsLeft <= 0) {
       form.isOpen = false;
-      await form.save();
       return false;
     }
     return true;
@@ -193,6 +192,11 @@ export class FormService {
         "form_filled",
         form.id,
       );
+    }
+
+    if (form.submissionsLeft !== null) {
+      form.submissionsLeft -= 1;
+      await form.save();
     }
   }
 }
