@@ -35,14 +35,22 @@ export default class BlocksController {
    * @tag blocks
    * @responseBody 200 - <Block[]>.paginated()
    */
-  async publicIndex({ params }: HttpContext) {
+  async publicIndex({ params, response }: HttpContext) {
     const event = await Event.findByOrFail("slug", params.eventSlug);
     const attribute = await Attribute.query()
       .where("event_id", event.id)
       .where("id", +params.attributeId)
       .firstOrFail();
 
-    return await this.blockService.getBlockTree(attribute.id);
+    const blockTree = await this.blockService.getBlockTree(attribute.id);
+
+    if (!blockTree) {
+      return response.notFound({
+        message: "Row not found",
+      });
+    }
+
+    return blockTree;
   }
 
   /**

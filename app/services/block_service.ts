@@ -13,6 +13,10 @@ export class BlockService {
 
     const rootBlock = blockAttribute.rootBlock;
 
+    if (!rootBlock) {
+      return null;
+    }
+
     const blockTree = await this.loadBlockTree(
       rootBlock,
       String(rootBlock.attribute.options).split(","),
