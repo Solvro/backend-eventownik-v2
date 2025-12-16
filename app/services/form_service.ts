@@ -26,7 +26,15 @@ export class FormService {
     if (!form.isOpen) {
       return false;
     }
-    if (form.endDate !== null && form.endDate.toJSDate() < new Date()) {
+
+    const now = new Date();
+
+    if (form.startDate.toJSDate() > now) {
+      form.isOpen = false;
+      return false;
+    }
+
+    if (form.endDate !== null && form.endDate.toJSDate() < now) {
       form.isOpen = false;
       await form.save();
       return false;
