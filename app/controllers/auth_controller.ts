@@ -90,13 +90,18 @@ export default class AuthController {
 
     const passwordResetToken = crypto.randomBytes(20).toString("hex");
 
+    const admin = await Admin.findBy("email", email);
+
+    if (admin === null) {
+      response.created();
+      return;
+    }
+
     const passwordReset = await PasswordReset.create({
       email,
       token: passwordResetToken,
       expiryDate: DateTime.local().plus({ minute: 30 }),
     });
-
-    const admin = await Admin.findByOrFail("email", email);
 
     await mail.send(async (message) => {
       message
