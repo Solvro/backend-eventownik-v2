@@ -116,14 +116,14 @@ export default class OrganizersController {
     await bouncer.authorize("manage_setting", await Event.findOrFail(eventId));
     const organizerId = +params.id;
 
-    if (auth.user && auth.user.id === organizerId) {
-      const organizersCountObj = await db
+    if (auth.user?.id === organizerId) {
+      const organizersCountObj = (await db
         .from("admin_permissions")
         .where("event_id", eventId)
         .countDistinct("admin_id as total")
-        .first();
+        .first()) as { total: string | number } | null;
 
-      const organizersCount = Number(organizersCountObj?.total || 0);
+      const organizersCount = Number(organizersCountObj?.total ?? 0);
 
       if (organizersCount <= 1) {
         return response.forbidden({
