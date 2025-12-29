@@ -70,8 +70,6 @@ export default class FormsController {
       });
     }
 
-    const form = await event.related("forms").create(newFormData);
-
     const eventAttributesIdsSet = new Set(
       event.attributes.map((attribute) => attribute.id),
     );
@@ -85,6 +83,7 @@ export default class FormsController {
         message: `Attributes with ids ${JSON.stringify(attributesFromDifferentEvent.map((attribute) => attribute.id))}, do not belong to this event`,
       });
     }
+    const form = await event.related("forms").create(newFormData);
 
     await form.related("attributes").attach(
       attributes.reduce(
