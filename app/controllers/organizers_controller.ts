@@ -109,11 +109,28 @@ export default class OrganizersController {
    * @description Removes organizer
    * @tag organizers
    * @responseBody 204 - {}
+   * @responseBody 403 - { "message": "Unable to remove the last organizer from the event." }
    */
-  async destroy({ params, bouncer, response }: HttpContext) {
+  async destroy({ params, bouncer, response, auth }: HttpContext) {
     const eventId = +params.eventId;
     await bouncer.authorize("manage_setting", await Event.findOrFail(eventId));
     const organizerId = +params.id;
+
+    if (auth.user?.id === organizerId) {
+      const organizersCountObj = (await db
+        .from("admin_permissions")
+        .where("event_id", eventId)
+        .countDistinct("admin_id as total")
+        .first()) as { total: string | number } | null;
+
+      const organizersCount = Number(organizersCountObj?.total ?? 0);
+
+      if (organizersCount <= 1) {
+        return response.forbidden({
+          message: "Unable to remove the last organizer from the event.",
+        });
+      }
+    }
 
     await db
       .from("admin_permissions")
