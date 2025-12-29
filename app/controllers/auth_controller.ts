@@ -137,7 +137,12 @@ export default class AuthController {
       });
     }
 
-    const admin = await Admin.findByOrFail("email", passwordReset.email);
+    const admin = await Admin.findBy("email", passwordReset.email);
+
+    if (admin === null) {
+      response.created();
+      return;
+    }
 
     admin.password = newPassword;
     await admin.save();
