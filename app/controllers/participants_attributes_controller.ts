@@ -89,6 +89,25 @@ export default class ParticipantsAttributesController {
       await Event.findOrFail(eventId),
     );
 
+    const attribute = await Attribute.query()
+      .where("id", attributeId)
+      .andWhere("event_id", eventId)
+      .firstOrFail();
+
+    const uniqueParticipantIds = Array.from(new Set(participantIds));
+    const validParticipantsCount = await Participant.query()
+      .whereIn("id", uniqueParticipantIds)
+      .andWhere("event_id", eventId)
+      .count("* as total");
+
+    const totalValid = Number(validParticipantsCount[0].$extras.total);
+
+    if (totalValid !== uniqueParticipantIds.length) {
+      return response.badRequest({
+        message: "One or more participants do not belong to this event",
+      });
+    }
+
     const updatedParticipantAttributes = participantIds.reduce<
       Record<number, { value: string }>
     >((acc, id) => {
@@ -96,7 +115,6 @@ export default class ParticipantsAttributesController {
       return acc;
     }, {});
 
-    const attribute = await Attribute.findOrFail(attributeId);
     await attribute
       .related("participantAttributes")
       .sync(updatedParticipantAttributes, false);
