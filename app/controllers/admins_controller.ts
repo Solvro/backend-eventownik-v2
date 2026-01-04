@@ -104,12 +104,14 @@ export default class AdminsController {
   /**
    * @destroy
    * @operationId deleteAdmin
-   * @description Deletes an admin
+   * @description Deletes an admin. Superadmins can delete any admin. Regular admins can only delete themselves.
    * @tag admins
    * @responseBody 204 - {}
    */
   async destroy({ params, response, auth }: HttpContext) {
-    if (auth.getUserOrFail().type !== "superadmin") {
+    const admin = auth.getUserOrFail();
+
+    if (admin.type !== "superadmin" && admin.id !== +params.id) {
       return response.unauthorized();
     }
 
