@@ -23,6 +23,7 @@ export class FormService {
   ) {}
 
   async checkFormClosure(form: Form): Promise<boolean> {
+    return form.isOpen;
     if (!form.isOpen) {
       return false;
     }
