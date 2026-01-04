@@ -7,6 +7,7 @@ import { FormService } from "#services/form_service";
 import {
   createFormValidator,
   formSubmitValidator,
+  toggleFormOpenValidator,
   updateFormValidator,
 } from "#validators/form";
 
@@ -28,10 +29,16 @@ export default class FormsController {
     const page = Number(request.input("page", 1));
     const perPage = Number(request.input("perPage", 10));
 
-    return await Form.query()
+    const forms = await Form.query()
       .where("event_id", eventId)
       .preload("attributes")
       .paginate(page, perPage);
+
+    for (const form of forms) {
+      await this.formService.checkFormClosure(form);
+    }
+
+    return forms;
   }
 
   /**
@@ -117,11 +124,14 @@ export default class FormsController {
     const formId = Number(params.id);
     await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
 
-    return await Form.query()
+    const form = await Form.query()
       .where("event_id", eventId)
       .where("id", formId)
       .preload("attributes")
       .firstOrFail();
+
+    await this.formService.checkFormClosure(form);
+    return form;
   }
 
   /**
@@ -195,6 +205,37 @@ export default class FormsController {
   }
 
   /**
+   * @toggleOpen
+   * @operationId toggleFormOpen
+   * @description Allows superadmin to open and close forms.
+   * @tag form
+   * @paramPath eventId - Event identifier - @type(number) @required
+   * @paramPath formId - Form identifier - @type(number) @required
+   * @requestFormDataBody <toggleFormOpen>
+   * @responseBody 200 - <Form>
+   * @responseBody 401 - Unauthorized access
+   */
+  public async toggleOpen({ request, params, bouncer }: HttpContext) {
+    const eventId = +params.eventId;
+    const formId = +params.formId;
+
+    await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
+
+    const form = await Form.query()
+      .where("event_id", eventId)
+      .where("id", formId)
+      .firstOrFail();
+
+    const payload = await request.validateUsing(toggleFormOpenValidator);
+
+    form.isOpen = payload.isOpen;
+
+    await form.save();
+
+    return form;
+  }
+
+  /**
    * @destroy
    * @operationId deleteForm
    * @description Deletes a form
@@ -231,6 +272,14 @@ export default class FormsController {
 
     const event = await Event.findByOrFail("slug", eventSlug);
 
+    const form = await Form.query()
+      .where("id", formId)
+      .andWhere("event_id", event.id)
+      .preload("attributes", async (query) => {
+        await query.pivotColumns(["is_required"]);
+      })
+      .firstOrFail();
+
     const { email, participantSlug, ...attributes } =
       await request.validateUsing(formSubmitValidator, {
         meta: { eventId: event.id },
@@ -247,7 +296,7 @@ export default class FormsController {
       }),
     );
 
-    const errorObject = await this.formService.submitForm(eventSlug, formId, {
+    const errorObject = await this.formService.submitForm(eventSlug, form, {
       email,
       participantSlug,
       ...transformedAttributes,

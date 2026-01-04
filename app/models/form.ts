@@ -36,16 +36,13 @@ export default class Form extends BaseModel {
   @column()
   declare slug: string;
 
-  @column.dateTime({
-    serialize: (value: DateTime) => value.toISO({ includeOffset: false }),
-  })
+  @column()
+  declare submissionsLeft: number | null;
+
+  @column.dateTime()
   declare startDate: DateTime;
 
-  @column.dateTime({
-    serialize: (value: DateTime | null) => {
-      return value !== null ? value.toISO({ includeOffset: false }) : value;
-    },
-  })
+  @column.dateTime()
   declare endDate: DateTime | null;
 
   @column.dateTime({ autoCreate: true })
@@ -70,15 +67,18 @@ export default class Form extends BaseModel {
   }
 
   serializeExtras() {
-    return {
-      attributes: this.attributes.map((attribute) => ({
-        ...attribute.toJSON(),
-        isEditable: (attribute.$extras as { pivot_is_editable: boolean })
-          .pivot_is_editable,
-        isRequired: (attribute.$extras as { pivot_is_required: boolean })
-          .pivot_is_required,
-        order: (attribute.$extras as { pivot_order: number }).pivot_order,
-      })),
-    };
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (this.attributes !== undefined && this.attributes !== null) {
+      return {
+        attributes: this.attributes.map((attribute) => ({
+          ...attribute.toJSON(),
+          isEditable: (attribute.$extras as { pivot_is_editable: boolean })
+            .pivot_is_editable,
+          isRequired: (attribute.$extras as { pivot_is_required: boolean })
+            .pivot_is_required,
+          order: (attribute.$extras as { pivot_order: number }).pivot_order,
+        })),
+      };
+    }
   }
 }
