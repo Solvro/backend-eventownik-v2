@@ -276,8 +276,19 @@ export default class EventController {
     }
 
     try {
-      await db.from("admin_permissions").where("event_id", event.id).delete();
-      await event.delete();
+      await db.transaction(async (trx) => {
+        await event.related("emails").query().useTransaction(trx).delete();
+        await event.related("forms").query().useTransaction(trx).delete();
+        await event.related("attributes").query().useTransaction(trx).delete();
+
+        await trx
+          .from("admin_permissions")
+          .where("event_id", event.id)
+          .delete();
+
+        event.useTransaction(trx);
+        await event.delete();
+      });
     } catch (error) {
       if (error.code === "23503") {
         return response.conflict({
