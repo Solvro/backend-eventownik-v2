@@ -263,8 +263,30 @@ export default class EventController {
         message: "You don't have permissions to this actions",
       });
     }
-    await db.from("admin_permissions").where("event_id", event.id).delete();
-    await event.delete();
+
+    const participants = await event
+      .related("participants")
+      .query()
+      .count("* as total")
+      .first();
+    if (participants && participants.$extras.total > 0) {
+      return response.badRequest({
+        message: "Cannot delete event with registered participants",
+      });
+    }
+
+    try {
+      await db.from("admin_permissions").where("event_id", event.id).delete();
+      await event.delete();
+    } catch (error) {
+      if (error.code === "23503") {
+        return response.conflict({
+          message: "Cannot delete event due to existing dependent objects",
+        });
+      }
+      throw error;
+    }
+
     return { message: "Event successfully deleted" };
   }
 }
