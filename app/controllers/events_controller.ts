@@ -269,7 +269,8 @@ export default class EventController {
       .query()
       .count("* as total")
       .first();
-    if (participants && participants.$extras.total > 0) {
+
+    if (participants !== null && Number(participants.$extras.total) > 0) {
       return response.badRequest({
         message: "Cannot delete event with registered participants",
       });
@@ -289,8 +290,9 @@ export default class EventController {
         event.useTransaction(trx);
         await event.delete();
       });
-    } catch (error) {
-      if (error.code === "23503") {
+    } catch (error: unknown) {
+      const dbError = error as { code?: string };
+      if (dbError.code === "23503") {
         return response.conflict({
           message: "Cannot delete event due to existing dependent objects",
         });
