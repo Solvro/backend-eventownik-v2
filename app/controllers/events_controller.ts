@@ -271,7 +271,7 @@ export default class EventController {
       .first();
 
     if (participants !== null && Number(participants.$extras.total) > 0) {
-      return response.badRequest({
+      return response.conflict({
         message: "Cannot delete event with registered participants",
       });
     }
