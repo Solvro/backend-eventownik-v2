@@ -80,7 +80,10 @@ export class FormService {
 
     const fileAttributesIds = new Set(
       form.attributes
-        .filter((attribute) => attribute.type === "file")
+        .filter(
+          (attribute) =>
+            attribute.type === "file" || attribute.type === "drawing",
+        )
         .map((attribute) => attribute.id),
     );
 
