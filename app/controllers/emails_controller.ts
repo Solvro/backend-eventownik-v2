@@ -6,6 +6,7 @@ import Participant from "#models/participant";
 import { EmailService } from "#services/email_service";
 import {
   emailDuplicateValidator,
+  emailsSendValidator,
   emailsStoreValidator,
   emailsUpdateValidator,
 } from "#validators/emails";
@@ -103,8 +104,10 @@ export default class EmailsController {
     );
 
     const data = await request.validateUsing(emailsUpdateValidator);
-    const emailId = Number(params.id);
-    const email = await Email.findOrFail(emailId);
+    const email = await Email.query()
+      .where("id", Number(params.id))
+      .where("event_id", Number(params.eventId))
+      .firstOrFail();
 
     await email.merge(data).save();
 
@@ -124,8 +127,10 @@ export default class EmailsController {
       await Event.findOrFail(params.eventId),
     );
 
-    const emailId = Number(params.id);
-    const email = await Email.findOrFail(emailId);
+    const email = await Email.query()
+      .where("id", Number(params.id))
+      .where("event_id", Number(params.eventId))
+      .firstOrFail();
 
     await email.related("participants").detach();
     await email.delete();
@@ -146,12 +151,16 @@ export default class EmailsController {
     const event = await Event.findOrFail(params.eventId);
     await bouncer.authorize("manage_email", event);
 
+    const { participants: participantIds } =
+      await request.validateUsing(emailsSendValidator);
+
     const email = await Email.query()
       .where("event_id", event.id)
       .where("id", emailId)
       .firstOrFail();
+
     const participants = await Participant.query()
-      .whereIn("id", request.input("participants") as number[])
+      .whereIn("id", participantIds)
       .where("event_id", event.id);
 
     for (const participant of participants) {

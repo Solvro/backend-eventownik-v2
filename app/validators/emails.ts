@@ -55,3 +55,9 @@ export const emailDuplicateValidator = vine.compile(
     name: vine.string(),
   }),
 );
+
+export const emailsSendValidator = vine.compile(
+  vine.object({
+    participants: vine.array(vine.number()),
+  }),
+);
