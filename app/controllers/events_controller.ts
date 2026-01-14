@@ -303,7 +303,6 @@ export default class EventController {
       });
     } catch (error: unknown) {
       const dbError = error as { code?: string };
-      console.error(error);
       if (dbError.code === "23503") {
         return response.conflict({
           message: "Cannot delete event due to existing dependent objects",
