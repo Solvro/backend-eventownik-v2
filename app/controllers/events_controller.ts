@@ -267,29 +267,28 @@ export default class EventController {
       });
     }
 
-    const participants = await event
-      .related("participants")
-      .query()
-      .count("* as total")
-      .first();
-
-    if (participants !== null && Number(participants.$extras.total) > 0) {
-      return response.conflict({
-        message: "Cannot delete event with registered participants",
-      });
-    }
-
     try {
       await db.transaction(async (trx) => {
+        await trx
+          .from("participant_attributes")
+          .whereIn("attribute_id", (query) =>
+            query.from("attributes").select("id").where("event_id", event.id),
+          )
+          .delete();
+
+        await event
+          .related("participants")
+          .query()
+          .useTransaction(trx)
+          .delete();
         await event.related("emails").query().useTransaction(trx).delete();
         await event.related("forms").query().useTransaction(trx).delete();
 
-        await db
+        await trx
           .from("blocks")
-          .whereIn("attribute_id", (query) => {
-            query.from("attributes").select("id").where("event_id", event.id);
-          })
-          .useTransaction(trx)
+          .whereIn("attribute_id", (query) =>
+            query.from("attributes").select("id").where("event_id", event.id),
+          )
           .delete();
 
         await event.related("attributes").query().useTransaction(trx).delete();
