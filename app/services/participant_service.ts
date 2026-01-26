@@ -47,7 +47,7 @@ export class ParticipantService {
         const raw = attribute.value;
 
         if (raw === null || raw === undefined || raw === "" || raw === "null") {
-          valueToSave = undefined;
+          valueToSave = null;
         } else {
           const blockId = Number(raw);
 
