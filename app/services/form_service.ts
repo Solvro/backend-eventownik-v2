@@ -23,7 +23,8 @@ export class FormService {
   ) {}
 
   async checkFormClosure(form: Form): Promise<boolean> {
-    if (!form.isOpen) {
+    return form.isOpen;
+    /*if (!form.isOpen) {
       return false;
     }
 
@@ -42,7 +43,7 @@ export class FormService {
       form.isOpen = false;
       return false;
     }
-    return true;
+    return true;*/
   }
 
   async submitForm(
@@ -94,7 +95,10 @@ export class FormService {
 
     const fileAttributesIds = new Set(
       form.attributes
-        .filter((attribute) => attribute.type === "file")
+        .filter(
+          (attribute) =>
+            attribute.type === "file" || attribute.type === "drawing",
+        )
         .map((attribute) => attribute.id),
     );
 
