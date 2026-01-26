@@ -71,12 +71,9 @@ export class FormService {
     for (const [key, value] of Object.entries(
       attributes as Record<string, unknown>,
     )) {
-      if (
-        !(value === null) &&
-        !(value === "null") &&
-        !(value === "") &&
-        !(value === undefined)
-      ) {
+      if (value === null || value === "null" || value === "") {
+        normalizedAttributes[key] = null;
+      } else if (value !== undefined) {
         normalizedAttributes[key] = value;
       }
     }
@@ -124,14 +121,34 @@ export class FormService {
     }
 
     const missingRequiredFields = form.attributes
-      .filter(
-        (attribute): boolean =>
-          attribute.$extras.pivot_is_required === true &&
-          !(
-            participant?.attributes.some((x) => x.id === attribute.id) ?? false
-          ),
-      )
-      .filter((attribute) => !(attribute.id.toString() in normalizedAttributes))
+      .filter((attribute) => {
+        const isRequired =
+          attribute.$extras.pivot_is_required === 1 ||
+          attribute.$extras.pivot_is_required === true ||
+          attribute.$extras.pivot_is_required === "1";
+
+        if (!isRequired) {
+          return false;
+        }
+
+        if (attribute.type === "block") {
+          return false;
+        }
+
+        const val = normalizedAttributes[attribute.id.toString()];
+
+        if (val === null) {
+          return true;
+        }
+
+        if (val !== undefined) {
+          return false;
+        }
+
+        return !(
+          participant?.attributes.some((x) => x.id === attribute.id) ?? false
+        );
+      })
       .map((attribute) => ({
         id: attribute.id,
         name: attribute.name,
