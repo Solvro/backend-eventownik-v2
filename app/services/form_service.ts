@@ -131,10 +131,6 @@ export class FormService {
           return false;
         }
 
-        if (attribute.type === "block") {
-          return false;
-        }
-
         const val = normalizedAttributes[attribute.id.toString()];
 
         if (val === null) {
@@ -152,6 +148,10 @@ export class FormService {
       .map((attribute) => ({
         id: attribute.id,
         name: attribute.name,
+        message:
+          attribute.type === "block"
+            ? "You must select a valid option and cannot unregister."
+            : undefined,
       }));
 
     if (missingRequiredFields.length > 0) {
