@@ -113,12 +113,12 @@ export default class EventExportController {
 
           if (attribute.type === "block") {
             const blockId = Number(value);
-            attributeValues.push(blockMap.get(blockId) || value);
+            attributeValues.push(blockMap.get(blockId) ?? value);
           } else {
             attributeValues.push(value);
           }
         } else {
-          attributeValues.push("N/A");
+          attributeValues.push("");
         }
       }
 
