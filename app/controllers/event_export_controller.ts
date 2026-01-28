@@ -6,6 +6,7 @@ import { inject } from "@adonisjs/core";
 import type { HttpContext } from "@adonisjs/core/http";
 import app from "@adonisjs/core/services/app";
 
+import Block from "#models/block";
 import Event from "#models/event";
 import Participant from "#models/participant";
 import { AttributeService } from "#services/attribute_service";
@@ -39,11 +40,27 @@ export default class EventExportController {
 
     const attributes = await this.attributeService.getEventAttributes(event.id);
 
+    const blockAttributeIds = attributes
+      .filter((a) => a.type === "block")
+      .map((a) => a.id);
+
+    const blockMap = new Map<number, string>();
+    if (blockAttributeIds.length > 0) {
+      const blocks = await Block.query()
+        .whereIn("attributeId", blockAttributeIds)
+        .select("id", "name");
+      blocks.forEach((block) => blockMap.set(block.id, block.name));
+    }
+
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet("Export");
 
     const attributesColumns = attributes.map((attribute) => {
-      return { header: attribute.name, key: attribute.name };
+      return {
+        header: attribute.name,
+        key: attribute.name,
+        type: attribute.type,
+      };
     });
 
     sheet.columns = [
@@ -92,7 +109,14 @@ export default class EventExportController {
         );
 
         if (foundAttribute !== undefined) {
-          attributeValues.push(foundAttribute.$extras.pivot_value as string);
+          const value = foundAttribute.$extras.pivot_value as string;
+
+          if (attribute.type === "block") {
+            const blockId = Number(value);
+            attributeValues.push(blockMap.get(blockId) || value);
+          } else {
+            attributeValues.push(value);
+          }
         } else {
           attributeValues.push("N/A");
         }
