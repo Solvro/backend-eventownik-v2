@@ -34,6 +34,8 @@ export default class ParticipantsController {
     const bonusAttributes =
       typeof paramAttributes === "string" ? paramAttributes.split(",") : [];
 
+    const attributeTypesToInclude = ["block"];
+
     const participants = await Participant.query()
       .select("id", "email", "slug", "created_at")
       .where("event_id", params.eventId as number)
@@ -42,7 +44,8 @@ export default class ParticipantsController {
           .select("id", "name", "slug", "created_at", "updated_at")
           .pivotColumns(["value"])
           .where("show_in_list", true)
-          .orWhereIn("slug", bonusAttributes),
+          .orWhereIn("slug", bonusAttributes)
+          .orWhereIn("type", attributeTypesToInclude),
       );
 
     const formattedParticipants = participants.map((participant) => {
