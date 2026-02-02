@@ -5,6 +5,7 @@ export const createBlockValidator = vine.compile(
     name: vine.string().trim(),
     parentId: vine.number().exists({ table: "blocks", column: "id" }),
     description: vine.string().nullable().optional(),
+    order: vine.number().optional(),
     capacity: vine.number().min(1).nullable().optional(),
   }),
 );
@@ -17,6 +18,7 @@ export const updateBlockValidator = vine.compile(
       .exists({ table: "blocks", column: "id" })
       .optional(),
     description: vine.string().nullable().optional(),
+    order: vine.number().optional(),
     capacity: vine.number().min(1).nullable().optional(),
   }),
 );

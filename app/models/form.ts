@@ -37,6 +37,9 @@ export default class Form extends BaseModel {
   declare slug: string;
 
   @column()
+  declare order: number;
+
+  @column()
   declare submissionsLeft: number | null;
 
   @column.dateTime()

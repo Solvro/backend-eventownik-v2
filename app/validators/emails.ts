@@ -4,6 +4,7 @@ export const emailsStoreValidator = vine.compile(
   vine.object({
     name: vine.string(),
     content: vine.string(),
+    order: vine.number().optional(),
     trigger: vine.enum([
       "participant_registered",
       "participant_deleted",
@@ -28,6 +29,7 @@ export const emailsUpdateValidator = vine.compile(
   vine.object({
     name: vine.string().optional(),
     content: vine.string().optional(),
+    order: vine.number().optional(),
     trigger: vine
       .enum([
         "participant_registered",

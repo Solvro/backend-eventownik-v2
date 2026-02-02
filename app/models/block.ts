@@ -27,6 +27,9 @@ export default class Block extends BaseModel {
   @column()
   declare attributeId: number;
 
+  @column()
+  declare order: number;
+
   @hasMany(() => Block, {
     foreignKey: "parentId",
   })

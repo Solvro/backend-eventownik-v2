@@ -31,7 +31,8 @@ export class BlockService {
     );
 
     block.children.sort(
-      (a, b) => a.createdAt.toMillis() - b.createdAt.toMillis(),
+      (a, b) =>
+        a.order - b.order || a.createdAt.toMillis() - b.createdAt.toMillis(),
     );
 
     const participants = await Participant.query()
