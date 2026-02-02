@@ -23,7 +23,8 @@ export class FormService {
   ) {}
 
   async checkFormClosure(form: Form): Promise<boolean> {
-    if (!form.isOpen) {
+    return form.isOpen;
+    /*if (!form.isOpen) {
       return false;
     }
 
@@ -42,7 +43,7 @@ export class FormService {
       form.isOpen = false;
       return false;
     }
-    return true;
+    return true;*/
   }
 
   async submitForm(
@@ -65,6 +66,18 @@ export class FormService {
       };
     }
 
+    const normalizedAttributes: Record<string, unknown> = {};
+
+    for (const [key, value] of Object.entries(
+      attributes as Record<string, unknown>,
+    )) {
+      if (value === null || value === "null" || value === "") {
+        normalizedAttributes[key] = null;
+      } else if (value !== undefined) {
+        normalizedAttributes[key] = value;
+      }
+    }
+
     if (form.isFirstForm && participantEmail === undefined) {
       return {
         status: 400,
@@ -79,7 +92,10 @@ export class FormService {
 
     const fileAttributesIds = new Set(
       form.attributes
-        .filter((attribute) => attribute.type === "file")
+        .filter(
+          (attribute) =>
+            attribute.type === "file" || attribute.type === "drawing",
+        )
         .map((attribute) => attribute.id),
     );
 
@@ -105,17 +121,37 @@ export class FormService {
     }
 
     const missingRequiredFields = form.attributes
-      .filter(
-        (attribute): boolean =>
-          attribute.$extras.pivot_is_required === true &&
-          !(
-            participant?.attributes.some((x) => x.id === attribute.id) ?? false
-          ),
-      )
-      .filter((attribute) => !(attribute.id in attributes))
+      .filter((attribute) => {
+        const isRequired =
+          attribute.$extras.pivot_is_required === 1 ||
+          attribute.$extras.pivot_is_required === true ||
+          attribute.$extras.pivot_is_required === "1";
+
+        if (!isRequired) {
+          return false;
+        }
+
+        const val = normalizedAttributes[attribute.id.toString()];
+
+        if (val === null) {
+          return true;
+        }
+
+        if (val !== undefined) {
+          return false;
+        }
+
+        return !(
+          participant?.attributes.some((x) => x.id === attribute.id) ?? false
+        );
+      })
       .map((attribute) => ({
         id: attribute.id,
         name: attribute.name,
+        message:
+          attribute.type === "block"
+            ? "You must select a valid option and cannot unregister."
+            : undefined,
       }));
 
     if (missingRequiredFields.length > 0) {
@@ -125,7 +161,10 @@ export class FormService {
       };
     }
 
-    const formFields = filterObjectFields(attributes, allowedFieldsIds);
+    const formFields = filterObjectFields(
+      normalizedAttributes,
+      allowedFieldsIds,
+    );
 
     const transformedFormFields = await Promise.all(
       Object.entries(formFields).map(async ([attributeId, value]) => {
@@ -151,9 +190,15 @@ export class FormService {
           value !== null &&
           value !== "null"
         ) {
+          const blockId = Number(value);
+
+          if (Number.isNaN(blockId)) {
+            throw new Exception("Invalid block ID format");
+          }
+
           const canSignInToBlock = await this.blockService.canSignInToBlock(
             +attributeId,
-            +(value as string),
+            blockId,
           );
 
           if (!canSignInToBlock) {

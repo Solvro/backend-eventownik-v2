@@ -70,8 +70,6 @@ export default class FormsController {
       });
     }
 
-    const form = await event.related("forms").create(newFormData);
-
     const eventAttributesIdsSet = new Set(
       event.attributes.map((attribute) => attribute.id),
     );
@@ -85,6 +83,7 @@ export default class FormsController {
         message: `Attributes with ids ${JSON.stringify(attributesFromDifferentEvent.map((attribute) => attribute.id))}, do not belong to this event`,
       });
     }
+    const form = await event.related("forms").create(newFormData);
 
     await form.related("attributes").attach(
       attributes.reduce(
@@ -149,12 +148,14 @@ export default class FormsController {
     const event = await Event.query()
       .where("id", eventId)
       .preload("firstForm")
+      .preload("attributes")
       .firstOrFail();
 
     await bouncer.authorize("manage_form", event);
     const form = await Form.query()
       .where("event_id", eventId)
       .where("id", formId)
+      .preload("attributes")
       .firstOrFail();
 
     const { attributes, ...updates } =
@@ -171,10 +172,20 @@ export default class FormsController {
       });
     }
 
-    form.merge(updates);
-    await form.save();
-
     if (attributes !== undefined) {
+      const eventAttributesIdsSet = new Set(
+        event.attributes.map((attribute) => attribute.id),
+      );
+
+      const attributesFromDifferentEvent = attributes.filter(
+        (attribute) => !eventAttributesIdsSet.has(attribute.id),
+      );
+
+      if (attributesFromDifferentEvent.length > 0) {
+        return response.badRequest({
+          message: `Attributes with ids ${JSON.stringify(attributesFromDifferentEvent.map((attribute) => attribute.id))}, do not belong to this event`,
+        });
+      }
       await form.related("attributes").detach();
 
       await form.related("attributes").attach(
@@ -194,6 +205,8 @@ export default class FormsController {
         ),
       );
     }
+    form.merge(updates);
+    await form.save();
 
     const updatedForm = await Form.query()
       .where("event_id", eventId)

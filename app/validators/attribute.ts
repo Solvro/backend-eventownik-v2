@@ -32,6 +32,7 @@ export const createAttributeSchema = vine.object({
     "tel",
     "color",
     "checkbox",
+    "drawing",
   ]),
   options: vine.array(vine.string()).minLength(1).nullable().optional(),
   order: vine.number().optional(),
@@ -74,6 +75,7 @@ export const UpdateAttributeSchema = vine.object({
       "tel",
       "color",
       "checkbox",
+      "drawing",
     ])
     .optional(),
   options: vine.array(vine.string()).minLength(1).nullable().optional(),
