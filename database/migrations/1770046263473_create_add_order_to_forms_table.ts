@@ -5,7 +5,7 @@ export default class extends BaseSchema {
 
   async up() {
     this.schema.alterTable(this.tableName, (table) => {
-      table.integer("order").defaultTo(0).notNullable();
+      table.integer("order").unsigned().defaultTo(0).notNullable();
     });
   }
 
