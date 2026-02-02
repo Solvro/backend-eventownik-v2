@@ -25,6 +25,7 @@ export default class EmailsController {
 
     const emails = await Email.query()
       .where("event_id", eventId)
+      .orderBy("order", "asc")
       .select([
         "id",
         "name",

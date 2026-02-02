@@ -29,6 +29,9 @@ export default class Email extends BaseModel {
   @column()
   declare triggerValue2: string;
 
+  @column()
+  declare order: number;
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime;
 

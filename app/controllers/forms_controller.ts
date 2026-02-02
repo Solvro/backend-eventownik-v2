@@ -31,6 +31,7 @@ export default class FormsController {
 
     const forms = await Form.query()
       .where("event_id", eventId)
+      .orderBy("order", "asc")
       .preload("attributes")
       .paginate(page, perPage);
 
