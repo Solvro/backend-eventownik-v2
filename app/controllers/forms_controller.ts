@@ -225,7 +225,7 @@ export default class FormsController {
    * @tag form
    * @paramPath eventId - Event identifier - @type(number) @required
    * @paramPath formId - Form identifier - @type(number) @required
-   * @requestFormDataBody <toggleFormOpen>
+   * @requestFormDataBody <toggleFormOpenValidator>
    * @responseBody 200 - <Form>
    * @responseBody 401 - Unauthorized access
    */

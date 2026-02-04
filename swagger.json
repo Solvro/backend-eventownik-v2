@@ -48,7 +48,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 465
+            "example": 246
           },
           "firstName": {
             "type": "string",
@@ -105,7 +105,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 170
+            "example": 399
           },
           "name": {
             "type": "string",
@@ -117,7 +117,7 @@
           },
           "eventId": {
             "type": "number",
-            "example": 329
+            "example": 419
           },
           "options": {
             "type": "string",
@@ -130,6 +130,18 @@
           "showInList": {
             "type": "boolean",
             "example": true
+          },
+          "order": {
+            "type": "number",
+            "example": 360
+          },
+          "isSensitiveData": {
+            "type": "boolean",
+            "example": true
+          },
+          "reason": {
+            "type": "string",
+            "example": "Lorem Ipsum"
           },
           "event": {
             "$ref": "#/components/schemas/Event",
@@ -183,7 +195,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 920
+            "example": 112
           },
           "name": {
             "type": "string",
@@ -195,11 +207,11 @@
           },
           "parentId": {
             "type": "number",
-            "example": 532
+            "example": 697
           },
           "capacity": {
             "type": "number",
-            "example": 662
+            "example": 800
           },
           "isRootBlock": {
             "type": "boolean",
@@ -207,7 +219,11 @@
           },
           "attributeId": {
             "type": "number",
-            "example": 4
+            "example": 630
+          },
+          "order": {
+            "type": "number",
+            "example": 409
           },
           "children": {
             "type": "array",
@@ -243,11 +259,11 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 769
+            "example": 859
           },
           "eventId": {
             "type": "number",
-            "example": 887
+            "example": 518
           },
           "name": {
             "type": "string",
@@ -269,6 +285,10 @@
             "type": "string",
             "example": "Lorem Ipsum"
           },
+          "order": {
+            "type": "number",
+            "example": 976
+          },
           "createdAt": {
             "type": "string",
             "example": "2021-03-23T16:13:08.489+01:00",
@@ -285,7 +305,7 @@
           },
           "formId": {
             "type": "number",
-            "example": 687
+            "example": 464
           },
           "form": {
             "$ref": "#/components/schemas/Form",
@@ -307,11 +327,11 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 38
+            "example": 439
           },
           "organizerId": {
             "type": "number",
-            "example": 137
+            "example": 378
           },
           "name": {
             "type": "string",
@@ -357,11 +377,15 @@
           },
           "participantsCount": {
             "type": "number",
-            "example": 115
+            "example": 543
           },
           "location": {
             "type": "string",
             "example": "Lorem Ipsum"
+          },
+          "isActive": {
+            "type": "boolean",
+            "example": true
           },
           "createdAt": {
             "type": "string",
@@ -433,6 +457,10 @@
               "type": "string",
               "example": "Lorem Ipsum"
             }
+          },
+          "termsLink": {
+            "type": "string",
+            "example": "Lorem Ipsum"
           }
         },
         "description": "Event (Model)"
@@ -443,11 +471,11 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 885
+            "example": 326
           },
           "eventId": {
             "type": "number",
-            "example": 603
+            "example": 385
           },
           "isOpen": {
             "type": "boolean",
@@ -468,6 +496,14 @@
           "slug": {
             "type": "string",
             "example": "Lorem Ipsum"
+          },
+          "order": {
+            "type": "number",
+            "example": 195
+          },
+          "submissionsLeft": {
+            "type": "number",
+            "example": 838
           },
           "startDate": {
             "type": "string",
@@ -509,7 +545,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 325
+            "example": 967
           },
           "email": {
             "type": "string",
@@ -518,7 +554,7 @@
           },
           "eventId": {
             "type": "number",
-            "example": 4
+            "example": 171
           },
           "slug": {
             "type": "string",
@@ -555,13 +591,52 @@
         },
         "description": "Participant (Model)"
       },
+      "PasswordReset": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 311
+          },
+          "email": {
+            "type": "string",
+            "example": "johndoe@example.com",
+            "format": "email"
+          },
+          "token": {
+            "type": "string",
+            "example": "Lorem Ipsum"
+          },
+          "used": {
+            "type": "boolean",
+            "example": true
+          },
+          "expiryDate": {
+            "type": "string",
+            "example": "2021-03-23T16:13:08.489+01:00",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2021-03-23T16:13:08.489+01:00",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "example": "2021-03-23T16:13:08.489+01:00",
+            "format": "date-time"
+          }
+        },
+        "description": "PasswordReset (Model)"
+      },
       "Permission": {
         "type": "object",
         "required": [],
         "properties": {
           "id": {
             "type": "number",
-            "example": 115
+            "example": 515
           },
           "action": {
             "type": "string",
@@ -661,7 +736,7 @@
           },
           "type": {
             "type": "number",
-            "example": 217,
+            "example": 705,
             "choices": ["organizer", "superadmin"]
           },
           "active": {
@@ -675,12 +750,12 @@
               "properties": {
                 "permissionId": {
                   "type": "number",
-                  "example": 95,
+                  "example": 928,
                   "required": true
                 },
                 "eventId": {
                   "type": "number",
-                  "example": 120,
+                  "example": 729,
                   "required": true
                 }
               }
@@ -692,12 +767,12 @@
           "lastName": "Lorem Ipsum",
           "password": "Lorem Ipsum",
           "email": "Lorem Ipsum",
-          "type": 217,
+          "type": 705,
           "active": true,
           "permissions": [
             {
-              "permissionId": 95,
-              "eventId": 120
+              "permissionId": 928,
+              "eventId": 729
             }
           ]
         },
@@ -728,7 +803,7 @@
           },
           "type": {
             "type": "number",
-            "example": 313,
+            "example": 762,
             "choices": ["organizer", "superadmin"]
           },
           "active": {
@@ -742,12 +817,12 @@
               "properties": {
                 "permissionId": {
                   "type": "number",
-                  "example": 412,
+                  "example": 751,
                   "required": true
                 },
                 "eventId": {
                   "type": "number",
-                  "example": 339,
+                  "example": 286,
                   "required": true
                 }
               }
@@ -759,12 +834,12 @@
           "lastName": "Lorem Ipsum",
           "password": "Lorem Ipsum",
           "email": "Lorem Ipsum",
-          "type": 313,
+          "type": 762,
           "active": true,
           "permissions": [
             {
-              "permissionId": 412,
-              "eventId": 339
+              "permissionId": 751,
+              "eventId": 286
             }
           ]
         },
@@ -784,7 +859,7 @@
           },
           "type": {
             "type": "number",
-            "example": 126,
+            "example": 433,
             "choices": [
               "text",
               "textarea",
@@ -799,7 +874,8 @@
               "email",
               "tel",
               "color",
-              "checkbox"
+              "checkbox",
+              "drawing"
             ],
             "required": true
           },
@@ -817,17 +893,32 @@
               }
             }
           },
+          "order": {
+            "type": "number",
+            "example": 163
+          },
           "showInList": {
             "type": "boolean",
             "example": true
+          },
+          "isSensitiveData": {
+            "type": "boolean",
+            "example": true
+          },
+          "reason": {
+            "type": "string",
+            "example": "Lorem Ipsum"
           }
         },
         "example": {
           "name": "Lorem Ipsum",
           "slug": "Lorem Ipsum",
-          "type": 126,
+          "type": 433,
           "options": ["Lorem Ipsum"],
-          "showInList": true
+          "order": 163,
+          "showInList": true,
+          "isSensitiveData": true,
+          "reason": "Lorem Ipsum"
         },
         "description": "createAttributeValidator (Validator)"
       },
@@ -844,7 +935,7 @@
           },
           "type": {
             "type": "number",
-            "example": 982,
+            "example": 57,
             "choices": [
               "text",
               "textarea",
@@ -859,7 +950,8 @@
               "email",
               "tel",
               "color",
-              "checkbox"
+              "checkbox",
+              "drawing"
             ]
           },
           "options": {
@@ -876,17 +968,32 @@
               }
             }
           },
+          "order": {
+            "type": "number",
+            "example": 111
+          },
           "showInList": {
             "type": "boolean",
             "example": true
+          },
+          "isSensitiveData": {
+            "type": "boolean",
+            "example": true
+          },
+          "reason": {
+            "type": "string",
+            "example": "Lorem Ipsum"
           }
         },
         "example": {
           "name": "Lorem Ipsum",
           "slug": "Lorem Ipsum",
-          "type": 982,
+          "type": 57,
           "options": ["Lorem Ipsum"],
-          "showInList": true
+          "order": 111,
+          "showInList": true,
+          "isSensitiveData": true,
+          "reason": "Lorem Ipsum"
         },
         "description": "updateAttributeValidator (Validator)"
       },
@@ -948,6 +1055,41 @@
         },
         "description": "registerAdminValidator (Validator)"
       },
+      "resetPasswordValidator": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "example": "Lorem Ipsum",
+            "required": true
+          },
+          "newPassword": {
+            "type": "string",
+            "example": "Lorem Ipsum",
+            "required": true,
+            "minLength": 8
+          }
+        },
+        "example": {
+          "token": "Lorem Ipsum",
+          "newPassword": "Lorem Ipsum"
+        },
+        "description": "resetPasswordValidator (Validator)"
+      },
+      "sendPasswordResetTokenValidator": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "Lorem Ipsum",
+            "required": true
+          }
+        },
+        "example": {
+          "email": "Lorem Ipsum"
+        },
+        "description": "sendPasswordResetTokenValidator (Validator)"
+      },
       "createBlockValidator": {
         "type": "object",
         "properties": {
@@ -958,12 +1100,16 @@
           },
           "parentId": {
             "type": "number",
-            "example": 370,
+            "example": 319,
             "required": true
           },
           "description": {
             "type": "string",
             "example": "Lorem Ipsum"
+          },
+          "order": {
+            "type": "number",
+            "example": 221
           },
           "capacity": {
             "type": "number",
@@ -973,8 +1119,9 @@
         },
         "example": {
           "name": "Lorem Ipsum",
-          "parentId": 370,
+          "parentId": 319,
           "description": "Lorem Ipsum",
+          "order": 221,
           "capacity": 1
         },
         "description": "createBlockValidator (Validator)"
@@ -988,11 +1135,15 @@
           },
           "parentId": {
             "type": "number",
-            "example": 510
+            "example": 453
           },
           "description": {
             "type": "string",
             "example": "Lorem Ipsum"
+          },
+          "order": {
+            "type": "number",
+            "example": 54
           },
           "capacity": {
             "type": "number",
@@ -1002,11 +1153,43 @@
         },
         "example": {
           "name": "Lorem Ipsum",
-          "parentId": 510,
+          "parentId": 453,
           "description": "Lorem Ipsum",
+          "order": 54,
           "capacity": 1
         },
         "description": "updateBlockValidator (Validator)"
+      },
+      "emailDuplicateValidator": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Lorem Ipsum",
+            "required": true
+          }
+        },
+        "example": {
+          "name": "Lorem Ipsum"
+        },
+        "description": "emailDuplicateValidator (Validator)"
+      },
+      "emailsSendValidator": {
+        "type": "object",
+        "properties": {
+          "participants": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "example": 333
+            },
+            "required": true
+          }
+        },
+        "example": {
+          "participants": [333]
+        },
+        "description": "emailsSendValidator (Validator)"
       },
       "emailsStoreValidator": {
         "type": "object",
@@ -1021,9 +1204,13 @@
             "example": "Lorem Ipsum",
             "required": true
           },
+          "order": {
+            "type": "number",
+            "example": 949
+          },
           "trigger": {
             "type": "number",
-            "example": 727,
+            "example": 934,
             "choices": [
               "participant_registered",
               "participant_deleted",
@@ -1043,16 +1230,17 @@
           },
           "formId": {
             "type": "number",
-            "example": 191
+            "example": 254
           }
         },
         "example": {
           "name": "Lorem Ipsum",
           "content": "Lorem Ipsum",
-          "trigger": 727,
+          "order": 949,
+          "trigger": 934,
           "triggerValue": "Lorem Ipsum",
           "triggerValue2": "Lorem Ipsum",
-          "formId": 191
+          "formId": 254
         },
         "description": "emailsStoreValidator (Validator)"
       },
@@ -1067,9 +1255,13 @@
             "type": "string",
             "example": "Lorem Ipsum"
           },
+          "order": {
+            "type": "number",
+            "example": 449
+          },
           "trigger": {
             "type": "number",
-            "example": 72,
+            "example": 357,
             "choices": [
               "participant_registered",
               "participant_deleted",
@@ -1088,16 +1280,17 @@
           },
           "formId": {
             "type": "number",
-            "example": 457
+            "example": 68
           }
         },
         "example": {
           "name": "Lorem Ipsum",
           "content": "Lorem Ipsum",
-          "trigger": 72,
+          "order": 449,
+          "trigger": 357,
           "triggerValue": "Lorem Ipsum",
           "triggerValue2": "Lorem Ipsum",
-          "formId": 457
+          "formId": 68
         },
         "description": "emailsUpdateValidator (Validator)"
       },
@@ -1125,17 +1318,17 @@
           },
           "startDate": {
             "type": "number",
-            "example": 873,
+            "example": 373,
             "required": true
           },
           "endDate": {
             "type": "number",
-            "example": 137,
+            "example": 422,
             "required": true
           },
           "lat": {
             "type": "number",
-            "example": 910
+            "example": 845
           },
           "location": {
             "type": "string",
@@ -1143,7 +1336,7 @@
           },
           "long": {
             "type": "number",
-            "example": 106
+            "example": 147
           },
           "primaryColor": {
             "type": "string",
@@ -1155,17 +1348,17 @@
           },
           "participantsCount": {
             "type": "number",
-            "example": 558
+            "example": 510
           },
           "photo": {
             "type": "number",
-            "example": 71
+            "example": 740
           },
           "socialMediaLinks": {
             "type": "array",
             "items": {
               "type": "number",
-              "example": 265
+              "example": 715
             },
             "properties": {
               "items": {
@@ -1173,6 +1366,10 @@
                 "example": "Lorem Ipsum"
               }
             }
+          },
+          "termsLink": {
+            "type": "string",
+            "example": "Lorem Ipsum"
           }
         },
         "example": {
@@ -1180,18 +1377,51 @@
           "description": "Lorem Ipsum",
           "organizer": "Lorem Ipsum",
           "slug": "Lorem Ipsum",
-          "startDate": 873,
-          "endDate": 137,
-          "lat": 910,
+          "startDate": 373,
+          "endDate": 422,
+          "lat": 845,
           "location": "Lorem Ipsum",
-          "long": 106,
+          "long": 147,
           "primaryColor": "Lorem Ipsum",
           "contactEmail": "Lorem Ipsum",
-          "participantsCount": 558,
-          "photo": 71,
-          "socialMediaLinks": ["Lorem Ipsum"]
+          "participantsCount": 510,
+          "photo": 740,
+          "socialMediaLinks": ["Lorem Ipsum"],
+          "termsLink": "Lorem Ipsum"
         },
         "description": "createEventValidator (Validator)"
+      },
+      "displayEvents": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "number",
+            "example": 186
+          },
+          "to": {
+            "type": "number",
+            "example": 614
+          }
+        },
+        "example": {
+          "from": 186,
+          "to": 614
+        },
+        "description": "displayEvents (Validator)"
+      },
+      "toggleEventActivation": {
+        "type": "object",
+        "properties": {
+          "isActive": {
+            "type": "boolean",
+            "example": true,
+            "required": true
+          }
+        },
+        "example": {
+          "isActive": true
+        },
+        "description": "toggleEventActivation (Validator)"
       },
       "updateEventValidator": {
         "type": "object",
@@ -1211,11 +1441,11 @@
           },
           "startDate": {
             "type": "number",
-            "example": 275
+            "example": 278
           },
           "endDate": {
             "type": "number",
-            "example": 348
+            "example": 772
           },
           "location": {
             "type": "string",
@@ -1227,11 +1457,11 @@
           },
           "lat": {
             "type": "number",
-            "example": 435
+            "example": 695
           },
           "long": {
             "type": "number",
-            "example": 940
+            "example": 404
           },
           "primaryColor": {
             "type": "string",
@@ -1239,7 +1469,7 @@
           },
           "participantsCount": {
             "type": "number",
-            "example": 48
+            "example": 293
           },
           "organizer": {
             "type": "string",
@@ -1247,13 +1477,13 @@
           },
           "photo": {
             "type": "number",
-            "example": 781
+            "example": 36
           },
           "socialMediaLinks": {
             "type": "array",
             "items": {
               "type": "number",
-              "example": 978
+              "example": 953
             },
             "properties": {
               "items": {
@@ -1261,23 +1491,28 @@
                 "example": "Lorem Ipsum"
               }
             }
+          },
+          "termsLink": {
+            "type": "string",
+            "example": "Lorem Ipsum"
           }
         },
         "example": {
           "name": "Lorem Ipsum",
           "description": "Lorem Ipsum",
           "slug": "Lorem Ipsum",
-          "startDate": 275,
-          "endDate": 348,
+          "startDate": 278,
+          "endDate": 772,
           "location": "Lorem Ipsum",
           "contactEmail": "Lorem Ipsum",
-          "lat": 435,
-          "long": 940,
+          "lat": 695,
+          "long": 404,
           "primaryColor": "Lorem Ipsum",
-          "participantsCount": 48,
+          "participantsCount": 293,
           "organizer": "Lorem Ipsum",
-          "photo": 781,
-          "socialMediaLinks": ["Lorem Ipsum"]
+          "photo": 36,
+          "socialMediaLinks": ["Lorem Ipsum"],
+          "termsLink": "Lorem Ipsum"
         },
         "description": "updateEventValidator (Validator)"
       },
@@ -1296,13 +1531,17 @@
           },
           "startDate": {
             "type": "number",
-            "example": 829,
+            "example": 602,
             "required": true
           },
           "isFirstForm": {
             "type": "boolean",
             "example": true,
             "required": true
+          },
+          "submissionsLeft": {
+            "type": "number",
+            "example": 970
           },
           "attributes": {
             "type": "array",
@@ -1311,20 +1550,20 @@
               "properties": {
                 "id": {
                   "type": "number",
-                  "example": 739,
+                  "example": 650,
                   "required": true
                 },
                 "isRequired": {
                   "type": "number",
-                  "example": 900
+                  "example": 243
                 },
                 "isEditable": {
                   "type": "number",
-                  "example": 531
+                  "example": 8
                 },
                 "order": {
                   "type": "number",
-                  "example": 757
+                  "example": 72
                 }
               }
             },
@@ -1344,28 +1583,34 @@
           },
           "endDate": {
             "type": "number",
-            "example": 702
+            "example": 311
           },
           "isOpen": {
             "type": "boolean",
             "example": true
+          },
+          "order": {
+            "type": "number",
+            "example": 165
           }
         },
         "example": {
           "name": "Lorem Ipsum",
           "description": "Lorem Ipsum",
-          "startDate": 829,
+          "startDate": 602,
           "isFirstForm": true,
+          "submissionsLeft": 970,
           "attributes": [
             {
-              "id": 739,
+              "id": 650,
               "isRequired": true,
               "isEditable": true,
-              "order": 757
+              "order": 72
             }
           ],
-          "endDate": 702,
-          "isOpen": true
+          "endDate": 311,
+          "isOpen": true,
+          "order": 165
         },
         "description": "createFormValidator (Validator)"
       },
@@ -1387,6 +1632,20 @@
         },
         "description": "formSubmitValidator (Validator)"
       },
+      "toggleFormOpenValidator": {
+        "type": "object",
+        "properties": {
+          "isOpen": {
+            "type": "boolean",
+            "example": true,
+            "required": true
+          }
+        },
+        "example": {
+          "isOpen": true
+        },
+        "description": "toggleFormOpenValidator (Validator)"
+      },
       "updateFormValidator": {
         "type": "object",
         "properties": {
@@ -1400,11 +1659,15 @@
           },
           "startDate": {
             "type": "number",
-            "example": 836
+            "example": 123
           },
           "endDate": {
             "type": "number",
-            "example": 430
+            "example": 567
+          },
+          "submissionsLeft": {
+            "type": "number",
+            "example": 584
           },
           "attributes": {
             "type": "array",
@@ -1413,20 +1676,20 @@
               "properties": {
                 "id": {
                   "type": "number",
-                  "example": 83,
+                  "example": 950,
                   "required": true
                 },
                 "isRequired": {
                   "type": "number",
-                  "example": 852
+                  "example": 450
                 },
                 "isEditable": {
                   "type": "number",
-                  "example": 72
+                  "example": 791
                 },
                 "order": {
                   "type": "number",
-                  "example": 457
+                  "example": 281
                 }
               }
             },
@@ -1450,23 +1713,29 @@
           "isFirstForm": {
             "type": "boolean",
             "example": true
+          },
+          "order": {
+            "type": "number",
+            "example": 580
           }
         },
         "example": {
           "name": "Lorem Ipsum",
           "description": "Lorem Ipsum",
-          "startDate": 836,
-          "endDate": 430,
+          "startDate": 123,
+          "endDate": 567,
+          "submissionsLeft": 584,
           "attributes": [
             {
-              "id": 83,
+              "id": 950,
               "isRequired": true,
               "isEditable": true,
-              "order": 457
+              "order": 281
             }
           ],
           "isOpen": true,
-          "isFirstForm": true
+          "isFirstForm": true,
+          "order": 580
         },
         "description": "updateFormValidator (Validator)"
       },
@@ -1482,7 +1751,7 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 916
+              "example": 922
             },
             "required": true
           },
@@ -1501,7 +1770,7 @@
         },
         "example": {
           "email": "Lorem Ipsum",
-          "permissionsIds": [916],
+          "permissionsIds": [922],
           "firstName": "Lorem Ipsum",
           "lastName": "Lorem Ipsum",
           "password": "Lorem Ipsum"
@@ -1515,13 +1784,13 @@
             "type": "array",
             "items": {
               "type": "number",
-              "example": 12
+              "example": 864
             },
             "required": true
           }
         },
         "example": {
-          "permissionsIds": [12]
+          "permissionsIds": [864]
         },
         "description": "updateOrganizerPermissionsValidator (Validator)"
       },
@@ -1540,12 +1809,12 @@
               "properties": {
                 "attributeId": {
                   "type": "number",
-                  "example": 329,
+                  "example": 391,
                   "required": true
                 },
                 "value": {
                   "type": "number",
-                  "example": 816,
+                  "example": 824,
                   "required": true
                 }
               }
@@ -1564,7 +1833,7 @@
           "email": "Lorem Ipsum",
           "participantAttributes": [
             {
-              "attributeId": 329,
+              "attributeId": 391,
               "value": "Lorem Ipsum"
             }
           ]
@@ -1585,12 +1854,12 @@
               "properties": {
                 "attributeId": {
                   "type": "number",
-                  "example": 458,
+                  "example": 318,
                   "required": true
                 },
                 "value": {
                   "type": "number",
-                  "example": 736,
+                  "example": 556,
                   "required": true
                 }
               }
@@ -1609,7 +1878,7 @@
           "email": "Lorem Ipsum",
           "participantAttributes": [
             {
-              "attributeId": 458,
+              "attributeId": 318,
               "value": "Lorem Ipsum"
             }
           ]
@@ -1637,322 +1906,62 @@
     }
   },
   "paths": {
-    "/api/v1/events/{eventSlug}/attributes/{attributeId}/blocks": {
+    "/api/v1/events/public": {
       "get": {
         "summary": " (publicIndex)",
-        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/blocks_controller.ts_ - **publicIndex**",
-        "operationId": "publicGetBlocks",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/events_controller.ts_ - **publicIndex**",
+        "operationId": "indexPublicEvent",
         "parameters": [
           {
-            "in": "path",
-            "name": "eventSlug",
+            "in": "query",
+            "name": "from",
+            "description": "filtering from event start date",
             "schema": {
-              "type": "string"
+              "example": "",
+              "type": "Date"
             },
-            "required": true
-          },
-          {
-            "in": "path",
-            "name": "attributeId",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "tags": ["BLOCKS"],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Block"
-                      }
-                    },
-                    "meta": {
-                      "$ref": "#/components/schemas/PaginationMeta"
-                    }
-                  }
-                },
-                "example": {
-                  "data": [
-                    {
-                      "id": 920,
-                      "name": "John Doe",
-                      "description": "Lorem ipsum dolor sit amet",
-                      "parentId": 532,
-                      "capacity": 662,
-                      "isRootBlock": true,
-                      "attributeId": 4,
-                      "createdAt": "2021-03-23T16:13:08.489+01:00",
-                      "updatedAt": "2021-03-23T16:13:08.489+01:00"
-                    }
-                  ],
-                  "meta": {
-                    "total": 100,
-                    "page": 2,
-                    "perPage": 10,
-                    "currentPage": 3,
-                    "lastPage": 10,
-                    "firstPage": 1,
-                    "lastPageUrl": "/?page=10",
-                    "firstPageUrl": "/?page=1",
-                    "nextPageUrl": "/?page=6",
-                    "previousPageUrl": "/?page=5"
-                  }
-                }
-              }
-            },
-            "description": "Returns **200** (OK) as **application/json**"
-          }
-        },
-        "security": []
-      }
-    },
-    "/api/v1/events/{eventSlug}": {
-      "get": {
-        "summary": " (publicShow)",
-        "description": "Shows one event basic data without login\n\n _app/controllers/events_controller.ts_ - **publicShow**",
-        "operationId": "showPublicEvent",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "eventSlug",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "tags": ["EVENT"],
-        "responses": {
-          "201": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Event"
-                },
-                "example": {
-                  "id": 38,
-                  "organizerId": 137,
-                  "name": "John Doe",
-                  "description": "Lorem ipsum dolor sit amet",
-                  "slug": "Lorem Ipsum",
-                  "startDate": "2021-03-23T16:13:08.489+01:00",
-                  "endDate": "2021-03-23T16:13:08.489+01:00",
-                  "lat": 41.705,
-                  "long": -87.475,
-                  "primaryColor": "Lorem Ipsum",
-                  "contactEmail": "Lorem Ipsum",
-                  "organizer": "Lorem Ipsum",
-                  "participantsCount": 115,
-                  "location": "Lorem Ipsum",
-                  "createdAt": "2021-03-23T16:13:08.489+01:00",
-                  "updatedAt": "2021-03-23T16:13:08.489+01:00",
-                  "photoUrl": "Lorem Ipsum",
-                  "forms": [
-                    {
-                      "id": 885,
-                      "eventId": 603,
-                      "isOpen": true,
-                      "description": "Lorem ipsum dolor sit amet",
-                      "name": "John Doe",
-                      "isFirstForm": true,
-                      "slug": "Lorem Ipsum",
-                      "startDate": "2021-03-23T16:13:08.489+01:00",
-                      "endDate": "2021-03-23T16:13:08.489+01:00",
-                      "createdAt": "2021-03-23T16:13:08.489+01:00",
-                      "updatedAt": "2021-03-23T16:13:08.489+01:00"
-                    }
-                  ],
-                  "socialMediaLinks": ["Lorem Ipsum"]
-                }
-              }
-            },
-            "description": "Returns **201** (Created) as **application/json**"
-          }
-        },
-        "security": []
-      }
-    },
-    "/api/v1/events/{eventSlug}/forms/{formSlug}": {
-      "get": {
-        "summary": " (showBySlug)",
-        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/forms_controller.ts_ - **showBySlug**",
-        "operationId": "getFormBySlug",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "eventSlug",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          },
-          {
-            "in": "path",
-            "name": "formSlug",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "tags": ["FORMS"],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Form"
-                },
-                "example": {
-                  "id": 885,
-                  "eventId": 603,
-                  "isOpen": true,
-                  "description": "Lorem ipsum dolor sit amet",
-                  "name": "John Doe",
-                  "isFirstForm": true,
-                  "slug": "Lorem Ipsum",
-                  "startDate": "2021-03-23T16:13:08.489+01:00",
-                  "endDate": "2021-03-23T16:13:08.489+01:00",
-                  "createdAt": "2021-03-23T16:13:08.489+01:00",
-                  "updatedAt": "2021-03-23T16:13:08.489+01:00",
-                  "attributes": [
-                    {
-                      "id": 170,
-                      "name": "John Doe",
-                      "slug": "Lorem Ipsum",
-                      "eventId": 329,
-                      "options": "Lorem Ipsum",
-                      "type": "Lorem Ipsum",
-                      "showInList": true,
-                      "createdAt": "2021-03-23T16:13:08.489+01:00",
-                      "updatedAt": "2021-03-23T16:13:08.489+01:00",
-                      "serializeExtras = true": null
-                    }
-                  ]
-                }
-              }
-            },
-            "description": "Returns **200** (OK) as **application/json**"
-          },
-          "404": {
-            "content": {
-              "text/plain": {
-                "example": "{ message: \"Row not found\", \"name\": \"Exception\", status: 404},"
-              }
-            },
-            "description": "Returns **404** (Not Found) as **text/plain**"
-          }
-        },
-        "security": []
-      }
-    },
-    "/api/v1/events/{eventSlug}/participants/{participantSlug}": {
-      "get": {
-        "summary": "Get participant (index)",
-        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/public_participants_controller.ts_ - **index**",
-        "operationId": "getPublicParticipant",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "eventSlug",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          },
-          {
-            "in": "path",
-            "name": "participantSlug",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
+            "required": false
           },
           {
             "in": "query",
-            "name": "<attributes[]>",
-            "description": "Array of attributes id to fetch",
+            "name": "to",
+            "description": "filtering from to end date",
             "schema": {
-              "example": null,
-              "type": "string"
+              "example": "",
+              "type": "Date"
             },
             "required": false
           }
         ],
-        "tags": ["PUBLIC_PARTICIPANTS"],
+        "tags": ["EVENT"],
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Participant.with(attributes)"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Event"
+                  }
                 },
-                "example": {}
+                "example": [
+                  {
+                    "name": "John Doe",
+                    "description": "Lorem ipsum dolor sit amet",
+                    "slug": "Lorem Ipsum",
+                    "startDate": "2021-03-23T16:13:08.489+01:00",
+                    "endDate": "2021-03-23T16:13:08.489+01:00",
+                    "primaryColor": "Lorem Ipsum",
+                    "organizer": "Lorem Ipsum",
+                    "participantsCount": 543,
+                    "location": "Lorem Ipsum",
+                    "isActive": true,
+                    "photoUrl": "Lorem Ipsum"
+                  }
+                ]
               }
             },
             "description": "Returns **200** (OK) as **application/json**"
-          },
-          "401": {
-            "content": {
-              "text/plain": {
-                "example": "{ errors: [{ message: \"Unauthorized access\" }] }"
-              }
-            },
-            "description": "Returns **401** (Unauthorized) as **text/plain**"
-          }
-        },
-        "security": []
-      },
-      "delete": {
-        "summary": "Removes a participant from an event (unregister)",
-        "description": "Removes a participant from an event\n\n _app/controllers/participants_controller.ts_ - **unregister**",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "eventSlug",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          },
-          {
-            "in": "path",
-            "name": "participantSlug",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "tags": ["PARTICIPANTS"],
-        "responses": {
-          "204": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {}
-                },
-                "example": {}
-              }
-            },
-            "description": "Returns **204** (No Content) as **application/json**"
-          },
-          "404": {
-            "content": {
-              "text/plain": {
-                "example": "{ message: \"Row not found\", \"name\": \"Exception\", status: 404},"
-              }
-            },
-            "description": "Returns **404** (Not Found) as **text/plain**"
           }
         },
         "security": []
@@ -1977,7 +1986,7 @@
                 },
                 "example": [
                   {
-                    "id": 465,
+                    "id": 246,
                     "firstName": "John",
                     "lastName": "Doe",
                     "email": "johndoe@example.com",
@@ -2034,12 +2043,12 @@
                 "lastName": "Lorem Ipsum",
                 "password": "Lorem Ipsum",
                 "email": "Lorem Ipsum",
-                "type": 217,
+                "type": 705,
                 "active": true,
                 "permissions": [
                   {
-                    "permissionId": 95,
-                    "eventId": 120
+                    "permissionId": 928,
+                    "eventId": 729
                   }
                 ]
               }
@@ -2072,7 +2081,7 @@
                   "$ref": "#/components/schemas/Admin"
                 },
                 "example": {
-                  "id": 465,
+                  "id": 246,
                   "firstName": "John",
                   "lastName": "Doe",
                   "email": "johndoe@example.com",
@@ -2129,7 +2138,7 @@
                   "$ref": "#/components/schemas/Admin"
                 },
                 "example": {
-                  "id": 465,
+                  "id": 246,
                   "firstName": "John",
                   "lastName": "Doe",
                   "email": "johndoe@example.com",
@@ -2236,8 +2245,8 @@
                 },
                 "example": [
                   {
-                    "id": 38,
-                    "organizerId": 137,
+                    "id": 439,
+                    "organizerId": 378,
                     "name": "John Doe",
                     "description": "Lorem ipsum dolor sit amet",
                     "slug": "Lorem Ipsum",
@@ -2248,12 +2257,14 @@
                     "primaryColor": "Lorem Ipsum",
                     "contactEmail": "Lorem Ipsum",
                     "organizer": "Lorem Ipsum",
-                    "participantsCount": 115,
+                    "participantsCount": 543,
                     "location": "Lorem Ipsum",
+                    "isActive": true,
                     "createdAt": "2021-03-23T16:13:08.489+01:00",
                     "updatedAt": "2021-03-23T16:13:08.489+01:00",
                     "photoUrl": "Lorem Ipsum",
-                    "socialMediaLinks": ["Lorem Ipsum"]
+                    "socialMediaLinks": ["Lorem Ipsum"],
+                    "termsLink": "Lorem Ipsum"
                   }
                 ]
               }
@@ -2287,8 +2298,8 @@
                   "$ref": "#/components/schemas/Event"
                 },
                 "example": {
-                  "id": 38,
-                  "organizerId": 137,
+                  "id": 439,
+                  "organizerId": 378,
                   "name": "John Doe",
                   "description": "Lorem ipsum dolor sit amet",
                   "slug": "Lorem Ipsum",
@@ -2299,12 +2310,14 @@
                   "primaryColor": "Lorem Ipsum",
                   "contactEmail": "Lorem Ipsum",
                   "organizer": "Lorem Ipsum",
-                  "participantsCount": 115,
+                  "participantsCount": 543,
                   "location": "Lorem Ipsum",
+                  "isActive": true,
                   "createdAt": "2021-03-23T16:13:08.489+01:00",
                   "updatedAt": "2021-03-23T16:13:08.489+01:00",
                   "photoUrl": "Lorem Ipsum",
-                  "socialMediaLinks": ["Lorem Ipsum"]
+                  "socialMediaLinks": ["Lorem Ipsum"],
+                  "termsLink": "Lorem Ipsum"
                 }
               }
             },
@@ -2412,6 +2425,10 @@
                   "socialMediaLinks": {
                     "type": "array",
                     "format": "string"
+                  },
+                  "termsLink": {
+                    "type": "string",
+                    "format": "string"
                   }
                 },
                 "required": ["name", "slug", "startDate", "endDate"]
@@ -2445,8 +2462,8 @@
                   "$ref": "#/components/schemas/Event"
                 },
                 "example": {
-                  "id": 38,
-                  "organizerId": 137,
+                  "id": 439,
+                  "organizerId": 378,
                   "name": "John Doe",
                   "description": "Lorem ipsum dolor sit amet",
                   "slug": "Lorem Ipsum",
@@ -2457,34 +2474,38 @@
                   "primaryColor": "Lorem Ipsum",
                   "contactEmail": "Lorem Ipsum",
                   "organizer": "Lorem Ipsum",
-                  "participantsCount": 115,
+                  "participantsCount": 543,
                   "location": "Lorem Ipsum",
+                  "isActive": true,
                   "createdAt": "2021-03-23T16:13:08.489+01:00",
                   "updatedAt": "2021-03-23T16:13:08.489+01:00",
                   "photoUrl": "Lorem Ipsum",
                   "permissions": [
                     {
-                      "id": 115,
+                      "id": 515,
                       "action": "Lorem Ipsum",
                       "subject": "Lorem Ipsum"
                     }
                   ],
                   "forms": [
                     {
-                      "id": 885,
-                      "eventId": 603,
+                      "id": 326,
+                      "eventId": 385,
                       "isOpen": true,
                       "description": "Lorem ipsum dolor sit amet",
                       "name": "John Doe",
                       "isFirstForm": true,
                       "slug": "Lorem Ipsum",
+                      "order": 195,
+                      "submissionsLeft": 838,
                       "startDate": "2021-03-23T16:13:08.489+01:00",
                       "endDate": "2021-03-23T16:13:08.489+01:00",
                       "createdAt": "2021-03-23T16:13:08.489+01:00",
                       "updatedAt": "2021-03-23T16:13:08.489+01:00"
                     }
                   ],
-                  "socialMediaLinks": ["Lorem Ipsum"]
+                  "socialMediaLinks": ["Lorem Ipsum"],
+                  "termsLink": "Lorem Ipsum"
                 }
               }
             },
@@ -2510,8 +2531,8 @@
       },
       "put": {
         "summary": "Update event (update)",
-        "description": "Updates an existing event if user has permission. Date should be in format 2025-01-05 12:00:00\n\n _app/controllers/events_controller.ts_ - **update**",
-        "operationId": "updateEvent",
+        "description": "Allows superadmin to activate new event.\n\n _app/controllers/events_controller.ts_ - **update**",
+        "operationId": "activateEvent",
         "parameters": [
           {
             "in": "path",
@@ -2533,8 +2554,8 @@
                   "$ref": "#/components/schemas/Event"
                 },
                 "example": {
-                  "id": 38,
-                  "organizerId": 137,
+                  "id": 439,
+                  "organizerId": 378,
                   "name": "John Doe",
                   "description": "Lorem ipsum dolor sit amet",
                   "slug": "Lorem Ipsum",
@@ -2545,51 +2566,29 @@
                   "primaryColor": "Lorem Ipsum",
                   "contactEmail": "Lorem Ipsum",
                   "organizer": "Lorem Ipsum",
-                  "participantsCount": 115,
+                  "participantsCount": 543,
                   "location": "Lorem Ipsum",
+                  "isActive": true,
                   "createdAt": "2021-03-23T16:13:08.489+01:00",
                   "updatedAt": "2021-03-23T16:13:08.489+01:00",
                   "photoUrl": "Lorem Ipsum",
-                  "socialMediaLinks": ["Lorem Ipsum"]
+                  "socialMediaLinks": ["Lorem Ipsum"],
+                  "termsLink": "Lorem Ipsum"
                 }
               }
             },
             "description": "Returns **200** (OK) as **application/json**"
           },
-          "400": {
+          "401": {
             "content": {
               "text/plain": {
-                "example": "Invalid input data"
+                "example": "Unauthorized access"
               }
             },
-            "description": "Returns **400** (Bad Request) as **text/plain**"
-          },
-          "401": {
-            "description": "Returns **401** (Unauthorized)"
+            "description": "Returns **401** (Unauthorized) as **text/plain**"
           },
           "403": {
-            "content": {
-              "text/plain": {
-                "example": "Not authorized to update this event"
-              }
-            },
-            "description": "Returns **403** (Forbidden) as **text/plain**"
-          },
-          "404": {
-            "content": {
-              "text/plain": {
-                "example": "Event not found"
-              }
-            },
-            "description": "Returns **404** (Not Found) as **text/plain**"
-          },
-          "422": {
-            "content": {
-              "text/plain": {
-                "example": "Validation failed"
-              }
-            },
-            "description": "Returns **422** (Unprocessable Entity) as **text/plain**"
+            "description": "Returns **403** (Forbidden)"
           }
         },
         "security": [
@@ -2603,64 +2602,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "name": {
-                    "type": "string",
-                    "format": "string"
-                  },
-                  "description": {
-                    "type": "string",
-                    "format": "string"
-                  },
-                  "slug": {
-                    "type": "string",
-                    "format": "string"
-                  },
-                  "startDate": {
-                    "type": "number",
-                    "format": "string"
-                  },
-                  "endDate": {
-                    "type": "number",
-                    "format": "string"
-                  },
-                  "location": {
-                    "type": "string",
-                    "format": "string"
-                  },
-                  "contactEmail": {
-                    "type": "string",
-                    "format": "string"
-                  },
-                  "lat": {
-                    "type": "number",
-                    "format": "string"
-                  },
-                  "long": {
-                    "type": "number",
-                    "format": "string"
-                  },
-                  "primaryColor": {
-                    "type": "string",
-                    "format": "string"
-                  },
-                  "participantsCount": {
-                    "type": "number",
-                    "format": "string"
-                  },
-                  "organizer": {
-                    "type": "string",
-                    "format": "string"
-                  },
-                  "photo": {
-                    "type": "number",
-                    "format": "string"
-                  },
-                  "socialMediaLinks": {
-                    "type": "array",
+                  "isActive": {
+                    "type": "boolean",
                     "format": "string"
                   }
                 },
-                "required": []
+                "required": ["isActive"]
               }
             }
           }
@@ -2723,6 +2670,105 @@
         ]
       }
     },
+    "/api/v1/events/admins/superadminIndex": {
+      "get": {
+        "summary": " (superadminIndex)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/events_controller.ts_ - **superadminIndex**",
+        "operationId": "getAllEvents",
+        "parameters": [],
+        "tags": ["EVENT"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Event"
+                  }
+                },
+                "example": [
+                  {
+                    "id": 439,
+                    "organizerId": 378,
+                    "name": "John Doe",
+                    "description": "Lorem ipsum dolor sit amet",
+                    "slug": "Lorem Ipsum",
+                    "startDate": "2021-03-23T16:13:08.489+01:00",
+                    "endDate": "2021-03-23T16:13:08.489+01:00",
+                    "lat": 41.705,
+                    "long": -87.475,
+                    "primaryColor": "Lorem Ipsum",
+                    "contactEmail": "Lorem Ipsum",
+                    "organizer": "Lorem Ipsum",
+                    "participantsCount": 543,
+                    "location": "Lorem Ipsum",
+                    "isActive": true,
+                    "createdAt": "2021-03-23T16:13:08.489+01:00",
+                    "updatedAt": "2021-03-23T16:13:08.489+01:00",
+                    "photoUrl": "Lorem Ipsum",
+                    "socialMediaLinks": ["Lorem Ipsum"],
+                    "termsLink": "Lorem Ipsum"
+                  }
+                ]
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "example": "Unauthorized access"
+              }
+            },
+            "description": "Returns **401** (Unauthorized) as **text/plain**"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": ["access"]
+          }
+        ]
+      }
+    },
+    "/api/v1/events/{id}/activate": {
+      "put": {
+        "summary": " (toggleActive)",
+        "description": "\n\n _app/controllers/events_controller.ts_ - **toggleActive**",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": ["V1"],
+        "responses": {
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": ["access"]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {}
+          }
+        }
+      }
+    },
     "/api/v1/permissions": {
       "get": {
         "summary": "Get a list of permissions (index)",
@@ -2742,7 +2788,7 @@
                 },
                 "example": [
                   {
-                    "id": 115,
+                    "id": 515,
                     "action": "Lorem Ipsum",
                     "subject": "Lorem Ipsum"
                   }
@@ -2819,7 +2865,7 @@
                   "$ref": "#/components/schemas/Permission"
                 },
                 "example": {
-                  "id": 115,
+                  "id": 515,
                   "action": "Lorem Ipsum",
                   "subject": "Lorem Ipsum"
                 }
@@ -2871,7 +2917,7 @@
                   "$ref": "#/components/schemas/Permission"
                 },
                 "example": {
-                  "id": 115,
+                  "id": 515,
                   "action": "Lorem Ipsum",
                   "subject": "Lorem Ipsum"
                 }
@@ -2992,13 +3038,16 @@
                 },
                 "example": [
                   {
-                    "id": 170,
+                    "id": 399,
                     "name": "John Doe",
                     "slug": "Lorem Ipsum",
-                    "eventId": 329,
+                    "eventId": 419,
                     "options": "Lorem Ipsum",
                     "type": "Lorem Ipsum",
                     "showInList": true,
+                    "order": 360,
+                    "isSensitiveData": true,
+                    "reason": "Lorem Ipsum",
                     "createdAt": "2021-03-23T16:13:08.489+01:00",
                     "updatedAt": "2021-03-23T16:13:08.489+01:00",
                     "serializeExtras = true": null
@@ -3044,13 +3093,16 @@
                   "$ref": "#/components/schemas/Attribute"
                 },
                 "example": {
-                  "id": 170,
+                  "id": 399,
                   "name": "John Doe",
                   "slug": "Lorem Ipsum",
-                  "eventId": 329,
+                  "eventId": 419,
                   "options": "Lorem Ipsum",
                   "type": "Lorem Ipsum",
                   "showInList": true,
+                  "order": 360,
+                  "isSensitiveData": true,
+                  "reason": "Lorem Ipsum",
                   "createdAt": "2021-03-23T16:13:08.489+01:00",
                   "updatedAt": "2021-03-23T16:13:08.489+01:00",
                   "serializeExtras = true": null
@@ -3080,9 +3132,12 @@
               "example": {
                 "name": "Lorem Ipsum",
                 "slug": "Lorem Ipsum",
-                "type": 126,
+                "type": 433,
                 "options": ["Lorem Ipsum"],
-                "showInList": true
+                "order": 163,
+                "showInList": true,
+                "isSensitiveData": true,
+                "reason": "Lorem Ipsum"
               }
             }
           }
@@ -3121,13 +3176,16 @@
                   "$ref": "#/components/schemas/Attribute"
                 },
                 "example": {
-                  "id": 170,
+                  "id": 399,
                   "name": "John Doe",
                   "slug": "Lorem Ipsum",
-                  "eventId": 329,
+                  "eventId": 419,
                   "options": "Lorem Ipsum",
                   "type": "Lorem Ipsum",
                   "showInList": true,
+                  "order": 360,
+                  "isSensitiveData": true,
+                  "reason": "Lorem Ipsum",
                   "createdAt": "2021-03-23T16:13:08.489+01:00",
                   "updatedAt": "2021-03-23T16:13:08.489+01:00",
                   "serializeExtras = true": null
@@ -3200,13 +3258,16 @@
                   "$ref": "#/components/schemas/Attribute"
                 },
                 "example": {
-                  "id": 170,
+                  "id": 399,
                   "name": "John Doe",
                   "slug": "Lorem Ipsum",
-                  "eventId": 329,
+                  "eventId": 419,
                   "options": "Lorem Ipsum",
                   "type": "Lorem Ipsum",
                   "showInList": true,
+                  "order": 360,
+                  "isSensitiveData": true,
+                  "reason": "Lorem Ipsum",
                   "createdAt": "2021-03-23T16:13:08.489+01:00",
                   "updatedAt": "2021-03-23T16:13:08.489+01:00",
                   "serializeExtras = true": null
@@ -3256,9 +3317,12 @@
               "example": {
                 "name": "Lorem Ipsum",
                 "slug": "Lorem Ipsum",
-                "type": 982,
+                "type": 57,
                 "options": ["Lorem Ipsum"],
-                "showInList": true
+                "order": 111,
+                "showInList": true,
+                "isSensitiveData": true,
+                "reason": "Lorem Ipsum"
               }
             }
           }
@@ -3359,13 +3423,14 @@
                 "example": {
                   "data": [
                     {
-                      "id": 920,
+                      "id": 112,
                       "name": "John Doe",
                       "description": "Lorem ipsum dolor sit amet",
-                      "parentId": 532,
-                      "capacity": 662,
+                      "parentId": 697,
+                      "capacity": 800,
                       "isRootBlock": true,
-                      "attributeId": 4,
+                      "attributeId": 630,
+                      "order": 409,
                       "createdAt": "2021-03-23T16:13:08.489+01:00",
                       "updatedAt": "2021-03-23T16:13:08.489+01:00"
                     }
@@ -3431,13 +3496,14 @@
                   "$ref": "#/components/schemas/Block"
                 },
                 "example": {
-                  "id": 920,
+                  "id": 112,
                   "name": "John Doe",
                   "description": "Lorem ipsum dolor sit amet",
-                  "parentId": 532,
-                  "capacity": 662,
+                  "parentId": 697,
+                  "capacity": 800,
                   "isRootBlock": true,
-                  "attributeId": 4,
+                  "attributeId": 630,
+                  "order": 409,
                   "createdAt": "2021-03-23T16:13:08.489+01:00",
                   "updatedAt": "2021-03-23T16:13:08.489+01:00"
                 }
@@ -3465,8 +3531,9 @@
               },
               "example": {
                 "name": "Lorem Ipsum",
-                "parentId": 370,
+                "parentId": 319,
                 "description": "Lorem Ipsum",
+                "order": 221,
                 "capacity": 1
               }
             }
@@ -3514,13 +3581,14 @@
                   "$ref": "#/components/schemas/Block"
                 },
                 "example": {
-                  "id": 920,
+                  "id": 112,
                   "name": "John Doe",
                   "description": "Lorem ipsum dolor sit amet",
-                  "parentId": 532,
-                  "capacity": 662,
+                  "parentId": 697,
+                  "capacity": 800,
                   "isRootBlock": true,
-                  "attributeId": 4,
+                  "attributeId": 630,
+                  "order": 409,
                   "createdAt": "2021-03-23T16:13:08.489+01:00",
                   "updatedAt": "2021-03-23T16:13:08.489+01:00"
                 }
@@ -3600,13 +3668,14 @@
                   "$ref": "#/components/schemas/Block"
                 },
                 "example": {
-                  "id": 920,
+                  "id": 112,
                   "name": "John Doe",
                   "description": "Lorem ipsum dolor sit amet",
-                  "parentId": 532,
-                  "capacity": 662,
+                  "parentId": 697,
+                  "capacity": 800,
                   "isRootBlock": true,
-                  "attributeId": 4,
+                  "attributeId": 630,
+                  "order": 409,
                   "createdAt": "2021-03-23T16:13:08.489+01:00",
                   "updatedAt": "2021-03-23T16:13:08.489+01:00"
                 }
@@ -3654,8 +3723,9 @@
               },
               "example": {
                 "name": "Lorem Ipsum",
-                "parentId": 510,
+                "parentId": 453,
                 "description": "Lorem Ipsum",
+                "order": 54,
                 "capacity": 1
               }
             }
@@ -3739,7 +3809,8 @@
     "/api/v1/events/{eventId}/attributes/{attributeId}/bulk-update": {
       "put": {
         "summary": " (bulkUpdate)",
-        "description": "\n\n _app/controllers/participants_attributes_controller.ts_ - **bulkUpdate**",
+        "description": "Returns **204** (No Content) as **text/plain**\n\n _app/controllers/participants_attributes_controller.ts_ - **bulkUpdate**",
+        "operationId": "bulkUpdate",
         "parameters": [
           {
             "in": "path",
@@ -3758,13 +3829,34 @@
             "required": true
           }
         ],
-        "tags": ["V1"],
+        "tags": ["PARTICIPANTS"],
         "responses": {
+          "204": {
+            "content": {
+              "text/plain": {
+                "example": "No Content"
+              }
+            },
+            "description": "Returns **204** (No Content) as **text/plain**"
+          },
           "401": {
-            "description": "Returns **401** (Unauthorized)"
+            "content": {
+              "text/plain": {
+                "example": "Unauthorized access"
+              }
+            },
+            "description": "Returns **401** (Unauthorized) as **text/plain**"
           },
           "403": {
             "description": "Returns **403** (Forbidden)"
+          },
+          "404": {
+            "content": {
+              "text/plain": {
+                "example": "Event not found"
+              }
+            },
+            "description": "Returns **404** (Not Found) as **text/plain**"
           }
         },
         "security": [
@@ -3774,7 +3866,26 @@
         ],
         "requestBody": {
           "content": {
-            "application/json": {}
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "participantIds": {
+                    "type": "object",
+                    "properties": {
+                      "0": 1,
+                      "1": 2,
+                      "2": 3
+                    }
+                  },
+                  "newValue": "new value"
+                }
+              },
+              "example": {
+                "participantIds": [1, 2, 3],
+                "newValue": "new value"
+              }
+            }
           }
         }
       }
@@ -3914,10 +4025,11 @@
               "example": {
                 "name": "Lorem Ipsum",
                 "content": "Lorem Ipsum",
-                "trigger": 727,
+                "order": 949,
+                "trigger": 934,
                 "triggerValue": "Lorem Ipsum",
                 "triggerValue2": "Lorem Ipsum",
-                "formId": 191
+                "formId": 254
               }
             }
           }
@@ -4160,10 +4272,11 @@
               "example": {
                 "name": "Lorem Ipsum",
                 "content": "Lorem Ipsum",
-                "trigger": 72,
+                "order": 449,
+                "trigger": 357,
                 "triggerValue": "Lorem Ipsum",
                 "triggerValue2": "Lorem Ipsum",
-                "formId": 457
+                "formId": 68
               }
             }
           }
@@ -4284,6 +4397,170 @@
         }
       }
     },
+    "/api/v1/events/{eventId}/emails/duplicate/{emailId}": {
+      "post": {
+        "summary": " (duplicate)",
+        "description": "Returns **201** (Created) as **application/json**\n\n _app/controllers/emails_controller.ts_ - **duplicate**",
+        "operationId": "duplicateEmail",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "emailId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": ["EMAILS"],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Email"
+                },
+                "example": {
+                  "id": 859,
+                  "eventId": 518,
+                  "name": "John Doe",
+                  "content": "Lorem Ipsum",
+                  "trigger": "Lorem Ipsum",
+                  "triggerValue": "Lorem Ipsum",
+                  "triggerValue2": "Lorem Ipsum",
+                  "order": 976,
+                  "createdAt": "2021-03-23T16:13:08.489+01:00",
+                  "updatedAt": "2021-03-23T16:13:08.489+01:00",
+                  "formId": 464,
+                  "meta": {}
+                }
+              }
+            },
+            "description": "Returns **201** (Created) as **application/json**"
+          },
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": ["access"]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/emailDuplicateValidator"
+              },
+              "example": {
+                "name": "Lorem Ipsum"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/events/{eventId}/forms/{formId}/toggleOpen": {
+      "post": {
+        "summary": " (toggleOpen)",
+        "description": "Allows superadmin to open and close forms.\n\n _app/controllers/forms_controller.ts_ - **toggleOpen**",
+        "operationId": "toggleFormOpen",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventId",
+            "description": "Event identifier",
+            "schema": {
+              "example": "",
+              "type": "number"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "formId",
+            "description": "Form identifier",
+            "schema": {
+              "example": "",
+              "type": "number"
+            },
+            "required": true
+          }
+        ],
+        "tags": ["FORM"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Form"
+                },
+                "example": {
+                  "id": 326,
+                  "eventId": 385,
+                  "isOpen": true,
+                  "description": "Lorem ipsum dolor sit amet",
+                  "name": "John Doe",
+                  "isFirstForm": true,
+                  "slug": "Lorem Ipsum",
+                  "order": 195,
+                  "submissionsLeft": 838,
+                  "startDate": "2021-03-23T16:13:08.489+01:00",
+                  "endDate": "2021-03-23T16:13:08.489+01:00",
+                  "createdAt": "2021-03-23T16:13:08.489+01:00",
+                  "updatedAt": "2021-03-23T16:13:08.489+01:00"
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "example": "Unauthorized access"
+              }
+            },
+            "description": "Returns **401** (Unauthorized) as **text/plain**"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": ["access"]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "isOpen": {
+                    "type": "boolean",
+                    "format": "string"
+                  }
+                },
+                "required": ["isOpen"]
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/events/{eventId}/forms": {
       "get": {
         "summary": "Get a list of forms (index)",
@@ -4321,26 +4598,31 @@
                 "example": {
                   "data": [
                     {
-                      "id": 885,
-                      "eventId": 603,
+                      "id": 326,
+                      "eventId": 385,
                       "isOpen": true,
                       "description": "Lorem ipsum dolor sit amet",
                       "name": "John Doe",
                       "isFirstForm": true,
                       "slug": "Lorem Ipsum",
+                      "order": 195,
+                      "submissionsLeft": 838,
                       "startDate": "2021-03-23T16:13:08.489+01:00",
                       "endDate": "2021-03-23T16:13:08.489+01:00",
                       "createdAt": "2021-03-23T16:13:08.489+01:00",
                       "updatedAt": "2021-03-23T16:13:08.489+01:00",
                       "attributes": [
                         {
-                          "id": 170,
+                          "id": 399,
                           "name": "John Doe",
                           "slug": "Lorem Ipsum",
-                          "eventId": 329,
+                          "eventId": 419,
                           "options": "Lorem Ipsum",
                           "type": "Lorem Ipsum",
                           "showInList": true,
+                          "order": 360,
+                          "isSensitiveData": true,
+                          "reason": "Lorem Ipsum",
                           "createdAt": "2021-03-23T16:13:08.489+01:00",
                           "updatedAt": "2021-03-23T16:13:08.489+01:00",
                           "serializeExtras = true": null
@@ -4401,13 +4683,15 @@
                   "$ref": "#/components/schemas/Form"
                 },
                 "example": {
-                  "id": 885,
-                  "eventId": 603,
+                  "id": 326,
+                  "eventId": 385,
                   "isOpen": true,
                   "description": "Lorem ipsum dolor sit amet",
                   "name": "John Doe",
                   "isFirstForm": true,
                   "slug": "Lorem Ipsum",
+                  "order": 195,
+                  "submissionsLeft": 838,
                   "startDate": "2021-03-23T16:13:08.489+01:00",
                   "endDate": "2021-03-23T16:13:08.489+01:00",
                   "createdAt": "2021-03-23T16:13:08.489+01:00",
@@ -4438,18 +4722,20 @@
               "example": {
                 "name": "Lorem Ipsum",
                 "description": "Lorem Ipsum",
-                "startDate": 829,
+                "startDate": 602,
                 "isFirstForm": true,
+                "submissionsLeft": 970,
                 "attributes": [
                   {
-                    "id": 739,
+                    "id": 650,
                     "isRequired": true,
                     "isEditable": true,
-                    "order": 757
+                    "order": 72
                   }
                 ],
-                "endDate": 702,
-                "isOpen": true
+                "endDate": 311,
+                "isOpen": true,
+                "order": 165
               }
             }
           }
@@ -4488,26 +4774,31 @@
                   "$ref": "#/components/schemas/Form"
                 },
                 "example": {
-                  "id": 885,
-                  "eventId": 603,
+                  "id": 326,
+                  "eventId": 385,
                   "isOpen": true,
                   "description": "Lorem ipsum dolor sit amet",
                   "name": "John Doe",
                   "isFirstForm": true,
                   "slug": "Lorem Ipsum",
+                  "order": 195,
+                  "submissionsLeft": 838,
                   "startDate": "2021-03-23T16:13:08.489+01:00",
                   "endDate": "2021-03-23T16:13:08.489+01:00",
                   "createdAt": "2021-03-23T16:13:08.489+01:00",
                   "updatedAt": "2021-03-23T16:13:08.489+01:00",
                   "attributes": [
                     {
-                      "id": 170,
+                      "id": 399,
                       "name": "John Doe",
                       "slug": "Lorem Ipsum",
-                      "eventId": 329,
+                      "eventId": 419,
                       "options": "Lorem Ipsum",
                       "type": "Lorem Ipsum",
                       "showInList": true,
+                      "order": 360,
+                      "isSensitiveData": true,
+                      "reason": "Lorem Ipsum",
                       "createdAt": "2021-03-23T16:13:08.489+01:00",
                       "updatedAt": "2021-03-23T16:13:08.489+01:00",
                       "serializeExtras = true": null
@@ -4570,13 +4861,15 @@
                   "$ref": "#/components/schemas/Form"
                 },
                 "example": {
-                  "id": 885,
-                  "eventId": 603,
+                  "id": 326,
+                  "eventId": 385,
                   "isOpen": true,
                   "description": "Lorem ipsum dolor sit amet",
                   "name": "John Doe",
                   "isFirstForm": true,
                   "slug": "Lorem Ipsum",
+                  "order": 195,
+                  "submissionsLeft": 838,
                   "startDate": "2021-03-23T16:13:08.489+01:00",
                   "endDate": "2021-03-23T16:13:08.489+01:00",
                   "createdAt": "2021-03-23T16:13:08.489+01:00",
@@ -4627,18 +4920,20 @@
               "example": {
                 "name": "Lorem Ipsum",
                 "description": "Lorem Ipsum",
-                "startDate": 836,
-                "endDate": 430,
+                "startDate": 123,
+                "endDate": 567,
+                "submissionsLeft": 584,
                 "attributes": [
                   {
-                    "id": 83,
+                    "id": 950,
                     "isRequired": true,
                     "isEditable": true,
-                    "order": 457
+                    "order": 281
                   }
                 ],
                 "isOpen": true,
-                "isFirstForm": true
+                "isFirstForm": true,
+                "order": 580
               }
             }
           }
@@ -4742,7 +5037,7 @@
                 },
                 "example": [
                   {
-                    "id": 465,
+                    "id": 246,
                     "firstName": "John",
                     "lastName": "Doe",
                     "email": "johndoe@example.com",
@@ -4805,7 +5100,7 @@
               },
               "example": {
                 "email": "Lorem Ipsum",
-                "permissionsIds": [916],
+                "permissionsIds": [922],
                 "firstName": "Lorem Ipsum",
                 "lastName": "Lorem Ipsum",
                 "password": "Lorem Ipsum"
@@ -4847,7 +5142,7 @@
                   "$ref": "#/components/schemas/Admin"
                 },
                 "example": {
-                  "id": 465,
+                  "id": 246,
                   "firstName": "John",
                   "lastName": "Doe",
                   "email": "johndoe@example.com",
@@ -4912,7 +5207,7 @@
                   "$ref": "#/components/schemas/Admin"
                 },
                 "example": {
-                  "id": 465,
+                  "id": 246,
                   "firstName": "John",
                   "lastName": "Doe",
                   "email": "johndoe@example.com",
@@ -4964,7 +5259,7 @@
                 "$ref": "#/components/schemas/updateOrganizerPermissionsValidator"
               },
               "example": {
-                "permissionsIds": [12]
+                "permissionsIds": [864]
               }
             }
           }
@@ -5010,7 +5305,20 @@
             "description": "Returns **401** (Unauthorized)"
           },
           "403": {
-            "description": "Returns **403** (Forbidden)"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": "Unable to remove the last organizer from the event."
+                  }
+                },
+                "example": {
+                  "message": "Unable to remove the last organizer from the event."
+                }
+              }
+            },
+            "description": "Returns **403** (Forbidden) as **application/json**"
           }
         },
         "security": [
@@ -5035,6 +5343,16 @@
               "type": "number"
             },
             "required": true
+          },
+          {
+            "in": "query",
+            "name": "ids",
+            "description": "Users to only include in export file",
+            "schema": {
+              "example": "?ids=2, or ?ids=3,4",
+              "type": "string"
+            },
+            "required": false
           }
         ],
         "tags": ["PARTICIPANTS"],
@@ -5109,9 +5427,9 @@
                   "eventId": {},
                   "importedParticipants": [
                     {
-                      "id": 325,
+                      "id": 967,
                       "email": "johndoe@example.com",
-                      "eventId": 4,
+                      "eventId": 171,
                       "slug": "Lorem Ipsum",
                       "createdAt": "2021-03-23T16:13:08.489+01:00",
                       "updatedAt": "2021-03-23T16:13:08.489+01:00"
@@ -5343,6 +5661,16 @@
               "type": "string"
             },
             "required": true
+          },
+          {
+            "in": "query",
+            "name": "bonus_attributes",
+            "description": "Array of attribute SLUGS to include regardless of their show_in_list value",
+            "schema": {
+              "example": "attribute1,attribute2",
+              "type": "string"
+            },
+            "required": false
           }
         ],
         "tags": ["PARTICIPANTS"],
@@ -5353,23 +5681,21 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "type": "object"
+                    "$ref": "#/components/schemas/Participant"
                   }
                 },
                 "example": [
                   {
-                    "id": 32,
-                    "email": "test@test.pl",
-                    "created_at": "yyyy-MM-dd HH:mm:ss",
-                    "slug": "9081d217-9e13-4642-b7f0-2b8f8f409dfb",
-                    "createdAt": "2025-02-19 13:56:10",
-                    "updatedAt": "2025-02-19 13:56:10",
+                    "id": 967,
+                    "email": "johndoe@example.com",
+                    "slug": "Lorem Ipsum",
+                    "createdAt": "2021-03-23T16:13:08.489+01:00",
                     "attributes": [
                       {
-                        "id": 25,
-                        "name": "Sample Attribute",
-                        "value": "sample value",
-                        "slug": "sample-slug"
+                        "id": 2,
+                        "name": "test",
+                        "slug": "test",
+                        "value": "LoremIpsum"
                       }
                     ]
                   }
@@ -5413,9 +5739,9 @@
                   "$ref": "#/components/schemas/Participant"
                 },
                 "example": {
-                  "id": 325,
+                  "id": 967,
                   "email": "johndoe@example.com",
-                  "eventId": 4,
+                  "eventId": 171,
                   "slug": "Lorem Ipsum",
                   "createdAt": "2021-03-23T16:13:08.489+01:00",
                   "updatedAt": "2021-03-23T16:13:08.489+01:00"
@@ -5446,7 +5772,7 @@
                 "email": "Lorem Ipsum",
                 "participantAttributes": [
                   {
-                    "attributeId": 329,
+                    "attributeId": 391,
                     "value": "Lorem Ipsum"
                   }
                 ]
@@ -5487,7 +5813,7 @@
                   "$ref": "#/components/schemas/Participant"
                 },
                 "example": {
-                  "id": 325,
+                  "id": 967,
                   "email": "johndoe@example.com",
                   "slug": "Lorem Ipsum",
                   "createdAt": "2021-03-23T16:13:08.489+01:00"
@@ -5547,9 +5873,9 @@
                   "$ref": "#/components/schemas/Participant"
                 },
                 "example": {
-                  "id": 325,
+                  "id": 967,
                   "email": "johndoe@example.com",
-                  "eventId": 4,
+                  "eventId": 171,
                   "slug": "Lorem Ipsum",
                   "createdAt": "2021-03-23T16:13:08.489+01:00",
                   "updatedAt": "2021-03-23T16:13:08.489+01:00"
@@ -5580,7 +5906,7 @@
                 "email": "Lorem Ipsum",
                 "participantAttributes": [
                   {
-                    "attributeId": 458,
+                    "attributeId": 318,
                     "value": "Lorem Ipsum"
                   }
                 ]
@@ -5644,6 +5970,337 @@
             "BearerAuth": ["access"]
           }
         ]
+      }
+    },
+    "/api/v1/events/{eventSlug}/attributes/{attributeId}/blocks": {
+      "get": {
+        "summary": " (publicIndex)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/blocks_controller.ts_ - **publicIndex**",
+        "operationId": "publicGetBlocks",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventSlug",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "attributeId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": ["BLOCKS"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Block"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/PaginationMeta"
+                    }
+                  }
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": 112,
+                      "name": "John Doe",
+                      "description": "Lorem ipsum dolor sit amet",
+                      "parentId": 697,
+                      "capacity": 800,
+                      "isRootBlock": true,
+                      "attributeId": 630,
+                      "order": 409,
+                      "createdAt": "2021-03-23T16:13:08.489+01:00",
+                      "updatedAt": "2021-03-23T16:13:08.489+01:00"
+                    }
+                  ],
+                  "meta": {
+                    "total": 100,
+                    "page": 2,
+                    "perPage": 10,
+                    "currentPage": 3,
+                    "lastPage": 10,
+                    "firstPage": 1,
+                    "lastPageUrl": "/?page=10",
+                    "firstPageUrl": "/?page=1",
+                    "nextPageUrl": "/?page=6",
+                    "previousPageUrl": "/?page=5"
+                  }
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v1/events/{eventSlug}/public": {
+      "get": {
+        "summary": " (publicShow)",
+        "description": "Shows one event basic data without login\n\n _app/controllers/events_controller.ts_ - **publicShow**",
+        "operationId": "showPublicEvent",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventSlug",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": ["EVENT"],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Event"
+                },
+                "example": {
+                  "id": 439,
+                  "organizerId": 378,
+                  "name": "John Doe",
+                  "description": "Lorem ipsum dolor sit amet",
+                  "slug": "Lorem Ipsum",
+                  "startDate": "2021-03-23T16:13:08.489+01:00",
+                  "endDate": "2021-03-23T16:13:08.489+01:00",
+                  "lat": 41.705,
+                  "long": -87.475,
+                  "primaryColor": "Lorem Ipsum",
+                  "contactEmail": "Lorem Ipsum",
+                  "organizer": "Lorem Ipsum",
+                  "participantsCount": 543,
+                  "location": "Lorem Ipsum",
+                  "isActive": true,
+                  "createdAt": "2021-03-23T16:13:08.489+01:00",
+                  "updatedAt": "2021-03-23T16:13:08.489+01:00",
+                  "photoUrl": "Lorem Ipsum",
+                  "forms": [
+                    {
+                      "id": 326,
+                      "eventId": 385,
+                      "isOpen": true,
+                      "description": "Lorem ipsum dolor sit amet",
+                      "name": "John Doe",
+                      "isFirstForm": true,
+                      "slug": "Lorem Ipsum",
+                      "order": 195,
+                      "submissionsLeft": 838,
+                      "startDate": "2021-03-23T16:13:08.489+01:00",
+                      "endDate": "2021-03-23T16:13:08.489+01:00",
+                      "createdAt": "2021-03-23T16:13:08.489+01:00",
+                      "updatedAt": "2021-03-23T16:13:08.489+01:00"
+                    }
+                  ],
+                  "socialMediaLinks": ["Lorem Ipsum"],
+                  "termsLink": "Lorem Ipsum"
+                }
+              }
+            },
+            "description": "Returns **201** (Created) as **application/json**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v1/events/{eventSlug}/forms/{formSlug}": {
+      "get": {
+        "summary": " (showBySlug)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/forms_controller.ts_ - **showBySlug**",
+        "operationId": "getFormBySlug",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventSlug",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "formSlug",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": ["FORMS"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Form"
+                },
+                "example": {
+                  "id": 326,
+                  "eventId": 385,
+                  "isOpen": true,
+                  "description": "Lorem ipsum dolor sit amet",
+                  "name": "John Doe",
+                  "isFirstForm": true,
+                  "slug": "Lorem Ipsum",
+                  "order": 195,
+                  "submissionsLeft": 838,
+                  "startDate": "2021-03-23T16:13:08.489+01:00",
+                  "endDate": "2021-03-23T16:13:08.489+01:00",
+                  "createdAt": "2021-03-23T16:13:08.489+01:00",
+                  "updatedAt": "2021-03-23T16:13:08.489+01:00",
+                  "attributes": [
+                    {
+                      "id": 399,
+                      "name": "John Doe",
+                      "slug": "Lorem Ipsum",
+                      "eventId": 419,
+                      "options": "Lorem Ipsum",
+                      "type": "Lorem Ipsum",
+                      "showInList": true,
+                      "order": 360,
+                      "isSensitiveData": true,
+                      "reason": "Lorem Ipsum",
+                      "createdAt": "2021-03-23T16:13:08.489+01:00",
+                      "updatedAt": "2021-03-23T16:13:08.489+01:00",
+                      "serializeExtras = true": null
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "404": {
+            "content": {
+              "text/plain": {
+                "example": "{ message: \"Row not found\", \"name\": \"Exception\", status: 404},"
+              }
+            },
+            "description": "Returns **404** (Not Found) as **text/plain**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v1/events/{eventSlug}/participants/{participantSlug}": {
+      "get": {
+        "summary": "Get participant (index)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/public_participants_controller.ts_ - **index**",
+        "operationId": "getPublicParticipant",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventSlug",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "participantSlug",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "<attributes[]>",
+            "description": "Array of attributes id to fetch",
+            "schema": {
+              "example": null,
+              "type": "string"
+            },
+            "required": false
+          }
+        ],
+        "tags": ["PUBLIC_PARTICIPANTS"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Participant.with(attributes)"
+                },
+                "example": {}
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "example": "{ errors: [{ message: \"Unauthorized access\" }] }"
+              }
+            },
+            "description": "Returns **401** (Unauthorized) as **text/plain**"
+          }
+        },
+        "security": []
+      },
+      "delete": {
+        "summary": "Removes a participant from an event (unregister)",
+        "description": "Removes a participant from an event\n\n _app/controllers/participants_controller.ts_ - **unregister**",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventSlug",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "participantSlug",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": ["PARTICIPANTS"],
+        "responses": {
+          "204": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {}
+              }
+            },
+            "description": "Returns **204** (No Content) as **application/json**"
+          },
+          "404": {
+            "content": {
+              "text/plain": {
+                "example": "{ message: \"Row not found\", \"name\": \"Exception\", status: 404},"
+              }
+            },
+            "description": "Returns **404** (Not Found) as **text/plain**"
+          }
+        },
+        "security": []
       }
     },
     "/api/v1/events/{eventSlug}/forms/{id}/submit": {
@@ -5757,7 +6414,7 @@
                 },
                 "example": {
                   "admin": {
-                    "id": 465,
+                    "id": 246,
                     "firstName": "John",
                     "lastName": "Doe",
                     "email": "johndoe@example.com",
@@ -5874,7 +6531,7 @@
                 },
                 "example": {
                   "admin": {
-                    "id": 465,
+                    "id": 246,
                     "firstName": "John",
                     "lastName": "Doe",
                     "email": "johndoe@example.com",
@@ -5955,7 +6612,7 @@
                   "$ref": "#/components/schemas/Admin"
                 },
                 "example": {
-                  "id": 465,
+                  "id": 246,
                   "firstName": "John",
                   "lastName": "Doe",
                   "email": "johndoe@example.com",
@@ -6011,12 +6668,293 @@
           }
         ]
       }
+    },
+    "/api/v1/auth/sendPasswordResetToken": {
+      "post": {
+        "summary": " (sendPasswordResetToken)",
+        "description": "Sends an email with a token to reset a password\n\n _app/controllers/auth_controller.ts_ - **sendPasswordResetToken**",
+        "operationId": "sendPasswordResetToken",
+        "parameters": [],
+        "tags": ["AUTH"],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/sendPasswordResetTokenValidator"
+              },
+              "example": {
+                "email": "Lorem Ipsum"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/resetPassword": {
+      "post": {
+        "summary": " (resetPassword)",
+        "description": "Resets admin's password\n\n _app/controllers/auth_controller.ts_ - **resetPassword**",
+        "operationId": "resetPassword",
+        "parameters": [],
+        "tags": ["AUTH"],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/resetPasswordValidator"
+              },
+              "example": {
+                "token": "Lorem Ipsum",
+                "newPassword": "Lorem Ipsum"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "tags": [
     {
       "name": "V1",
       "description": "Everything related to V1"
+    },
+    {
+      "name": "EVENT",
+      "description": "Everything related to EVENT"
+    },
+    {
+      "name": "ADMINS",
+      "description": "Everything related to ADMINS"
+    },
+    {
+      "name": "ADMINS",
+      "description": "Everything related to ADMINS"
+    },
+    {
+      "name": "ADMINS",
+      "description": "Everything related to ADMINS"
+    },
+    {
+      "name": "ADMINS",
+      "description": "Everything related to ADMINS"
+    },
+    {
+      "name": "ADMINS",
+      "description": "Everything related to ADMINS"
+    },
+    {
+      "name": "EVENT",
+      "description": "Everything related to EVENT"
+    },
+    {
+      "name": "EVENT",
+      "description": "Everything related to EVENT"
+    },
+    {
+      "name": "EVENT",
+      "description": "Everything related to EVENT"
+    },
+    {
+      "name": "EVENT",
+      "description": "Everything related to EVENT"
+    },
+    {
+      "name": "EVENT",
+      "description": "Everything related to EVENT"
+    },
+    {
+      "name": "EVENT",
+      "description": "Everything related to EVENT"
+    },
+    {
+      "name": "PERMISSIONS",
+      "description": "Everything related to PERMISSIONS"
+    },
+    {
+      "name": "PERMISSIONS",
+      "description": "Everything related to PERMISSIONS"
+    },
+    {
+      "name": "PERMISSIONS",
+      "description": "Everything related to PERMISSIONS"
+    },
+    {
+      "name": "PERMISSIONS",
+      "description": "Everything related to PERMISSIONS"
+    },
+    {
+      "name": "PERMISSIONS",
+      "description": "Everything related to PERMISSIONS"
+    },
+    {
+      "name": "ATTRIBUTES",
+      "description": "Everything related to ATTRIBUTES"
+    },
+    {
+      "name": "ATTRIBUTES",
+      "description": "Everything related to ATTRIBUTES"
+    },
+    {
+      "name": "ATTRIBUTES",
+      "description": "Everything related to ATTRIBUTES"
+    },
+    {
+      "name": "ATTRIBUTES",
+      "description": "Everything related to ATTRIBUTES"
+    },
+    {
+      "name": "ATTRIBUTES",
+      "description": "Everything related to ATTRIBUTES"
+    },
+    {
+      "name": "BLOCKS",
+      "description": "Everything related to BLOCKS"
+    },
+    {
+      "name": "BLOCKS",
+      "description": "Everything related to BLOCKS"
+    },
+    {
+      "name": "BLOCKS",
+      "description": "Everything related to BLOCKS"
+    },
+    {
+      "name": "BLOCKS",
+      "description": "Everything related to BLOCKS"
+    },
+    {
+      "name": "BLOCKS",
+      "description": "Everything related to BLOCKS"
+    },
+    {
+      "name": "PARTICIPANTS",
+      "description": "Everything related to PARTICIPANTS"
+    },
+    {
+      "name": "EMAILS",
+      "description": "Everything related to EMAILS"
+    },
+    {
+      "name": "EMAILS",
+      "description": "Everything related to EMAILS"
+    },
+    {
+      "name": "EMAILS",
+      "description": "Everything related to EMAILS"
+    },
+    {
+      "name": "EMAILS",
+      "description": "Everything related to EMAILS"
+    },
+    {
+      "name": "EMAILS",
+      "description": "Everything related to EMAILS"
+    },
+    {
+      "name": "EMAILS",
+      "description": "Everything related to EMAILS"
+    },
+    {
+      "name": "EMAILS",
+      "description": "Everything related to EMAILS"
+    },
+    {
+      "name": "FORM",
+      "description": "Everything related to FORM"
+    },
+    {
+      "name": "FORMS",
+      "description": "Everything related to FORMS"
+    },
+    {
+      "name": "FORMS",
+      "description": "Everything related to FORMS"
+    },
+    {
+      "name": "FORMS",
+      "description": "Everything related to FORMS"
+    },
+    {
+      "name": "FORMS",
+      "description": "Everything related to FORMS"
+    },
+    {
+      "name": "FORMS",
+      "description": "Everything related to FORMS"
+    },
+    {
+      "name": "ORGANIZERS",
+      "description": "Everything related to ORGANIZERS"
+    },
+    {
+      "name": "ORGANIZERS",
+      "description": "Everything related to ORGANIZERS"
+    },
+    {
+      "name": "ORGANIZERS",
+      "description": "Everything related to ORGANIZERS"
+    },
+    {
+      "name": "ORGANIZERS",
+      "description": "Everything related to ORGANIZERS"
+    },
+    {
+      "name": "ORGANIZERS",
+      "description": "Everything related to ORGANIZERS"
+    },
+    {
+      "name": "PARTICIPANTS",
+      "description": "Everything related to PARTICIPANTS"
+    },
+    {
+      "name": "PARTICIPANTS",
+      "description": "Everything related to PARTICIPANTS"
+    },
+    {
+      "name": "ATTRIBUTES",
+      "description": "Everything related to ATTRIBUTES"
+    },
+    {
+      "name": "PARTICIPANTS",
+      "description": "Everything related to PARTICIPANTS"
+    },
+    {
+      "name": "PARTICIPANTS",
+      "description": "Everything related to PARTICIPANTS"
+    },
+    {
+      "name": "PARTICIPANTS",
+      "description": "Everything related to PARTICIPANTS"
+    },
+    {
+      "name": "PARTICIPANTS",
+      "description": "Everything related to PARTICIPANTS"
+    },
+    {
+      "name": "PARTICIPANTS",
+      "description": "Everything related to PARTICIPANTS"
+    },
+    {
+      "name": "PARTICIPANTS",
+      "description": "Everything related to PARTICIPANTS"
     },
     {
       "name": "BLOCKS",
@@ -6035,212 +6973,20 @@
       "description": "Everything related to PUBLIC_PARTICIPANTS"
     },
     {
-      "name": "ADMINS",
-      "description": "Everything related to ADMINS"
-    },
-    {
-      "name": "ADMINS",
-      "description": "Everything related to ADMINS"
-    },
-    {
-      "name": "ADMINS",
-      "description": "Everything related to ADMINS"
-    },
-    {
-      "name": "ADMINS",
-      "description": "Everything related to ADMINS"
-    },
-    {
-      "name": "ADMINS",
-      "description": "Everything related to ADMINS"
-    },
-    {
-      "name": "EVENT",
-      "description": "Everything related to EVENT"
-    },
-    {
-      "name": "EVENT",
-      "description": "Everything related to EVENT"
-    },
-    {
-      "name": "EVENT",
-      "description": "Everything related to EVENT"
-    },
-    {
-      "name": "EVENT",
-      "description": "Everything related to EVENT"
-    },
-    {
-      "name": "EVENT",
-      "description": "Everything related to EVENT"
-    },
-    {
-      "name": "PERMISSIONS",
-      "description": "Everything related to PERMISSIONS"
-    },
-    {
-      "name": "PERMISSIONS",
-      "description": "Everything related to PERMISSIONS"
-    },
-    {
-      "name": "PERMISSIONS",
-      "description": "Everything related to PERMISSIONS"
-    },
-    {
-      "name": "PERMISSIONS",
-      "description": "Everything related to PERMISSIONS"
-    },
-    {
-      "name": "PERMISSIONS",
-      "description": "Everything related to PERMISSIONS"
-    },
-    {
-      "name": "ATTRIBUTES",
-      "description": "Everything related to ATTRIBUTES"
-    },
-    {
-      "name": "ATTRIBUTES",
-      "description": "Everything related to ATTRIBUTES"
-    },
-    {
-      "name": "ATTRIBUTES",
-      "description": "Everything related to ATTRIBUTES"
-    },
-    {
-      "name": "ATTRIBUTES",
-      "description": "Everything related to ATTRIBUTES"
-    },
-    {
-      "name": "ATTRIBUTES",
-      "description": "Everything related to ATTRIBUTES"
-    },
-    {
-      "name": "BLOCKS",
-      "description": "Everything related to BLOCKS"
-    },
-    {
-      "name": "BLOCKS",
-      "description": "Everything related to BLOCKS"
-    },
-    {
-      "name": "BLOCKS",
-      "description": "Everything related to BLOCKS"
-    },
-    {
-      "name": "BLOCKS",
-      "description": "Everything related to BLOCKS"
-    },
-    {
-      "name": "BLOCKS",
-      "description": "Everything related to BLOCKS"
-    },
-    {
-      "name": "EMAILS",
-      "description": "Everything related to EMAILS"
-    },
-    {
-      "name": "EMAILS",
-      "description": "Everything related to EMAILS"
-    },
-    {
-      "name": "EMAILS",
-      "description": "Everything related to EMAILS"
-    },
-    {
-      "name": "EMAILS",
-      "description": "Everything related to EMAILS"
-    },
-    {
-      "name": "EMAILS",
-      "description": "Everything related to EMAILS"
-    },
-    {
-      "name": "EMAILS",
-      "description": "Everything related to EMAILS"
-    },
-    {
-      "name": "FORMS",
-      "description": "Everything related to FORMS"
-    },
-    {
-      "name": "FORMS",
-      "description": "Everything related to FORMS"
-    },
-    {
-      "name": "FORMS",
-      "description": "Everything related to FORMS"
-    },
-    {
-      "name": "FORMS",
-      "description": "Everything related to FORMS"
-    },
-    {
-      "name": "FORMS",
-      "description": "Everything related to FORMS"
-    },
-    {
-      "name": "ORGANIZERS",
-      "description": "Everything related to ORGANIZERS"
-    },
-    {
-      "name": "ORGANIZERS",
-      "description": "Everything related to ORGANIZERS"
-    },
-    {
-      "name": "ORGANIZERS",
-      "description": "Everything related to ORGANIZERS"
-    },
-    {
-      "name": "ORGANIZERS",
-      "description": "Everything related to ORGANIZERS"
-    },
-    {
-      "name": "ORGANIZERS",
-      "description": "Everything related to ORGANIZERS"
-    },
-    {
-      "name": "PARTICIPANTS",
-      "description": "Everything related to PARTICIPANTS"
-    },
-    {
-      "name": "PARTICIPANTS",
-      "description": "Everything related to PARTICIPANTS"
-    },
-    {
-      "name": "ATTRIBUTES",
-      "description": "Everything related to ATTRIBUTES"
-    },
-    {
-      "name": "PARTICIPANTS",
-      "description": "Everything related to PARTICIPANTS"
-    },
-    {
-      "name": "PARTICIPANTS",
-      "description": "Everything related to PARTICIPANTS"
-    },
-    {
-      "name": "PARTICIPANTS",
-      "description": "Everything related to PARTICIPANTS"
-    },
-    {
-      "name": "PARTICIPANTS",
-      "description": "Everything related to PARTICIPANTS"
-    },
-    {
-      "name": "PARTICIPANTS",
-      "description": "Everything related to PARTICIPANTS"
-    },
-    {
-      "name": "PARTICIPANTS",
-      "description": "Everything related to PARTICIPANTS"
-    },
-    {
       "name": "FORMS",
       "description": "Everything related to FORMS"
     },
     {
       "name": "PARTICIPANTS",
       "description": "Everything related to PARTICIPANTS"
+    },
+    {
+      "name": "AUTH",
+      "description": "Everything related to AUTH"
+    },
+    {
+      "name": "AUTH",
+      "description": "Everything related to AUTH"
     },
     {
       "name": "AUTH",
