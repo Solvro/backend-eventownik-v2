@@ -32,19 +32,18 @@ export const participantsUpdateValidator = vine.compile(
       .string()
       .email()
       .unique(async (db, value, field) => {
-        const participantEmail = (await db
+        const participant = await db
           .from("participants")
-          .select("email", "id")
+          .select("id")
           .where("email", value)
           .andWhere("event_id", +field.meta.eventId)
-          .first()) as { email: string; id: number } | null;
-        if (
-          participantEmail !== null &&
-          participantEmail.id === field.meta.participantId
-        ) {
+          .first();
+
+        if (!participant) {
           return true;
         }
-        return participantEmail === null;
+
+        return participant.id === field.meta.participantId;
       })
       .optional(),
     participantAttributes: vine

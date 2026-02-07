@@ -173,7 +173,7 @@ export default class ParticipantsController {
    * @update
    * @tag participants
    * @summary Update a participant
-   * @description Update a participant for specific event with optional attributes
+   * @description Update a participant's email or attributes for a specific event
    * @requestBody <participantsUpdateValidator>
    * @responseBody 200 - <Participant>
    */
