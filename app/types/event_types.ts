@@ -1,4 +1,4 @@
-export const EventTypes = {
+export const EventCategories = {
   PARTY: "party",
   INTEGRATION: "integration",
   TRIP: "trip",
@@ -9,6 +9,7 @@ export const EventTypes = {
   FAIR: "fair",
 } as const;
 
-export type EventType = (typeof EventTypes)[keyof typeof EventTypes];
+export type EventCategory =
+  (typeof EventCategories)[keyof typeof EventCategories];
 
-export const ALLOWED_EVENT_TYPES = Object.values(EventTypes);
+export const ALLOWED_EVENT_CATEGORIES = Object.values(EventCategories);

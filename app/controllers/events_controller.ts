@@ -144,7 +144,7 @@ export default class EventController {
         "participants_count",
         "photo_url",
         "location",
-        "types",
+        "categories",
       );
 
     return events;

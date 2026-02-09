@@ -5,13 +5,13 @@ export default class extends BaseSchema {
 
   async up() {
     this.schema.alterTable(this.tableName, (table) => {
-      table.json("types").nullable();
+      table.json("categories").nullable();
     });
   }
 
   async down() {
     this.schema.alterTable(this.tableName, (table) => {
-      table.dropColumn("types");
+      table.dropColumn("categories");
     });
   }
 }
