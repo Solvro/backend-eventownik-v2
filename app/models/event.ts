@@ -19,6 +19,7 @@ import type {
 import Email from "#models/email";
 import Form from "#models/form";
 
+import { EventType } from "../types/event_types.js";
 import Admin from "./admin.js";
 import Attribute from "./attribute.js";
 import Participant from "./participant.js";
@@ -66,6 +67,12 @@ export default class Event extends BaseModel {
 
   @column()
   declare location: string | null;
+
+  @column({
+    prepare: (value: EventType[] | null) =>
+      value ? JSON.stringify(value) : null,
+  })
+  declare types: EventType[] | null;
 
   @column()
   declare isActive: boolean;

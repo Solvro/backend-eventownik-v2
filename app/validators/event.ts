@@ -4,6 +4,8 @@ import { DateTime } from "luxon";
 
 import string from "@adonisjs/core/helpers/string";
 
+import { ALLOWED_EVENT_TYPES } from "../types/event_types.js";
+
 function dateTimeTransform(value: Date): DateTime {
   const parsed = DateTime.fromJSDate(value);
   if (!parsed.isValid) {
@@ -70,6 +72,7 @@ export const createEventValidator = vine.compile(
       .nullable()
       .optional(),
     termsLink: vine.string().nullable().optional(),
+    types: vine.array(vine.enum(ALLOWED_EVENT_TYPES)).nullable().optional(),
   }),
 );
 
@@ -121,6 +124,7 @@ export const updateEventValidator = vine.compile(
       .nullable()
       .optional(),
     termsLink: vine.string().nullable().optional(),
+    types: vine.array(vine.enum(ALLOWED_EVENT_TYPES)).nullable().optional(),
   }),
 );
 
