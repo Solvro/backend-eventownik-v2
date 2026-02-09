@@ -70,7 +70,7 @@ export default class Event extends BaseModel {
 
   @column({
     prepare: (value: EventType[] | null) =>
-      value ? JSON.stringify(value) : null,
+      value !== null ? JSON.stringify(value) : null,
   })
   declare types: EventType[] | null;
 
