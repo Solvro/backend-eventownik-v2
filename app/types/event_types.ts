@@ -1,10 +1,10 @@
 export const EventCategories = {
-  PARIES: "paries",
+  PARTIES: "parties",
   TRIPS: "trips",
   RECRUITMENT: "recruitment",
   EDUCATIONAL: "educational",
   SPORT: "sport",
-  VOULUNTEERING: "volunteering",
+  VOLUNTEERING: "volunteering",
   OTHER: "other",
 } as const;
 
