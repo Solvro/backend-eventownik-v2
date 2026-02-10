@@ -71,12 +71,13 @@ export default class Event extends BaseModel {
   @column({
     prepare: (value: EventCategory[] | null) =>
       value !== null ? JSON.stringify(value) : null,
-    consume: (value: any) => {
-      if (!value) {
+    consume: (value: string | EventCategory[] | null) => {
+      if (value === null) {
         return [];
       }
-      const parsed = typeof value === "string" ? JSON.parse(value) : value;
-      return parsed || [];
+      const parsed =
+        typeof value === "string" ? (JSON.parse(value) as unknown) : value;
+      return Array.isArray(parsed) ? (parsed as EventCategory[]) : [];
     },
   })
   declare categories: EventCategory[];
