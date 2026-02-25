@@ -21,6 +21,9 @@ export default class Email extends BaseModel {
   declare content: string;
 
   @column()
+  declare schema: string | null;
+
+  @column()
   declare trigger: string;
 
   @column()
