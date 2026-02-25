@@ -1,6 +1,5 @@
 import { inject } from "@adonisjs/core";
 import { MultipartFile } from "@adonisjs/core/bodyparser";
-import { Exception } from "@adonisjs/core/exceptions";
 
 import Event from "#models/event";
 import Form from "#models/form";
@@ -166,75 +165,98 @@ export class FormService {
       allowedFieldsIds,
     );
 
-    const transformedFormFields = await Promise.all(
-      Object.entries(formFields).map(async ([attributeId, value]) => {
-        const attribute = form.attributes.find((a) => a.id === +attributeId);
+    const transformedFormFields: Array<{
+      attributeId: number;
+      value: string | null;
+    }> = [];
 
-        if (
-          fileAttributesIds.has(+attributeId) &&
-          value !== null &&
-          value !== "null"
-        ) {
-          const fileName = await this.fileService.storeFile(
-            value as MultipartFile,
-          );
+    for (const [attributeIdStr, value] of Object.entries(formFields)) {
+      const attributeId = +attributeIdStr;
+      const attribute = form.attributes.find((a) => a.id === attributeId);
 
-          if (fileName === undefined) {
-            throw new Exception("Error while saving a file");
-          }
+      // file handling
+      if (
+        fileAttributesIds.has(attributeId) &&
+        value !== null &&
+        value !== "null"
+      ) {
+        const fileName = await this.fileService.storeFile(
+          value as MultipartFile,
+        );
 
+        if (fileName === undefined) {
           return {
-            attributeId: +attributeId,
-            value: fileName,
+            status: 500,
+            error: { message: "Error while saving a file" },
           };
-        } else if (
-          blockAttributesIds.has(+attributeId) &&
-          value !== null &&
-          value !== "null"
-        ) {
-          const blockId = Number(value);
-
-          if (Number.isNaN(blockId)) {
-            throw new Exception("Invalid block ID format");
-          }
-
-          const canSignInToBlock = await this.blockService.canSignInToBlock(
-            +attributeId,
-            blockId,
-          );
-
-          if (!canSignInToBlock) {
-            throw new Exception("Block is full");
-          }
         }
 
-        if (
-          attribute &&
-          (attribute.type === "select" || attribute.type === "multiselect")
-        ) {
-          if (value !== null && value !== "null") {
-            const parsedOptions =
-              typeof attribute.options === "string"
-                ? JSON.parse(attribute.options)
-                : attribute.options || [];
+        transformedFormFields.push({ attributeId, value: fileName });
+        continue;
+      }
 
-            if (
-              !attribute.allowOther &&
-              !parsedOptions.includes(value as string)
-            ) {
-              throw new Exception(
-                `Invalid option selected for attribute ${attribute.name}`,
-              );
-            }
-          }
+      // block handling
+      if (
+        blockAttributesIds.has(attributeId) &&
+        value !== null &&
+        value !== "null"
+      ) {
+        const blockId = Number(value);
+
+        if (Number.isNaN(blockId)) {
+          return {
+            status: 400,
+            error: {
+              message: `Invalid block ID format for attribute ${attribute?.name}`,
+            },
+          };
         }
 
-        return {
-          attributeId: +attributeId,
-          value: value as string | null,
-        };
-      }),
-    );
+        const canSignInToBlock = await this.blockService.canSignInToBlock(
+          attributeId,
+          blockId,
+        );
+
+        if (!canSignInToBlock) {
+          return {
+            status: 400,
+            error: {
+              message: `Block is full for attribute ${attribute?.name}`,
+            },
+          };
+        }
+      }
+
+      // select/multiselect handling
+      if (
+        attribute &&
+        (attribute.type === "select" || attribute.type === "multiselect")
+      ) {
+        if (value !== null && value !== "null") {
+          const parsedOptions =
+            typeof attribute.options === "string"
+              ? JSON.parse(attribute.options)
+              : attribute.options || [];
+
+          if (
+            !attribute.allowOther &&
+            !parsedOptions.includes(value as string)
+          ) {
+            return {
+              status: 400,
+              error: {
+                message: `Invalid option selected for attribute ${attribute.name}`,
+              },
+            };
+          }
+        }
+      }
+
+      transformedFormFields.push({
+        attributeId,
+        value: value as string | null,
+      });
+    }
 
     if (participantEmail !== undefined) {
       participant = await this.participantService.createParticipant(event.id, {
