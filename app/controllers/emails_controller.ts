@@ -32,6 +32,7 @@ export default class EmailsController {
         "trigger",
         "trigger_value",
         "trigger_value_2",
+        "order",
         "created_at",
         "updated_at",
       ])
