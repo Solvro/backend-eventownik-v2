@@ -165,10 +165,10 @@ export class FormService {
       allowedFieldsIds,
     );
 
-    const transformedFormFields: Array<{
+    const transformedFormFields: {
       attributeId: number;
       value: string | null;
-    }> = [];
+    }[] = [];
 
     for (const [attributeIdStr, value] of Object.entries(formFields)) {
       const attributeId = +attributeIdStr;
@@ -229,14 +229,15 @@ export class FormService {
 
       // select/multiselect handling
       if (
-        attribute &&
+        attribute !== undefined &&
         (attribute.type === "select" || attribute.type === "multiselect")
       ) {
         if (value !== null && value !== "null") {
-          const parsedOptions =
+          const parsedOptions = (
             typeof attribute.options === "string"
               ? JSON.parse(attribute.options)
-              : attribute.options || [];
+              : []
+          ) as string[];
 
           if (
             !attribute.allowOther &&
