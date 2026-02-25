@@ -39,6 +39,7 @@ export const createAttributeSchema = vine.object({
   showInList: vine.boolean().optional(),
   isSensitiveData: vine.boolean().optional(),
   reason: vine.string().optional().requiredWhen("isSensitiveData", "=", true),
+  allowOther: vine.boolean().optional(),
 });
 
 export const createAttributeValidator = vine.compile(createAttributeSchema);
@@ -83,6 +84,7 @@ export const UpdateAttributeSchema = vine.object({
   showInList: vine.boolean().optional(),
   isSensitiveData: vine.boolean().optional(),
   reason: vine.string().optional().requiredWhen("isSensitiveData", "=", true),
+  allowOther: vine.boolean().optional(),
 });
 
 export const updateAttributeValidator = vine.compile(UpdateAttributeSchema);

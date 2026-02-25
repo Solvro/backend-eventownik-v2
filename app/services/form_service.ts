@@ -168,6 +168,8 @@ export class FormService {
 
     const transformedFormFields = await Promise.all(
       Object.entries(formFields).map(async ([attributeId, value]) => {
+        const attribute = form.attributes.find((a) => a.id === +attributeId);
+
         if (
           fileAttributesIds.has(+attributeId) &&
           value !== null &&
@@ -203,6 +205,27 @@ export class FormService {
 
           if (!canSignInToBlock) {
             throw new Exception("Block is full");
+          }
+        }
+
+        if (
+          attribute &&
+          (attribute.type === "select" || attribute.type === "multiselect")
+        ) {
+          if (value !== null && value !== "null") {
+            const parsedOptions =
+              typeof attribute.options === "string"
+                ? JSON.parse(attribute.options)
+                : attribute.options || [];
+
+            if (
+              !attribute.allowOther &&
+              !parsedOptions.includes(value as string)
+            ) {
+              throw new Exception(
+                `Invalid option selected for attribute ${attribute.name}`,
+              );
+            }
           }
         }
 
