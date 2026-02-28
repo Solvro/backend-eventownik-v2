@@ -40,6 +40,7 @@ export class BlockService {
         void query.where("attributes.id", block.attributeId);
         void query.where("participant_attributes.value", block.id);
       })
+      .orderBy("email", "asc")
       .preload("attributes", (q) => {
         void q.whereIn("slug", participantFields);
         void q.pivotColumns(["value"]);
