@@ -4,6 +4,7 @@ import type { HttpContext } from "@adonisjs/core/http";
 import Event from "#models/event";
 import { AttributeService } from "#services/attribute_service";
 import {
+  bulkAttributeValidator,
   createAttributeValidator,
   updateAttributeValidator,
 } from "#validators/attribute";
@@ -122,5 +123,28 @@ export default class AttributesController {
     await this.attributeService.deleteAttribute(eventId, attributeId);
 
     return response.noContent();
+  }
+
+  /**
+   * @bulkUpdate
+   * @operationId bulkUpdateEventAttributes
+   * @description Bulk update or create attributes for an event. Items with ID are updated, items without ID are created.
+   * @tag attributes
+   * @requestBody <bulkAttributeValidator>
+   * @responseBody 200 - <Attribute[]>
+   */
+  async bulkUpdate({ params, request, bouncer }: HttpContext) {
+    const eventId = +params.eventId;
+
+    await bouncer.authorize("manage_setting", await Event.findOrFail(eventId));
+
+    const data = await request.validateUsing(bulkAttributeValidator);
+
+    const results = await this.attributeService.bulkUpdateAttributes(
+      eventId,
+      data,
+    );
+
+    return results;
   }
 }
