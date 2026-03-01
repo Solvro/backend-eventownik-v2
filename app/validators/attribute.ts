@@ -86,3 +86,41 @@ export const UpdateAttributeSchema = vine.object({
 });
 
 export const updateAttributeValidator = vine.compile(UpdateAttributeSchema);
+
+export const bulkAttributeSchema = vine.array(
+  vine.object({
+    id: vine.number().optional(),
+    name: vine.string().optional(),
+    slug: vine
+      .string()
+      .transform((value) => string.slug(value, { lower: true }))
+      .nullable()
+      .optional(),
+    type: vine
+      .enum([
+        "text",
+        "textarea",
+        "number",
+        "file",
+        "select",
+        "multiselect",
+        "block",
+        "date",
+        "time",
+        "datetime",
+        "email",
+        "tel",
+        "color",
+        "checkbox",
+        "drawing",
+      ])
+      .optional(),
+    options: vine.array(vine.string()).minLength(1).nullable().optional(),
+    order: vine.number().optional(),
+    showInList: vine.boolean().optional(),
+    isSensitiveData: vine.boolean().optional(),
+    reason: vine.string().optional().requiredWhen("isSensitiveData", "=", true),
+  }),
+);
+
+export const bulkAttributeValidator = vine.compile(bulkAttributeSchema);

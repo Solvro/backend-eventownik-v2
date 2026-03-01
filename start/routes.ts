@@ -50,6 +50,10 @@ router
 
         router
           .group(() => {
+            router.put("attributes/bulk-update", [
+              AttributesController,
+              "bulkUpdate",
+            ]);
             router.resource("attributes", AttributesController).apiOnly();
             router
               .group(() => {
