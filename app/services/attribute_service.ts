@@ -23,8 +23,8 @@ export class AttributeService {
 
   async getEventAttributes(eventId: number, trx?: TransactionClientContract) {
     const query = Attribute.query();
-    if (trx) {
-      query.useTransaction(trx);
+    if (trx !== undefined) {
+      void query.useTransaction(trx);
     }
     const attributes = await query.where("event_id", eventId);
 
@@ -37,8 +37,8 @@ export class AttributeService {
     trx?: TransactionClientContract,
   ) {
     const query = Attribute.query();
-    if (trx) {
-      query.useTransaction(trx);
+    if (trx !== undefined) {
+      void query.useTransaction(trx);
     }
     const attribute = await query
       .where("event_id", eventId)
@@ -52,7 +52,7 @@ export class AttributeService {
     createAttributeDTO: CreateAttributeDTO,
     trx?: TransactionClientContract,
   ): Promise<Attribute> {
-    if (!trx) {
+    if (trx === undefined) {
       return db.transaction(async (newTrx) => {
         return this.createAttribute(createAttributeDTO, newTrx);
       });
@@ -68,7 +68,7 @@ export class AttributeService {
       ...createAttributeDTO,
       options: optionsJSON,
     });
-    newAttribute.useTransaction(trx);
+    void newAttribute.useTransaction(trx);
     await newAttribute.save();
 
     if (newAttribute.type === "block") {
@@ -84,7 +84,7 @@ export class AttributeService {
     updates: UpdateAttributeDTO,
     trx?: TransactionClientContract, // Add trx parameter
   ): Promise<Attribute> {
-    if (!trx) {
+    if (trx === undefined) {
       return db.transaction(async (newTrx) => {
         return this.updateAttribute(eventId, attributeId, updates, newTrx);
       });
@@ -108,7 +108,7 @@ export class AttributeService {
       options: optionsJSON,
     });
 
-    attributeToUpdate.useTransaction(trx);
+    void attributeToUpdate.useTransaction(trx);
     await attributeToUpdate.save();
 
     const updatedAttribute = await this.getEventAttribute(
@@ -119,12 +119,15 @@ export class AttributeService {
 
     if (previousType === "block") {
       await updatedAttribute.load("rootBlock", (query) => {
-        query.useTransaction(trx);
+        void query.useTransaction(trx);
       });
 
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      if (updatedAttribute.type !== "block" && updatedAttribute.rootBlock) {
-        updatedAttribute.rootBlock.useTransaction(trx);
+      if (
+        updatedAttribute.type !== "block" &&
+        updatedAttribute.rootBlock !== null
+      ) {
+        void updatedAttribute.rootBlock.useTransaction(trx);
         await updatedAttribute.rootBlock.delete();
       }
     } else if (updatedAttribute.type === "block") {
@@ -139,18 +142,18 @@ export class AttributeService {
     attributeId: number,
     trx?: TransactionClientContract,
   ): Promise<void> {
-    if (!trx) {
+    if (trx === undefined) {
       return db.transaction(async (newTrx) => {
         return this.deleteAttribute(eventId, attributeId, newTrx);
       });
     }
 
     const blockQuery = Block.query();
-    blockQuery.useTransaction(trx);
+    void blockQuery.useTransaction(trx);
     await blockQuery.where("attribute_id", attributeId).delete();
 
     const attributeQuery = Attribute.query();
-    attributeQuery.useTransaction(trx);
+    void attributeQuery.useTransaction(trx);
     await attributeQuery
       .where("event_id", eventId)
       .andWhere("id", attributeId)
@@ -158,13 +161,14 @@ export class AttributeService {
   }
 
   async bulkUpdateAttributes(eventId: number, data: BulkAttributeDTO) {
-    // Only wait for transaction
     return db.transaction(async (trx) => {
       const results = [];
       for (const item of data) {
-        if (item.id) {
+        const { id, ...payload } = item;
+
+        if (item.id !== undefined) {
           // Update
-          const updates = await updateAttributeValidator.validate(item, {
+          const updates = await updateAttributeValidator.validate(payload, {
             meta: { eventId, attributeId: item.id },
           });
           results.push(
@@ -172,7 +176,7 @@ export class AttributeService {
           );
         } else {
           // Create
-          const newItemData = await createAttributeValidator.validate(item, {
+          const newItemData = await createAttributeValidator.validate(payload, {
             meta: { eventId },
           });
           results.push(
