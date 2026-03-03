@@ -113,8 +113,8 @@ export class BlockService {
 
   async createRootBlock(attributeId: number, trx?: TransactionClientContract) {
     const query = Attribute.query();
-    if (trx) {
-      query.useTransaction(trx);
+    if (trx !== undefined) {
+      void query.useTransaction(trx);
     }
     const attribute = await query
       .where("id", attributeId)
@@ -123,14 +123,14 @@ export class BlockService {
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (attribute.rootBlock !== null) {
-      if (trx) {
-        attribute.rootBlock.useTransaction(trx);
+      if (trx !== undefined) {
+        void attribute.rootBlock.useTransaction(trx);
       }
       await attribute.rootBlock.delete();
     }
 
-    if (trx) {
-      attribute.useTransaction(trx);
+    if (trx !== undefined) {
+      void attribute.useTransaction(trx);
     }
     await attribute.related("blocks").create({
       name: string.slug(`${attribute.slug ?? attribute.name}-root-block`, {
