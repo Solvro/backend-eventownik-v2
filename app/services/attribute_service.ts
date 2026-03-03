@@ -1,4 +1,6 @@
 import { inject } from "@adonisjs/core";
+import db from "@adonisjs/lucid/services/db";
+import type { TransactionClientContract } from "@adonisjs/lucid/types/database";
 
 import Attribute from "#models/attribute";
 import Block from "#models/block";
@@ -19,14 +21,26 @@ export class AttributeService {
   // eslint-disable-next-line no-useless-constructor
   constructor(private blockService: BlockService) {}
 
-  async getEventAttributes(eventId: number) {
-    const attributes = await Attribute.findManyBy("event_id", eventId);
+  async getEventAttributes(eventId: number, trx?: TransactionClientContract) {
+    const query = Attribute.query();
+    if (trx) {
+      query.useTransaction(trx);
+    }
+    const attributes = await query.where("event_id", eventId);
 
     return attributes;
   }
 
-  async getEventAttribute(eventId: number, attributeId: number) {
-    const attribute = await Attribute.query()
+  async getEventAttribute(
+    eventId: number,
+    attributeId: number,
+    trx?: TransactionClientContract,
+  ) {
+    const query = Attribute.query();
+    if (trx) {
+      query.useTransaction(trx);
+    }
+    const attribute = await query
       .where("event_id", eventId)
       .andWhere("id", attributeId)
       .firstOrFail();
@@ -34,19 +48,31 @@ export class AttributeService {
     return attribute;
   }
 
-  async createAttribute(createAttributeDTO: CreateAttributeDTO) {
+  async createAttribute(
+    createAttributeDTO: CreateAttributeDTO,
+    trx?: TransactionClientContract,
+  ): Promise<Attribute> {
+    if (!trx) {
+      return db.transaction(async (newTrx) => {
+        return this.createAttribute(createAttributeDTO, newTrx);
+      });
+    }
+
     const optionsJSON: string | null =
       createAttributeDTO.options !== undefined
         ? JSON.stringify(createAttributeDTO.options)
         : null;
 
-    const newAttribute = await Attribute.create({
+    const newAttribute = new Attribute();
+    newAttribute.merge({
       ...createAttributeDTO,
       options: optionsJSON,
     });
+    newAttribute.useTransaction(trx);
+    await newAttribute.save();
 
     if (newAttribute.type === "block") {
-      await this.blockService.createRootBlock(newAttribute.id);
+      await this.blockService.createRootBlock(newAttribute.id, trx);
     }
 
     return newAttribute;
@@ -56,10 +82,18 @@ export class AttributeService {
     eventId: number,
     attributeId: number,
     updates: UpdateAttributeDTO,
-  ) {
+    trx?: TransactionClientContract, // Add trx parameter
+  ): Promise<Attribute> {
+    if (!trx) {
+      return db.transaction(async (newTrx) => {
+        return this.updateAttribute(eventId, attributeId, updates, newTrx);
+      });
+    }
+
     const attributeToUpdate = await this.getEventAttribute(
       eventId,
       attributeId,
+      trx,
     );
 
     const previousType = attributeToUpdate.type;
@@ -74,48 +108,79 @@ export class AttributeService {
       options: optionsJSON,
     });
 
+    attributeToUpdate.useTransaction(trx);
     await attributeToUpdate.save();
 
-    const updatedAttribute = await this.getEventAttribute(eventId, attributeId);
+    const updatedAttribute = await this.getEventAttribute(
+      eventId,
+      attributeId,
+      trx,
+    );
 
     if (previousType === "block") {
-      await updatedAttribute.load("rootBlock");
+      await updatedAttribute.load("rootBlock", (query) => {
+        query.useTransaction(trx);
+      });
 
-      if (updatedAttribute.type !== "block") {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (updatedAttribute.type !== "block" && updatedAttribute.rootBlock) {
+        updatedAttribute.rootBlock.useTransaction(trx);
         await updatedAttribute.rootBlock.delete();
       }
     } else if (updatedAttribute.type === "block") {
-      await this.blockService.createRootBlock(updatedAttribute.id);
+      await this.blockService.createRootBlock(updatedAttribute.id, trx);
     }
 
-    return await this.getEventAttribute(eventId, attributeId);
+    return await this.getEventAttribute(eventId, attributeId, trx);
   }
 
-  async deleteAttribute(eventId: number, attributeId: number) {
-    await Block.query().where("attribute_id", attributeId).delete();
-    await Attribute.query()
+  async deleteAttribute(
+    eventId: number,
+    attributeId: number,
+    trx?: TransactionClientContract,
+  ): Promise<void> {
+    if (!trx) {
+      return db.transaction(async (newTrx) => {
+        return this.deleteAttribute(eventId, attributeId, newTrx);
+      });
+    }
+
+    const blockQuery = Block.query();
+    blockQuery.useTransaction(trx);
+    await blockQuery.where("attribute_id", attributeId).delete();
+
+    const attributeQuery = Attribute.query();
+    attributeQuery.useTransaction(trx);
+    await attributeQuery
       .where("event_id", eventId)
       .andWhere("id", attributeId)
       .delete();
   }
 
   async bulkUpdateAttributes(eventId: number, data: BulkAttributeDTO) {
-    const results = [];
-    for (const item of data) {
-      if (item.id) {
-        // Update
-        const updates = await updateAttributeValidator.validate(item, {
-          meta: { eventId, attributeId: item.id },
-        });
-        results.push(await this.updateAttribute(eventId, item.id, updates));
-      } else {
-        // Create
-        const newItemData = await createAttributeValidator.validate(item, {
-          meta: { eventId },
-        });
-        results.push(await this.createAttribute({ eventId, ...newItemData }));
+    // Only wait for transaction
+    return db.transaction(async (trx) => {
+      const results = [];
+      for (const item of data) {
+        if (item.id) {
+          // Update
+          const updates = await updateAttributeValidator.validate(item, {
+            meta: { eventId, attributeId: item.id },
+          });
+          results.push(
+            await this.updateAttribute(eventId, item.id, updates, trx),
+          );
+        } else {
+          // Create
+          const newItemData = await createAttributeValidator.validate(item, {
+            meta: { eventId },
+          });
+          results.push(
+            await this.createAttribute({ eventId, ...newItemData }, trx),
+          );
+        }
       }
-    }
-    return results;
+      return results;
+    });
   }
 }
