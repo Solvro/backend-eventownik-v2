@@ -78,17 +78,18 @@ export const bulkAttributeSchema = vine.array(
     slug: vine
       .string()
       .unique(async (db, value, field) => {
-        const itemId = field.parent.id;
+        const parent = field.parent as { id?: number };
+        const itemId = parent.id;
         const query = db
           .from("attributes")
           .where("slug", string.slug(value, { lower: true }))
           .andWhere("event_id", +field.meta.eventId);
 
         if (itemId !== undefined) {
-          query.andWhereNot("id", itemId);
+          void query.andWhereNot("id", itemId);
         }
 
-        const existing = await query.first();
+        const existing = (await query.first()) as unknown;
         return existing === null;
       })
       .transform((value) => string.slug(value, { lower: true }))

@@ -176,7 +176,9 @@ export class AttributeService {
             await this.createAttribute(
               {
                 eventId,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 name: name!,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 type: type!,
                 ...rest,
               },
