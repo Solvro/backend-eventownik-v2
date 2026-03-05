@@ -4,10 +4,6 @@ import type { TransactionClientContract } from "@adonisjs/lucid/types/database";
 
 import Attribute from "#models/attribute";
 import Block from "#models/block";
-import {
-  createAttributeValidator,
-  updateAttributeValidator,
-} from "#validators/attribute";
 
 import {
   BulkAttributeDTO,
@@ -59,7 +55,7 @@ export class AttributeService {
     }
 
     const optionsJSON: string | null =
-      createAttributeDTO.options !== undefined
+      createAttributeDTO.options !== null
         ? JSON.stringify(createAttributeDTO.options)
         : null;
 
@@ -99,9 +95,7 @@ export class AttributeService {
     const previousType = attributeToUpdate.type;
 
     const optionsJSON: string | undefined =
-      updates.options !== undefined
-        ? JSON.stringify(updates.options)
-        : undefined;
+      updates.options !== null ? JSON.stringify(updates.options) : undefined;
 
     attributeToUpdate.merge({
       ...updates,
@@ -164,23 +158,30 @@ export class AttributeService {
     return db.transaction(async (trx) => {
       const results = [];
       for (const item of data) {
-        const { id, ...payload } = item;
+        const { id, name, type, ...rest } = item;
 
-        if (item.id !== undefined) {
-          // Update
-          const updates = await updateAttributeValidator.validate(payload, {
-            meta: { eventId, attributeId: item.id },
-          });
+        if (id !== undefined) {
+          // Update flow
           results.push(
-            await this.updateAttribute(eventId, item.id, updates, trx),
+            await this.updateAttribute(
+              eventId,
+              id,
+              { name, type, ...rest },
+              trx,
+            ),
           );
         } else {
-          // Create
-          const newItemData = await createAttributeValidator.validate(payload, {
-            meta: { eventId },
-          });
+          // Create flow
           results.push(
-            await this.createAttribute({ eventId, ...newItemData }, trx),
+            await this.createAttribute(
+              {
+                eventId,
+                name: name!,
+                type: type!,
+                ...rest,
+              },
+              trx,
+            ),
           );
         }
       }
