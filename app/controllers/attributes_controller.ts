@@ -138,7 +138,9 @@ export default class AttributesController {
 
     await bouncer.authorize("manage_setting", await Event.findOrFail(eventId));
 
-    const data = await bulkAttributeValidator.validate(request.body());
+    const data = await bulkAttributeValidator.validate(request.body(), {
+      meta: { eventId },
+    });
 
     const results = await this.attributeService.bulkUpdateAttributes(
       eventId,
