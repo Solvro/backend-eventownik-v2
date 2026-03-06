@@ -103,6 +103,7 @@ export const bulkAttributeSchema = vine.array(
     showInList: vine.boolean().optional(),
     isSensitiveData: vine.boolean().optional(),
     reason: vine.string().optional().requiredWhen("isSensitiveData", "=", true),
+    allowOther: vine.boolean().optional(),
   }),
 );
 
