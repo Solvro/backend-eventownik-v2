@@ -236,8 +236,9 @@ export class FormService {
           let parsedOptions: string[] = [];
           if (typeof attribute.options === "string") {
             try {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               parsedOptions = JSON.parse(attribute.options);
-            } catch (e) {
+            } catch {
               parsedOptions = [];
             }
           } else if (Array.isArray(attribute.options)) {
@@ -250,18 +251,19 @@ export class FormService {
             if (Array.isArray(value)) {
               selectedValues = value.map((v) => String(v));
             } else {
+              const valStr = String(value as string | number | boolean);
               try {
-                const parsed = JSON.parse(String(value));
+                const parsed: unknown = JSON.parse(valStr);
                 if (Array.isArray(parsed)) {
-                  selectedValues = parsed.map((v) => String(v));
+                  selectedValues = (parsed as unknown[]).map((v) => String(v));
                 } else {
-                  selectedValues = [String(value)];
+                  selectedValues = [String(valStr)];
                 }
               } catch {
-                if (String(value).includes(",")) {
-                  selectedValues = String(value).split(",");
+                if (valStr.includes(",")) {
+                  selectedValues = valStr.split(",");
                 } else {
-                  selectedValues = [String(value)];
+                  selectedValues = [valStr];
                 }
               }
             }
@@ -271,7 +273,7 @@ export class FormService {
                 (v) => !parsedOptions.includes(v),
               );
 
-              if (invalidOption) {
+              if (invalidOption !== undefined) {
                 return {
                   status: 400,
                   error: {
@@ -287,14 +289,12 @@ export class FormService {
             });
             continue;
           } else {
-            if (
-              !attribute.allowOther &&
-              !parsedOptions.includes(String(value))
-            ) {
+            const valStr = String(value as string | number | boolean);
+            if (!attribute.allowOther && !parsedOptions.includes(valStr)) {
               return {
                 status: 400,
                 error: {
-                  message: `Invalid option selected for attribute ${attribute.name} - Option ${value} not found in ${JSON.stringify(parsedOptions)}`,
+                  message: `Invalid option selected for attribute ${attribute.name} - Option ${valStr} not found in ${JSON.stringify(parsedOptions)}`,
                 },
               };
             }
