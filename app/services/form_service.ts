@@ -233,22 +233,71 @@ export class FormService {
         (attribute.type === "select" || attribute.type === "multiselect")
       ) {
         if (value !== null && value !== "null") {
-          const parsedOptions = (
-            typeof attribute.options === "string"
-              ? JSON.parse(attribute.options)
-              : []
-          ) as string[];
+          let parsedOptions: string[] = [];
+          if (typeof attribute.options === "string") {
+            try {
+              parsedOptions = JSON.parse(attribute.options);
+            } catch (e) {
+              parsedOptions = [];
+            }
+          } else if (Array.isArray(attribute.options)) {
+            parsedOptions = attribute.options;
+          }
+          parsedOptions = parsedOptions.map((v) => String(v));
 
-          if (
-            !attribute.allowOther &&
-            !parsedOptions.includes(value as string)
-          ) {
-            return {
-              status: 400,
-              error: {
-                message: `Invalid option selected for attribute ${attribute.name}`,
-              },
-            };
+          if (attribute.type === "multiselect") {
+            let selectedValues: string[] = [];
+            if (Array.isArray(value)) {
+              selectedValues = value.map((v) => String(v));
+            } else {
+              try {
+                const parsed = JSON.parse(String(value));
+                if (Array.isArray(parsed)) {
+                  selectedValues = parsed.map((v) => String(v));
+                } else {
+                  selectedValues = [String(value)];
+                }
+              } catch {
+                if (String(value).includes(",")) {
+                  selectedValues = String(value).split(",");
+                } else {
+                  selectedValues = [String(value)];
+                }
+              }
+            }
+
+            if (!attribute.allowOther) {
+              const invalidOption = selectedValues.find(
+                (v) => !parsedOptions.includes(v),
+              );
+
+              if (invalidOption) {
+                return {
+                  status: 400,
+                  error: {
+                    message: `Invalid option selected for attribute ${attribute.name} - Option ${invalidOption} not found in ${JSON.stringify(parsedOptions)}`,
+                  },
+                };
+              }
+            }
+
+            transformedFormFields.push({
+              attributeId,
+              value: selectedValues.join(","),
+            });
+            continue;
+          } else {
+            if (
+              !attribute.allowOther &&
+              !parsedOptions.includes(String(value))
+            ) {
+              return {
+                status: 400,
+                error: {
+                  message: `Invalid option selected for attribute ${attribute.name} - Option ${value} not found in ${JSON.stringify(parsedOptions)}`,
+                },
+              };
+            }
           }
         }
       }
