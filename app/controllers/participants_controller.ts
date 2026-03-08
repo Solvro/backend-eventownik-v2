@@ -39,6 +39,7 @@ export default class ParticipantsController {
     const participants = await Participant.query()
       .select("id", "email", "slug", "created_at")
       .where("event_id", params.eventId as number)
+      .orderBy("email", "asc")
       .preload("attributes", (attributesQuery) =>
         attributesQuery
           .select("id", "name", "slug", "created_at", "updated_at")

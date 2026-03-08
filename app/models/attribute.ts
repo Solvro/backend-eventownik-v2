@@ -52,6 +52,9 @@ export default class Attribute extends BaseModel {
   @column()
   declare reason: string;
 
+  @column()
+  declare allowOther: boolean;
+
   @belongsTo(() => Event)
   declare event: BelongsTo<typeof Event>;
 

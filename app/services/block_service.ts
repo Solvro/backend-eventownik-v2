@@ -1,4 +1,5 @@
 import string from "@adonisjs/core/helpers/string";
+import type { TransactionClientContract } from "@adonisjs/lucid/types/database";
 
 import Attribute from "#models/attribute";
 import Block from "#models/block";
@@ -40,6 +41,7 @@ export class BlockService {
         void query.where("attributes.id", block.attributeId);
         void query.where("participant_attributes.value", block.id);
       })
+      .orderBy("email", "asc")
       .preload("attributes", (q) => {
         void q.whereIn("slug", participantFields);
         void q.pivotColumns(["value"]);
@@ -109,17 +111,27 @@ export class BlockService {
     );
   }
 
-  async createRootBlock(attributeId: number) {
-    const attribute = await Attribute.query()
+  async createRootBlock(attributeId: number, trx?: TransactionClientContract) {
+    const query = Attribute.query();
+    if (trx !== undefined) {
+      void query.useTransaction(trx);
+    }
+    const attribute = await query
       .where("id", attributeId)
       .preload("rootBlock")
       .firstOrFail();
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (attribute.rootBlock !== null) {
+      if (trx !== undefined) {
+        void attribute.rootBlock.useTransaction(trx);
+      }
       await attribute.rootBlock.delete();
     }
 
+    if (trx !== undefined) {
+      void attribute.useTransaction(trx);
+    }
     await attribute.related("blocks").create({
       name: string.slug(`${attribute.slug ?? attribute.name}-root-block`, {
         lower: true,

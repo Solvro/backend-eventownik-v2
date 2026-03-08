@@ -1,6 +1,5 @@
 import { inject } from "@adonisjs/core";
 import { MultipartFile } from "@adonisjs/core/bodyparser";
-import { Exception } from "@adonisjs/core/exceptions";
 
 import Event from "#models/event";
 import Form from "#models/form";
@@ -166,52 +165,148 @@ export class FormService {
       allowedFieldsIds,
     );
 
-    const transformedFormFields = await Promise.all(
-      Object.entries(formFields).map(async ([attributeId, value]) => {
-        if (
-          fileAttributesIds.has(+attributeId) &&
-          value !== null &&
-          value !== "null"
-        ) {
-          const fileName = await this.fileService.storeFile(
-            value as MultipartFile,
-          );
+    const transformedFormFields: {
+      attributeId: number;
+      value: string | null;
+    }[] = [];
 
-          if (fileName === undefined) {
-            throw new Exception("Error while saving a file");
-          }
+    for (const [attributeIdStr, value] of Object.entries(formFields)) {
+      const attributeId = +attributeIdStr;
+      const attribute = form.attributes.find((a) => a.id === attributeId);
 
+      // file handling
+      if (
+        fileAttributesIds.has(attributeId) &&
+        value !== null &&
+        value !== "null"
+      ) {
+        const fileName = await this.fileService.storeFile(
+          value as MultipartFile,
+        );
+
+        if (fileName === undefined) {
           return {
-            attributeId: +attributeId,
-            value: fileName,
+            status: 500,
+            error: { message: "Error while saving a file" },
           };
-        } else if (
-          blockAttributesIds.has(+attributeId) &&
-          value !== null &&
-          value !== "null"
-        ) {
-          const blockId = Number(value);
-
-          if (Number.isNaN(blockId)) {
-            throw new Exception("Invalid block ID format");
-          }
-
-          const canSignInToBlock = await this.blockService.canSignInToBlock(
-            +attributeId,
-            blockId,
-          );
-
-          if (!canSignInToBlock) {
-            throw new Exception("Block is full");
-          }
         }
 
-        return {
-          attributeId: +attributeId,
-          value: value as string | null,
-        };
-      }),
-    );
+        transformedFormFields.push({ attributeId, value: fileName });
+        continue;
+      }
+
+      // block handling
+      if (
+        blockAttributesIds.has(attributeId) &&
+        value !== null &&
+        value !== "null"
+      ) {
+        const blockId = Number(value);
+
+        if (Number.isNaN(blockId)) {
+          return {
+            status: 400,
+            error: {
+              message: `Invalid block ID format for attribute ${attribute?.name}`,
+            },
+          };
+        }
+
+        const canSignInToBlock = await this.blockService.canSignInToBlock(
+          attributeId,
+          blockId,
+        );
+
+        if (!canSignInToBlock) {
+          return {
+            status: 400,
+            error: {
+              message: `Block is full for attribute ${attribute?.name}`,
+            },
+          };
+        }
+      }
+
+      // select/multiselect handling
+      if (
+        attribute !== undefined &&
+        (attribute.type === "select" || attribute.type === "multiselect")
+      ) {
+        if (value !== null && value !== "null") {
+          let parsedOptions: string[] = [];
+          if (typeof attribute.options === "string") {
+            try {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+              parsedOptions = JSON.parse(attribute.options);
+            } catch {
+              parsedOptions = [];
+            }
+          } else if (Array.isArray(attribute.options)) {
+            parsedOptions = attribute.options;
+          }
+          parsedOptions = parsedOptions.map((v) => String(v));
+
+          if (attribute.type === "multiselect") {
+            let selectedValues: string[] = [];
+            if (Array.isArray(value)) {
+              selectedValues = value.map((v) => String(v));
+            } else {
+              const valStr = String(value as string | number | boolean);
+              try {
+                const parsed: unknown = JSON.parse(valStr);
+                if (Array.isArray(parsed)) {
+                  selectedValues = (parsed as unknown[]).map((v) => String(v));
+                } else {
+                  selectedValues = [String(valStr)];
+                }
+              } catch {
+                if (valStr.includes(",")) {
+                  selectedValues = valStr.split(",");
+                } else {
+                  selectedValues = [valStr];
+                }
+              }
+            }
+
+            if (!attribute.allowOther) {
+              const invalidOption = selectedValues.find(
+                (v) => !parsedOptions.includes(v),
+              );
+
+              if (invalidOption !== undefined) {
+                return {
+                  status: 400,
+                  error: {
+                    message: `Invalid option selected for attribute ${attribute.name} - Option ${invalidOption} not found in ${JSON.stringify(parsedOptions)}`,
+                  },
+                };
+              }
+            }
+
+            transformedFormFields.push({
+              attributeId,
+              value: selectedValues.join(","),
+            });
+            continue;
+          } else {
+            const valStr = String(value as string | number | boolean);
+            if (!attribute.allowOther && !parsedOptions.includes(valStr)) {
+              return {
+                status: 400,
+                error: {
+                  message: `Invalid option selected for attribute ${attribute.name} - Option ${valStr} not found in ${JSON.stringify(parsedOptions)}`,
+                },
+              };
+            }
+          }
+        }
+      }
+
+      transformedFormFields.push({
+        attributeId,
+        value: value as string | null,
+      });
+    }
 
     if (participantEmail !== undefined) {
       participant = await this.participantService.createParticipant(event.id, {
