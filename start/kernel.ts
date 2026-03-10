@@ -35,7 +35,6 @@ server.use([
  * requests with a registered route.
  */
 router.use([
-  () => import("@adonisjs/core/bodyparser_middleware"),
   () => import("@adonisjs/auth/initialize_auth_middleware"),
   () => import("#middleware/initialize_bouncer_middleware"),
 ]);
@@ -45,6 +44,8 @@ router.use([
  * the routes or the routes group.
  */
 export const middleware = router.named({
+  bodyparser: () => import("@adonisjs/core/bodyparser_middleware"),
+  largeBodyparser: () => import("#middleware/large_bodyparser_middleware"),
   participantAuth: () => import("#middleware/participant_auth_middleware"),
   auth: () => import("#middleware/auth_middleware"),
   hCaptcha: () => import("#middleware/hcaptcha_middleware"),
