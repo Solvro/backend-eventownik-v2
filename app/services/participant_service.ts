@@ -13,7 +13,7 @@ import { EmailService } from "./email_service.js";
 export class ParticipantService {
   private async prepareAttributesForSave(
     event: Event,
-    participant: Participant,
+    _participant: Participant,
     participantAttributes?: { attributeId: number; value: string | null }[],
   ): Promise<Record<number, { value: string | null }>> {
     const transformedAttributes: Record<number, { value: string | null }> = {};
@@ -126,7 +126,7 @@ export class ParticipantService {
       .where("id", participantId)
       .andWhere("event_id", eventId)
       .preload("attributes", (query) => {
-        query.pivotColumns(["value"]);
+        void query.pivotColumns(["value"]);
       })
       .firstOrFail();
 
@@ -165,7 +165,6 @@ export class ParticipantService {
       )) {
         const attributeId = Number(attributeIdString);
         const newValue = data.value;
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         const oldValue = oldAttributes[attributeId] ?? null;
 
         // Trigger if value has changed

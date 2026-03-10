@@ -43,8 +43,8 @@ export class EmailService {
     const email = await Email.query()
       .where("event_id", event.id)
       .where("trigger", trigger)
-      // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
       .if(triggerValue !== undefined, (query) =>
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         query.where("trigger_value", triggerValue!),
       )
       .if(triggerValue2 !== undefined, (query) =>
