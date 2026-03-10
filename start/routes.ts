@@ -64,12 +64,6 @@ router
                 ]);
               })
               .prefix("attributes/:attributeId");
-            router.resource("emails", EmailsController).apiOnly();
-            router.post("emails/send/:emailId", [EmailsController, "send"]);
-            router.post("emails/duplicate/:emailId", [
-              EmailsController,
-              "duplicate",
-            ]);
             router.post("forms/:formId/toggleOpen", [
               FormsController,
               "toggleOpen",
@@ -163,4 +157,26 @@ router
         }),
       );
   })
-  .prefix("api/v1");
+  .prefix("api/v1")
+  .use(middleware.bodyparser());
+
+router
+  .group(() => {
+    router
+      .group(() => {
+        router
+          .group(() => {
+            router.resource("emails", EmailsController).apiOnly();
+            router.post("emails/send/:emailId", [EmailsController, "send"]);
+            router.post("emails/duplicate/:emailId", [
+              EmailsController,
+              "duplicate",
+            ]);
+          })
+          .prefix("events/:eventId")
+          .where("eventId", router.matchers.number());
+      })
+      .use(middleware.auth());
+  })
+  .prefix("api/v1")
+  .use(middleware.largeBodyparser());
