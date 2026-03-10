@@ -34,7 +34,9 @@ export default class Attribute extends BaseModel {
   @column()
   declare eventId: number;
 
-  @column({ serialize: (value) => JSON.parse(JSON.stringify(value)) })
+  @column({
+    serialize: (value) => (value ? JSON.parse(JSON.stringify(value)) : value),
+  })
   declare options: string | null;
 
   @column()

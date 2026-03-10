@@ -54,6 +54,8 @@ export default class AttributesController {
       ...newAttributeData,
     });
 
+    console.log(newAttribute, request.body());
+
     return newAttribute;
   }
 

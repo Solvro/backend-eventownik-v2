@@ -55,7 +55,8 @@ export class AttributeService {
     }
 
     const optionsJSON: string | null =
-      createAttributeDTO.options !== null
+      createAttributeDTO.options !== null &&
+      createAttributeDTO.options !== undefined
         ? JSON.stringify(createAttributeDTO.options)
         : null;
 
@@ -94,8 +95,12 @@ export class AttributeService {
 
     const previousType = attributeToUpdate.type;
 
-    const optionsJSON: string | undefined =
-      updates.options !== null ? JSON.stringify(updates.options) : undefined;
+    const optionsJSON: string | null | undefined =
+      updates.options === undefined
+        ? undefined
+        : updates.options === null
+          ? null
+          : JSON.stringify(updates.options);
 
     attributeToUpdate.merge({
       ...updates,
