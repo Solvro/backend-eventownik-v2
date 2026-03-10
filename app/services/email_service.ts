@@ -44,8 +44,10 @@ export class EmailService {
       .where("event_id", event.id)
       .where("trigger", trigger)
       // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-      .if(triggerValue, (query) => query.where("trigger_value", triggerValue!))
-      .if(triggerValue2, (query) =>
+      .if(triggerValue !== undefined, (query) =>
+        query.where("trigger_value", triggerValue!),
+      )
+      .if(triggerValue2 !== undefined, (query) =>
         // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
         query.where("trigger_value_2", triggerValue2!),
       )

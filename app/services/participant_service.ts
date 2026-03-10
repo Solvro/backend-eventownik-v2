@@ -68,14 +68,6 @@ export class ParticipantService {
         continue;
       }
 
-      await EmailService.sendOnTrigger(
-        event,
-        participant,
-        "attribute_changed",
-        attribute.attributeId,
-        valueToSave,
-      );
-
       transformedAttributes[attribute.attributeId] = {
         value: valueToSave,
       };
@@ -128,12 +120,26 @@ export class ParticipantService {
   ) {
     const { participantAttributes, ...updates } = updateParticipantDTO;
 
+    const event = await Event.findOrFail(eventId);
+
     const participant = await Participant.query()
       .where("id", participantId)
       .andWhere("event_id", eventId)
+      .preload("attributes", (query) => {
+        query.pivotColumns(["value"]);
+      })
       .firstOrFail();
 
-    const event = await Event.findOrFail(eventId);
+    // Map old attributes for comparison
+    const oldAttributes: Record<number, string | null> = {};
+    for (const attr of participant.attributes) {
+      const raw = attr.$extras.pivot_value as string | number | null;
+      if (raw === null || raw === undefined) {
+        oldAttributes[attr.id] = null;
+      } else {
+        oldAttributes[attr.id] = String(raw);
+      }
+    }
 
     participant.merge(updates);
     await participant.save();
@@ -148,6 +154,38 @@ export class ParticipantService {
       await participant
         .related("attributes")
         .sync(transformedAttributes, false);
+
+      const triggersToProcess: {
+        attributeId: number;
+        value: string | null;
+      }[] = [];
+
+      for (const [attributeIdString, data] of Object.entries(
+        transformedAttributes,
+      )) {
+        const attributeId = Number(attributeIdString);
+        const newValue = data.value;
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        const oldValue = oldAttributes[attributeId] ?? null;
+
+        // Trigger if value has changed
+        if (oldValue !== newValue) {
+          triggersToProcess.push({
+            attributeId,
+            value: newValue,
+          });
+        }
+      }
+
+      for (const trigger of triggersToProcess) {
+        await EmailService.sendOnTrigger(
+          event,
+          participant,
+          "attribute_changed",
+          trigger.attributeId,
+          trigger.value,
+        );
+      }
     }
 
     const updatedParticipant = await Participant.query()
