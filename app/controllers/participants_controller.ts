@@ -42,13 +42,16 @@ export default class ParticipantsController {
       .where("event_id", params.eventId as number)
       .orderBy("email", "asc");
 
-    const filters = request.qs().filters;
+    const filters = request.qs().filters as
+      | Record<string, unknown>
+      | undefined
+      | null;
 
-    if (filters && typeof filters === "object") {
+    if (typeof filters === "object" && filters !== null) {
       Object.entries(filters).forEach(([slug, value]) => {
         if (typeof value === "string") {
-          participantsQuery.whereHas("attributes", (query) => {
-            query
+          void participantsQuery.whereHas("attributes", (query) => {
+            void query
               .where("slug", slug)
               .where("participant_attributes.value", value);
           });
