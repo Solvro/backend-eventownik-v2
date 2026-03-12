@@ -21,6 +21,7 @@ export default class ParticipantsController {
    * @summary Get all participants
    * @description Get all participants and their attributes for specific event
    * @paramQuery bonus_attributes - Array of attribute SLUGS to include regardless of their show_in_list value - @type(string[].join(",")) @example(attribute1,attribute2)
+   * @paramQuery filters - Object of attribute slugs and values to filter participants by their values - @type(object)
    * @responseBody 200 - <Participant[]>.exclude(eventId, updatedAt).append("attributes": [{ "id": 2, "name": "test", "slug": "test","value": "Lorem Ipsum" }])
    */
   async index({ params, request, bouncer }: HttpContext) {
@@ -36,18 +37,35 @@ export default class ParticipantsController {
 
     const attributeTypesToInclude = ["block"];
 
-    const participants = await Participant.query()
+    const participantsQuery = Participant.query()
       .select("id", "email", "slug", "created_at")
       .where("event_id", params.eventId as number)
-      .orderBy("email", "asc")
-      .preload("attributes", (attributesQuery) =>
+      .orderBy("email", "asc");
+
+    const filters = request.qs().filters;
+
+    if (filters && typeof filters === "object") {
+      Object.entries(filters).forEach(([slug, value]) => {
+        if (typeof value === "string") {
+          participantsQuery.whereHas("attributes", (query) => {
+            query
+              .where("slug", slug)
+              .where("participant_attributes.value", value);
+          });
+        }
+      });
+    }
+
+    const participants = await participantsQuery.preload(
+      "attributes",
+      (attributesQuery) =>
         attributesQuery
           .select("id", "name", "slug", "created_at", "updated_at")
           .pivotColumns(["value"])
           .where("show_in_list", true)
           .orWhereIn("slug", bonusAttributes)
           .orWhereIn("type", attributeTypesToInclude),
-      );
+    );
 
     const formattedParticipants = participants.map((participant) => {
       return {
