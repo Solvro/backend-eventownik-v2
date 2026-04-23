@@ -36,7 +36,41 @@ export const createAttributeSchema = vine.object({
     .nullable()
     .optional(),
   type: vine.enum(ATTRIBUTE_TYPES),
-  options: vine.any().nullable().optional(),
+  options: vine
+    .any()
+    .nullable()
+    .optional()
+    .transform((value, field) => {
+      if (value === undefined) {
+        return undefined;
+      }
+      if (value === null || value === "") {
+        return null;
+      }
+
+      if (Array.isArray(value)) {
+        if (value.every((v) => typeof v === "string")) {
+          return value;
+        }
+        field.report("Options must be an array of strings", "options", field);
+        return;
+      }
+
+      if (typeof value === "object") {
+        const val = value as Record<string, any>;
+        if ("allowMultiple" in val && typeof val.allowMultiple !== "boolean") {
+          field.report("allowMultiple must be a boolean", "options", field);
+          return;
+        }
+        if ("maxSelections" in val && typeof val.maxSelections !== "number") {
+          field.report("maxSelections must be a number", "options", field);
+          return;
+        }
+        return val;
+      }
+
+      field.report("Options must be an array or an object", "options", field);
+    }),
   order: vine.number().optional(),
   showInList: vine.boolean().optional(),
   isSensitiveData: vine.boolean().optional(),
@@ -63,7 +97,41 @@ export const updateAttributeSchema = vine.object({
     .nullable()
     .optional(),
   type: vine.enum(ATTRIBUTE_TYPES).optional(),
-  options: vine.any().nullable().optional(),
+  options: vine
+    .any()
+    .nullable()
+    .optional()
+    .transform((value, field) => {
+      if (value === undefined) {
+        return undefined;
+      }
+      if (value === null || value === "") {
+        return null;
+      }
+
+      if (Array.isArray(value)) {
+        if (value.every((v) => typeof v === "string")) {
+          return value;
+        }
+        field.report("Options must be an array of strings", "options", field);
+        return;
+      }
+
+      if (typeof value === "object") {
+        const val = value as Record<string, any>;
+        if ("allowMultiple" in val && typeof val.allowMultiple !== "boolean") {
+          field.report("allowMultiple must be a boolean", "options", field);
+          return;
+        }
+        if ("maxSelections" in val && typeof val.maxSelections !== "number") {
+          field.report("maxSelections must be a number", "options", field);
+          return;
+        }
+        return val;
+      }
+
+      field.report("Options must be an array or an object", "options", field);
+    }),
   order: vine.number().optional(),
   showInList: vine.boolean().optional(),
   isSensitiveData: vine.boolean().optional(),
@@ -98,7 +166,44 @@ export const bulkAttributeSchema = vine.array(
       .nullable()
       .optional(),
     type: vine.enum(ATTRIBUTE_TYPES).optional().requiredIfMissing("id"),
-    options: vine.any().nullable().optional(),
+    options: vine
+      .any()
+      .nullable()
+      .optional()
+      .transform((value, field) => {
+        if (value === undefined) {
+          return undefined;
+        }
+        if (value === null || value === "") {
+          return null;
+        }
+
+        if (Array.isArray(value)) {
+          if (value.every((v) => typeof v === "string")) {
+            return value;
+          }
+          field.report("Options must be an array of strings", "options", field);
+          return;
+        }
+
+        if (typeof value === "object") {
+          const val = value as Record<string, any>;
+          if (
+            "allowMultiple" in val &&
+            typeof val.allowMultiple !== "boolean"
+          ) {
+            field.report("allowMultiple must be a boolean", "options", field);
+            return;
+          }
+          if ("maxSelections" in val && typeof val.maxSelections !== "number") {
+            field.report("maxSelections must be a number", "options", field);
+            return;
+          }
+          return val;
+        }
+
+        field.report("Options must be an array or an object", "options", field);
+      }),
     order: vine.number().optional(),
     showInList: vine.boolean().optional(),
     isSensitiveData: vine.boolean().optional(),

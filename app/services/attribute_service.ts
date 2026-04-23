@@ -48,22 +48,16 @@ export class AttributeService {
     createAttributeDTO: CreateAttributeDTO,
     trx?: TransactionClientContract,
   ): Promise<Attribute> {
+    console.log("Creating attribute with data:", createAttributeDTO);
     if (trx === undefined) {
       return db.transaction(async (newTrx) => {
         return this.createAttribute(createAttributeDTO, newTrx);
       });
     }
 
-    const optionsJSON: string | null =
-      createAttributeDTO.options !== null
-        ? JSON.stringify(createAttributeDTO.options)
-        : null;
-
     const newAttribute = new Attribute();
-    newAttribute.merge({
-      ...createAttributeDTO,
-      options: optionsJSON,
-    });
+    newAttribute.merge(createAttributeDTO);
+    console.log("Saving new attribute:", newAttribute);
     void newAttribute.useTransaction(trx);
     await newAttribute.save();
 
@@ -94,13 +88,7 @@ export class AttributeService {
 
     const previousType = attributeToUpdate.type;
 
-    const optionsJSON: string | undefined =
-      updates.options !== null ? JSON.stringify(updates.options) : undefined;
-
-    attributeToUpdate.merge({
-      ...updates,
-      options: optionsJSON,
-    });
+    attributeToUpdate.merge(updates);
 
     void attributeToUpdate.useTransaction(trx);
     await attributeToUpdate.save();
