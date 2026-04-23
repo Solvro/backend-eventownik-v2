@@ -1,5 +1,6 @@
 import { DateTime } from "luxon";
 
+import { Exception } from "@adonisjs/core/exceptions";
 import db from "@adonisjs/lucid/services/db";
 
 import Block from "#models/block";
@@ -16,7 +17,10 @@ export class ParticipantService {
   private async prepareAttributesForSave(
     event: Event,
     participant: Participant,
-    participantAttributes?: { attributeId: number; value: string | null }[],
+    participantAttributes?: {
+      attributeId: number;
+      value: string | string[] | null | undefined;
+    }[],
   ): Promise<{ attributeId: number; value: string | null }[]> {
     const results: { attributeId: number; value: string | null }[] = [];
 
@@ -33,55 +37,88 @@ export class ParticipantService {
       .related("attributes")
       .query()
       .whereIn("id", attributeIds)
-      .select("id", "type");
+      .andWhere("event_id", event.id)
+      .select("id", "type", "is_multiple", "max_selections", "name");
 
-    const blockAttributeIds = new Set<number>(
-      attributeTypes
-        .filter((attr) => attr.type === "block")
-        .map((attr) => attr.id),
-    );
+    const attributeMap = new Map(attributeTypes.map((attr) => [attr.id, attr]));
 
     for (const attribute of participantAttributes) {
-      const isBlock = blockAttributeIds.has(attribute.attributeId);
-      let valueToSave: string | null | undefined = attribute.value;
-
-      if (isBlock) {
-        const raw = attribute.value;
-
-        if (raw === null || raw === undefined || raw === "" || raw === "null") {
-          valueToSave = null;
-        } else {
-          const blockId = Number(raw);
-
-          if (!Number.isFinite(blockId)) {
-            throw new Error(`Invalid block ID format: "${raw}"`);
-          }
-
-          const block = await Block.find(blockId);
-          if (block === null) {
-            throw new Error(`Block with ID ${blockId} does not exist.`);
-          }
-
-          valueToSave = blockId.toString();
-        }
-      }
-
-      if (valueToSave === undefined) {
+      const attrConfig = attributeMap.get(attribute.attributeId);
+      if (!attrConfig) {
         continue;
       }
 
-      await EmailService.sendOnTrigger(
-        event,
-        participant,
-        "attribute_changed",
-        attribute.attributeId,
-        valueToSave,
+      const isBlock = attrConfig.type === "block";
+      const rawValues = Array.isArray(attribute.value)
+        ? attribute.value
+        : [attribute.value];
+
+      // Remove duplicates and nulls if it's an array
+      const values = [...new Set(rawValues)].filter(
+        (v) => v !== undefined && v !== "" && v !== "null",
       );
 
-      results.push({
-        attributeId: attribute.attributeId,
-        value: valueToSave,
-      });
+      // Handle unregistration (explicit null or empty array)
+      if (values.length === 0 || (values.length === 1 && values[0] === null)) {
+        results.push({ attributeId: attribute.attributeId, value: null });
+        continue;
+      }
+
+      // Validation
+      if (values.length > 1 && !attrConfig.isMultiple) {
+        throw new Exception(
+          `Multiple selections are not allowed for attribute ${attrConfig.name}`,
+          { status: 400 },
+        );
+      }
+
+      if (
+        attrConfig.maxSelections !== null &&
+        values.length > attrConfig.maxSelections
+      ) {
+        throw new Exception(
+          `Maximum ${attrConfig.maxSelections} selections allowed for attribute ${attrConfig.name}`,
+          { status: 400 },
+        );
+      }
+
+      for (const raw of values) {
+        let valueToSave: string | null = null;
+
+        if (raw === null) {
+          valueToSave = null;
+        } else if (isBlock) {
+          const blockId = Number(raw);
+
+          if (!Number.isFinite(blockId)) {
+            throw new Exception(`Invalid block ID format: "${String(raw)}"`, {
+              status: 400,
+            });
+          }
+
+          const block = await Block.query()
+            .where("attribute_id", attribute.attributeId)
+            .where("id", blockId)
+            .firstOrFail();
+
+          valueToSave = block.id.toString();
+        } else {
+          valueToSave = String(raw);
+        }
+
+        await EmailService.sendOnTrigger(
+          event,
+          participant,
+          "attribute_changed",
+          attribute.attributeId,
+          valueToSave,
+        );
+
+        results.push({
+          attributeId: attribute.attributeId,
+          value: valueToSave,
+        });
+      }
     }
 
     return results;
@@ -195,6 +232,7 @@ export class ParticipantService {
               "id",
               "name",
               "slug",
+              "type",
               "is_multiple",
               "created_at",
               "updated_at",

@@ -19,7 +19,22 @@ export const participantsStoreValidator = vine.compile(
       .array(
         vine.object({
           attributeId: vine.number(),
-          value: vine.string().nullable(),
+          value: vine.any().transform((value, field) => {
+            if (value === null || value === undefined) return null;
+            if (typeof value === "string") return value;
+            if (typeof value === "number") return String(value);
+            if (
+              Array.isArray(value) &&
+              value.every((v) => typeof v === "string" || typeof v === "number")
+            ) {
+              return value.map((v) => String(v));
+            }
+            field.report(
+              "Value must be a string, number, null, or an array of these",
+              "value",
+              field,
+            );
+          }),
         }),
       )
       .optional(),
@@ -50,7 +65,28 @@ export const participantsUpdateValidator = vine.compile(
       .array(
         vine.object({
           attributeId: vine.number(),
-          value: vine.string().nullable(),
+          value: vine
+            .any()
+            .transform((value, field) => {
+              if (value === null || value === undefined) return null;
+              if (typeof value === "string") return value;
+              if (typeof value === "number") return String(value);
+              if (
+                Array.isArray(value) &&
+                value.every(
+                  (v) => typeof v === "string" || typeof v === "number",
+                )
+              ) {
+                return value.map((v) => String(v));
+              }
+              field.report(
+                "Value must be a string, number, null, or an array of these",
+                "value",
+                field,
+              );
+            })
+            .optional()
+            .nullable(),
         }),
       )
       .optional(),

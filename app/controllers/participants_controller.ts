@@ -65,7 +65,7 @@ export default class ParticipantsController {
       ) {
         attr.value = attr.value !== null ? [attr.value] : [];
       }
-      const { isMultiple, ...rest } = attr;
+      const { isMultiple, type, ...rest } = attr;
       return rest;
     });
   }
@@ -101,6 +101,7 @@ export default class ParticipantsController {
             "id",
             "name",
             "slug",
+            "type",
             "is_multiple",
             "created_at",
             "updated_at",
@@ -191,6 +192,7 @@ export default class ParticipantsController {
             "id",
             "name",
             "slug",
+            "type",
             "is_multiple",
             "created_at",
             "updated_at",
