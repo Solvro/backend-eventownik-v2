@@ -44,7 +44,7 @@ export class ParticipantService {
 
     for (const attribute of participantAttributes) {
       const attrConfig = attributeMap.get(attribute.attributeId);
-      if (!attrConfig) {
+      if (attrConfig === undefined) {
         continue;
       }
 

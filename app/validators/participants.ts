@@ -20,9 +20,15 @@ export const participantsStoreValidator = vine.compile(
         vine.object({
           attributeId: vine.number(),
           value: vine.any().transform((value, field) => {
-            if (value === null || value === undefined) return null;
-            if (typeof value === "string") return value;
-            if (typeof value === "number") return String(value);
+            if (value === null || value === undefined) {
+              return null;
+            }
+            if (typeof value === "string") {
+              return value;
+            }
+            if (typeof value === "number") {
+              return String(value);
+            }
             if (
               Array.isArray(value) &&
               value.every((v) => typeof v === "string" || typeof v === "number")
@@ -68,9 +74,15 @@ export const participantsUpdateValidator = vine.compile(
           value: vine
             .any()
             .transform((value, field) => {
-              if (value === null || value === undefined) return null;
-              if (typeof value === "string") return value;
-              if (typeof value === "number") return String(value);
+              if (value === null || value === undefined) {
+                return null;
+              }
+              if (typeof value === "string") {
+                return value;
+              }
+              if (typeof value === "number") {
+                return String(value);
+              }
               if (
                 Array.isArray(value) &&
                 value.every(
