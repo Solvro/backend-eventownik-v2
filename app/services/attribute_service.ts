@@ -55,8 +55,17 @@ export class AttributeService {
       });
     }
 
+    const optionsJSON: string | null =
+      createAttributeDTO.options !== null &&
+      createAttributeDTO.options !== undefined
+        ? JSON.stringify(createAttributeDTO.options)
+        : null;
+
     const newAttribute = new Attribute();
-    newAttribute.merge(createAttributeDTO);
+    newAttribute.merge({
+      ...createAttributeDTO,
+      options: optionsJSON,
+    });
     console.log("Saving new attribute:", newAttribute);
     void newAttribute.useTransaction(trx);
     await newAttribute.save();
@@ -88,7 +97,17 @@ export class AttributeService {
 
     const previousType = attributeToUpdate.type;
 
-    attributeToUpdate.merge(updates);
+    const optionsJSON: string | undefined | null =
+      updates.options !== undefined
+        ? updates.options !== null
+          ? JSON.stringify(updates.options)
+          : null
+        : undefined;
+
+    attributeToUpdate.merge({
+      ...updates,
+      options: optionsJSON,
+    });
 
     void attributeToUpdate.useTransaction(trx);
     await attributeToUpdate.save();

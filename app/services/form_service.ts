@@ -202,29 +202,7 @@ export class FormService {
         ) {
           const values = [...new Set(Array.isArray(value) ? value : [value])];
 
-          let parsedOptions: any = {};
-          if (typeof attribute.options === "string") {
-            try {
-              parsedOptions = JSON.parse(attribute.options);
-            } catch {
-              parsedOptions = {};
-            }
-          } else if (
-            attribute.options &&
-            typeof attribute.options === "object" &&
-            !Array.isArray(attribute.options)
-          ) {
-            parsedOptions = attribute.options;
-          }
-
-          const allowMultiple =
-            parsedOptions?.allowMultiple === true ||
-            parsedOptions?.allowMultiple === "true";
-          const maxSelections = parsedOptions?.maxSelections
-            ? Number(parsedOptions.maxSelections)
-            : undefined;
-
-          if (values.length > 1 && !allowMultiple) {
+          if (values.length > 1 && !attribute.isMultiple) {
             return {
               status: 400,
               error: {
@@ -233,11 +211,14 @@ export class FormService {
             };
           }
 
-          if (maxSelections && values.length > maxSelections) {
+          if (
+            attribute.maxSelections &&
+            values.length > attribute.maxSelections
+          ) {
             return {
               status: 400,
               error: {
-                message: `Maximum ${maxSelections} selections allowed for attribute ${attribute.name}`,
+                message: `Maximum ${attribute.maxSelections} selections allowed for attribute ${attribute.name}`,
               },
             };
           }
