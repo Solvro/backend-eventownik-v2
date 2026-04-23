@@ -51,7 +51,6 @@ export class FormService {
     formSubmitDTO: FormSubmitDTO,
   ): Promise<void | { status: number; error: object }> {
     const event = await Event.findByOrFail("slug", eventSlug);
-
     const {
       email: participantEmail,
       participantSlug,
@@ -201,6 +200,10 @@ export class FormService {
           value !== "null"
         ) {
           const values = [...new Set(Array.isArray(value) ? value : [value])];
+
+          if (values.length === 0) {
+            return [{ attributeId, value: null }];
+          }
 
           if (values.length > 1 && !attribute.isMultiple) {
             return {

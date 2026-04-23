@@ -109,13 +109,15 @@ export class ParticipantService {
       if (transformedAttributes.length > 0) {
         const now = DateTime.now().toSQL();
         await trx.table("participant_attributes").insert(
-          transformedAttributes.map((attr) => ({
-            participant_id: participant.id,
-            attribute_id: attr.attributeId,
-            value: attr.value,
-            created_at: now,
-            updated_at: now,
-          })),
+          transformedAttributes
+            .filter((attr) => attr.value !== null)
+            .map((attr) => ({
+              participant_id: participant.id,
+              attribute_id: attr.attributeId,
+              value: attr.value,
+              created_at: now,
+              updated_at: now,
+            })),
         );
       }
 
