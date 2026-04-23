@@ -34,18 +34,8 @@ export default class Attribute extends BaseModel {
   @column()
   declare eventId: number;
 
-  @column({
-    prepare: (value) => (value ? JSON.stringify(value) : value),
-    consume: (value) => {
-      if (!value) return null;
-      try {
-        return typeof value === "string" ? JSON.parse(value) : value;
-      } catch {
-        return value;
-      }
-    },
-  })
-  declare options: any;
+  @column({ serialize: (value) => JSON.parse(JSON.stringify(value)) })
+  declare options: string | null;
 
   @column()
   declare isMultiple: boolean;

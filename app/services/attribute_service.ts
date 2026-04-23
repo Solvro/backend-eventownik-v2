@@ -48,7 +48,6 @@ export class AttributeService {
     createAttributeDTO: CreateAttributeDTO,
     trx?: TransactionClientContract,
   ): Promise<Attribute> {
-    console.log("Creating attribute with data:", createAttributeDTO);
     if (trx === undefined) {
       return db.transaction(async (newTrx) => {
         return this.createAttribute(createAttributeDTO, newTrx);
@@ -66,7 +65,6 @@ export class AttributeService {
       ...createAttributeDTO,
       options: optionsJSON,
     });
-    console.log("Saving new attribute:", newAttribute);
     void newAttribute.useTransaction(trx);
     await newAttribute.save();
 

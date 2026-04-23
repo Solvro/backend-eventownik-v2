@@ -169,7 +169,7 @@ export class FormService {
         const attributeId = +attributeIdStr;
         const attribute = form.attributes.find((a) => a.id === attributeId);
 
-        if (!attribute) {
+        if (attribute === undefined) {
           return [];
         }
 
@@ -215,7 +215,7 @@ export class FormService {
           }
 
           if (
-            attribute.maxSelections &&
+            attribute.maxSelections !== null &&
             values.length > attribute.maxSelections
           ) {
             return {
