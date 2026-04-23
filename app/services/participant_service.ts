@@ -191,7 +191,14 @@ export class ParticipantService {
         .where("event_id", eventId)
         .preload("attributes", (attributesQuery) =>
           attributesQuery
-            .select("id", "name", "slug")
+            .select(
+              "id",
+              "name",
+              "slug",
+              "is_multiple",
+              "created_at",
+              "updated_at",
+            )
             .pivotColumns(["value"])
             .where("show_in_list", true),
         )
