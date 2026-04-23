@@ -36,7 +36,7 @@ export const createAttributeSchema = vine.object({
     .nullable()
     .optional(),
   type: vine.enum(ATTRIBUTE_TYPES),
-  options: vine.array(vine.string()).minLength(1).nullable().optional(),
+  options: vine.any().nullable().optional(),
   order: vine.number().optional(),
   showInList: vine.boolean().optional(),
   isSensitiveData: vine.boolean().optional(),
@@ -63,7 +63,7 @@ export const updateAttributeSchema = vine.object({
     .nullable()
     .optional(),
   type: vine.enum(ATTRIBUTE_TYPES).optional(),
-  options: vine.array(vine.string()).minLength(1).nullable().optional(),
+  options: vine.any().nullable().optional(),
   order: vine.number().optional(),
   showInList: vine.boolean().optional(),
   isSensitiveData: vine.boolean().optional(),
@@ -98,7 +98,7 @@ export const bulkAttributeSchema = vine.array(
       .nullable()
       .optional(),
     type: vine.enum(ATTRIBUTE_TYPES).optional().requiredIfMissing("id"),
-    options: vine.array(vine.string()).minLength(1).nullable().optional(),
+    options: vine.any().nullable().optional(),
     order: vine.number().optional(),
     showInList: vine.boolean().optional(),
     isSensitiveData: vine.boolean().optional(),

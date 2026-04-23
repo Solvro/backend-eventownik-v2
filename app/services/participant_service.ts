@@ -1,3 +1,5 @@
+import { DateTime } from "luxon";
+
 import db from "@adonisjs/lucid/services/db";
 
 import Block from "#models/block";
@@ -15,28 +17,28 @@ export class ParticipantService {
     event: Event,
     participant: Participant,
     participantAttributes?: { attributeId: number; value: string | null }[],
-  ): Promise<Record<number, { value: string | null }>> {
-    const transformedAttributes: Record<number, { value: string | null }> = {};
+  ): Promise<{ attributeId: number; value: string | null }[]> {
+    const results: { attributeId: number; value: string | null }[] = [];
 
-    if (participantAttributes === undefined) {
-      return transformedAttributes;
-    }
-
-    if (participantAttributes.length === 0) {
-      return transformedAttributes;
+    if (
+      participantAttributes === undefined ||
+      participantAttributes.length === 0
+    ) {
+      return results;
     }
 
     const attributeIds = participantAttributes.map((attr) => attr.attributeId);
 
-    const attributesQuery = event.related("attributes").query();
-
-    const blockAttributes = await attributesQuery
+    const attributeTypes = await event
+      .related("attributes")
+      .query()
       .whereIn("id", attributeIds)
-      .andWhere("type", "block")
-      .select("id");
+      .select("id", "type");
 
     const blockAttributeIds = new Set<number>(
-      blockAttributes.map((attr) => attr.id),
+      attributeTypes
+        .filter((attr) => attr.type === "block")
+        .map((attr) => attr.id),
     );
 
     for (const attribute of participantAttributes) {
@@ -76,12 +78,13 @@ export class ParticipantService {
         valueToSave,
       );
 
-      transformedAttributes[attribute.attributeId] = {
+      results.push({
+        attributeId: attribute.attributeId,
         value: valueToSave,
-      };
+      });
     }
 
-    return transformedAttributes;
+    return results;
   }
 
   async createParticipant(
@@ -103,10 +106,17 @@ export class ParticipantService {
         participantAttributes,
       );
 
-      if (Object.keys(transformedAttributes).length > 0) {
-        await participant
-          .related("attributes")
-          .attach(transformedAttributes, trx);
+      if (transformedAttributes.length > 0) {
+        const now = DateTime.now().toSQL();
+        await trx.table("participant_attributes").insert(
+          transformedAttributes.map((attr) => ({
+            participant_id: participant.id,
+            attribute_id: attr.attributeId,
+            value: attr.value,
+            created_at: now,
+            updated_at: now,
+          })),
+        );
       }
 
       await participant.load("attributes");
@@ -144,10 +154,27 @@ export class ParticipantService {
       participantAttributes,
     );
 
-    if (Object.keys(transformedAttributes).length > 0) {
-      await participant
-        .related("attributes")
-        .sync(transformedAttributes, false);
+    if (transformedAttributes.length > 0) {
+      const attributeIds = [
+        ...new Set(transformedAttributes.map((attr) => attr.attributeId)),
+      ];
+
+      await db
+        .from("participant_attributes")
+        .where("participant_id", participant.id)
+        .whereIn("attribute_id", attributeIds)
+        .delete();
+
+      const now = DateTime.now().toSQL();
+      await db.table("participant_attributes").insert(
+        transformedAttributes.map((attr) => ({
+          participant_id: participant.id,
+          attribute_id: attr.attributeId,
+          value: attr.value,
+          created_at: now,
+          updated_at: now,
+        })),
+      );
     }
 
     const updatedParticipant = await Participant.query()

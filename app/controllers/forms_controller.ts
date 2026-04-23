@@ -289,8 +289,9 @@ export default class FormsController {
     const form = await Form.query()
       .where("id", formId)
       .andWhere("event_id", event.id)
-      .preload("attributes", async (query) => {
-        await query.pivotColumns(["is_required"]);
+      .preload("attributes", (query) => {
+        void query.select("attributes.*");
+        void query.pivotColumns(["is_required"]);
       })
       .firstOrFail();
 
