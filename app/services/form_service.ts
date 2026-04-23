@@ -200,7 +200,7 @@ export class FormService {
           value !== null &&
           value !== "null"
         ) {
-          const values = Array.isArray(value) ? value : [value];
+          const values = [...new Set(Array.isArray(value) ? value : [value])];
 
           let parsedOptions: any = {};
           if (typeof attribute.options === "string") {
@@ -367,7 +367,10 @@ export class FormService {
       }
     }
 
-    const transformedFormFields = transformedFormFieldsResults.flat();
+    const transformedFormFields = transformedFormFieldsResults.flat() as {
+      attributeId: number;
+      value: string | null;
+    }[];
 
     if (participantEmail !== undefined) {
       participant = await this.participantService.createParticipant(event.id, {

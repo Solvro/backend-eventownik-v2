@@ -138,57 +138,59 @@ export class ParticipantService {
   ) {
     const { participantAttributes, ...updates } = updateParticipantDTO;
 
-    const participant = await Participant.query()
-      .where("id", participantId)
-      .andWhere("event_id", eventId)
-      .firstOrFail();
+    return await db.transaction(async (trx) => {
+      const participant = await Participant.query({ client: trx })
+        .where("id", participantId)
+        .andWhere("event_id", eventId)
+        .firstOrFail();
 
-    const event = await Event.findOrFail(eventId);
+      const event = await Event.findOrFail(eventId, { client: trx });
 
-    participant.merge(updates);
-    await participant.save();
+      participant.merge(updates);
+      await participant.save();
 
-    const transformedAttributes = await this.prepareAttributesForSave(
-      event,
-      participant,
-      participantAttributes,
-    );
-
-    if (transformedAttributes.length > 0) {
-      const attributeIds = [
-        ...new Set(transformedAttributes.map((attr) => attr.attributeId)),
-      ];
-
-      await db
-        .from("participant_attributes")
-        .where("participant_id", participant.id)
-        .whereIn("attribute_id", attributeIds)
-        .delete();
-
-      const now = DateTime.now().toSQL();
-      await db.table("participant_attributes").insert(
-        transformedAttributes.map((attr) => ({
-          participant_id: participant.id,
-          attribute_id: attr.attributeId,
-          value: attr.value,
-          created_at: now,
-          updated_at: now,
-        })),
+      const transformedAttributes = await this.prepareAttributesForSave(
+        event,
+        participant,
+        participantAttributes,
       );
-    }
 
-    const updatedParticipant = await Participant.query()
-      .where("id", participantId)
-      .where("event_id", eventId)
-      .preload("attributes", (attributesQuery) =>
-        attributesQuery
-          .select("id", "name", "slug")
-          .pivotColumns(["value"])
-          .where("show_in_list", true),
-      )
-      .firstOrFail();
+      if (transformedAttributes.length > 0) {
+        const attributeIds = [
+          ...new Set(transformedAttributes.map((attr) => attr.attributeId)),
+        ];
 
-    return updatedParticipant;
+        await trx
+          .from("participant_attributes")
+          .where("participant_id", participant.id)
+          .whereIn("attribute_id", attributeIds)
+          .delete();
+
+        const now = DateTime.now().toSQL();
+        await trx.table("participant_attributes").insert(
+          transformedAttributes.map((attr) => ({
+            participant_id: participant.id,
+            attribute_id: attr.attributeId,
+            value: attr.value,
+            created_at: now,
+            updated_at: now,
+          })),
+        );
+      }
+
+      const updatedParticipant = await Participant.query({ client: trx })
+        .where("id", participantId)
+        .where("event_id", eventId)
+        .preload("attributes", (attributesQuery) =>
+          attributesQuery
+            .select("id", "name", "slug")
+            .pivotColumns(["value"])
+            .where("show_in_list", true),
+        )
+        .firstOrFail();
+
+      return updatedParticipant;
+    });
   }
 
   async unregister(participantSlug: string, eventSlug: string) {
