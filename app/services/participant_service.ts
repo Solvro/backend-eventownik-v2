@@ -168,16 +168,22 @@ export class ParticipantService {
           .whereIn("attribute_id", attributeIds)
           .delete();
 
-        const now = DateTime.now().toSQL();
-        await trx.table("participant_attributes").insert(
-          transformedAttributes.map((attr) => ({
-            participant_id: participant.id,
-            attribute_id: attr.attributeId,
-            value: attr.value,
-            created_at: now,
-            updated_at: now,
-          })),
+        const attributesToInsert = transformedAttributes.filter(
+          (attr) => attr.value !== null,
         );
+
+        if (attributesToInsert.length > 0) {
+          const now = DateTime.now().toSQL();
+          await trx.table("participant_attributes").insert(
+            transformedAttributes.map((attr) => ({
+              participant_id: participant.id,
+              attribute_id: attr.attributeId,
+              value: attr.value,
+              created_at: now,
+              updated_at: now,
+            })),
+          );
+        }
       }
 
       const updatedParticipant = await Participant.query({ client: trx })
