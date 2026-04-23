@@ -26,6 +26,7 @@ export default class ParticipantsController {
         slug: string | null;
         isMultiple: boolean;
         value: string | string[] | null;
+        type: string;
         createdAt: DateTime;
         updatedAt: DateTime;
       }
@@ -49,6 +50,7 @@ export default class ParticipantsController {
           slug: attr.slug,
           isMultiple: attr.isMultiple,
           value: pivotValue,
+          type: attr.type,
           createdAt: attr.createdAt,
           updatedAt: attr.updatedAt,
         });
@@ -56,7 +58,11 @@ export default class ParticipantsController {
     }
 
     return Array.from(grouped.values()).map((attr) => {
-      if (attr.isMultiple === true && !Array.isArray(attr.value)) {
+      if (
+        attr.isMultiple === true &&
+        attr.type === "block" &&
+        !Array.isArray(attr.value)
+      ) {
         attr.value = attr.value !== null ? [attr.value] : [];
       }
       const { isMultiple, ...rest } = attr;
