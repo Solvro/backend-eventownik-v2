@@ -104,18 +104,32 @@ export default class EventExportController {
       attributeValues.push(attribute.header);
 
       for (const participantWithAttributes of sortedParticipants) {
-        const foundAttribute = participantWithAttributes.attributes.find(
+        const matchedAttributes = participantWithAttributes.attributes.filter(
           (participantAttribute) => participantAttribute.name === attribute.key,
         );
 
-        if (foundAttribute !== undefined) {
-          const value = foundAttribute.$extras.pivot_value as string;
+        if (matchedAttributes.length > 0) {
+          const rawValues = matchedAttributes.flatMap((matchedAttribute) => {
+            const raw = matchedAttribute.$extras.pivot_value as
+              | string
+              | string[]
+              | null
+              | undefined;
+            return Array.isArray(raw) ? raw : [raw];
+          });
+
+          const normalizedValues = rawValues
+            .map((value) => String(value ?? "").trim())
+            .filter((value) => value !== "");
 
           if (attribute.type === "block") {
-            const blockId = Number(value);
-            attributeValues.push(blockMap.get(blockId) ?? value);
+            const blockNames = normalizedValues.map((value) => {
+              const id = Number(value);
+              return blockMap.get(id) ?? value;
+            });
+            attributeValues.push([...new Set(blockNames)].join(", "));
           } else {
-            attributeValues.push(value);
+            attributeValues.push([...new Set(normalizedValues)].join(", "));
           }
         } else {
           attributeValues.push("");
