@@ -1,6 +1,9 @@
+import { DateTime } from "luxon";
+
 import { inject } from "@adonisjs/core";
 import { HttpContext } from "@adonisjs/core/http";
 
+import Attribute from "#models/attribute";
 import Event from "#models/event";
 import Participant from "#models/participant";
 import { ParticipantService } from "#services/participant_service";
@@ -12,8 +15,60 @@ import {
 
 @inject()
 export default class ParticipantsController {
-  // eslint-disable-next-line no-useless-constructor
   constructor(private participantService: ParticipantService) {}
+
+  private formatAttributes(attributes: Attribute[]) {
+    const grouped = new Map<
+      number,
+      {
+        id: number;
+        name: string;
+        slug: string | null;
+        isMultiple: boolean;
+        value: string | string[] | null;
+        type: string;
+        createdAt: DateTime;
+        updatedAt: DateTime;
+      }
+    >();
+
+    for (const attr of attributes) {
+      const pivotValue = attr.$extras.pivot_value as string;
+
+      const existing = grouped.get(attr.id);
+      if (existing !== undefined) {
+        const val = existing.value;
+        if (Array.isArray(val)) {
+          val.push(pivotValue);
+        } else if (typeof val === "string") {
+          existing.value = [val, pivotValue];
+        }
+      } else {
+        grouped.set(attr.id, {
+          id: attr.id,
+          name: attr.name,
+          slug: attr.slug,
+          isMultiple: attr.isMultiple,
+          value: pivotValue,
+          type: attr.type,
+          createdAt: attr.createdAt,
+          updatedAt: attr.updatedAt,
+        });
+      }
+    }
+
+    return Array.from(grouped.values()).map((attr) => {
+      if (
+        attr.isMultiple === true &&
+        attr.type === "block" &&
+        !Array.isArray(attr.value)
+      ) {
+        attr.value = attr.value !== null ? [attr.value] : [];
+      }
+      const { isMultiple, type, ...rest } = attr;
+      return rest;
+    });
+  }
 
   /**
    * @index
@@ -39,9 +94,18 @@ export default class ParticipantsController {
     const participants = await Participant.query()
       .select("id", "email", "slug", "created_at")
       .where("event_id", params.eventId as number)
+      .orderBy("email", "asc")
       .preload("attributes", (attributesQuery) =>
         attributesQuery
-          .select("id", "name", "slug", "created_at", "updated_at")
+          .select(
+            "id",
+            "name",
+            "slug",
+            "type",
+            "is_multiple",
+            "created_at",
+            "updated_at",
+          )
           .pivotColumns(["value"])
           .where("show_in_list", true)
           .orWhereIn("slug", bonusAttributes)
@@ -53,14 +117,7 @@ export default class ParticipantsController {
         id: participant.id,
         email: participant.email,
         slug: participant.slug,
-        attributes: participant.attributes.map((attribute) => ({
-          id: attribute.id,
-          name: attribute.name,
-          slug: attribute.slug,
-          value: attribute.$extras.pivot_value as string,
-          createdAt: attribute.createdAt,
-          updatedAt: attribute.updatedAt,
-        })),
+        attributes: this.formatAttributes(participant.attributes),
         createdAt: participant.createdAt
           .setZone("Europe/Warsaw")
           .toFormat("yyyy-MM-dd HH:mm:ss"),
@@ -131,7 +188,15 @@ export default class ParticipantsController {
       .andWhere("event_id", +params.eventId)
       .preload("attributes", (attributesQuery) =>
         attributesQuery
-          .select("id", "name", "slug", "created_at", "updated_at")
+          .select(
+            "id",
+            "name",
+            "slug",
+            "type",
+            "is_multiple",
+            "created_at",
+            "updated_at",
+          )
           .pivotColumns(["value"]),
       )
       .preload("emails", (emailsQuery) =>
@@ -146,14 +211,7 @@ export default class ParticipantsController {
       email: participant.email,
       slug: participant.slug,
       createdAt: participant.createdAt.toFormat("yyyy-MM-dd HH:mm:ss"),
-      attributes: participant.attributes.map((attribute) => ({
-        id: attribute.id,
-        name: attribute.name,
-        slug: attribute.slug,
-        value: attribute.$extras.pivot_value as string,
-        createdAt: attribute.createdAt,
-        updatedAt: attribute.updatedAt,
-      })),
+      attributes: this.formatAttributes(participant.attributes),
       emails: participant.emails.map((email) => {
         const { $extras, $original } = email;
 
@@ -206,12 +264,7 @@ export default class ParticipantsController {
       id: updatedParticipant.id,
       email: updatedParticipant.email,
       slug: updatedParticipant.slug,
-      attributes: updatedParticipant.attributes.map((attribute) => ({
-        id: attribute.id,
-        name: attribute.name,
-        slug: attribute.slug,
-        value: attribute.$extras.pivot_value as string,
-      })),
+      attributes: this.formatAttributes(updatedParticipant.attributes),
       created_at: updatedParticipant.createdAt.toFormat("yyyy-MM-dd HH:mm:ss"),
     };
 

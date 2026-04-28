@@ -38,6 +38,12 @@ export default class Attribute extends BaseModel {
   declare options: string | null;
 
   @column()
+  declare isMultiple: boolean;
+
+  @column()
+  declare maxSelections: number | null;
+
+  @column()
   declare type: string;
 
   @column()
@@ -51,6 +57,9 @@ export default class Attribute extends BaseModel {
 
   @column()
   declare reason: string;
+
+  @column()
+  declare allowOther: boolean;
 
   @belongsTo(() => Event)
   declare event: BelongsTo<typeof Event>;
