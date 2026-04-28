@@ -49,14 +49,25 @@ export class ParticipantService {
       }
 
       const isBlock = attrConfig.type === "block";
-      const rawValues = Array.isArray(attribute.value)
+      const normalizedValues = Array.isArray(attribute.value)
         ? attribute.value
         : [attribute.value];
 
+      const rawValues =
+        isBlock && attrConfig.isMultiple
+          ? normalizedValues.flatMap((value) =>
+              typeof value === "string"
+                ? value.split(",").map((item) => item.trim())
+                : [value],
+            )
+          : normalizedValues;
+
       // Remove duplicates and nulls if it's an array
-      const values = [...new Set(rawValues)].filter(
-        (v) => v !== undefined && v !== "" && v !== "null",
-      );
+      const values = [
+        ...new Set(
+          rawValues.map((v) => (typeof v === "string" ? v.trim() : v)),
+        ),
+      ].filter((v) => v !== undefined && v !== "" && v !== "null");
 
       // Handle unregistration (explicit null or empty array)
       if (values.length === 0 || (values.length === 1 && values[0] === null)) {
