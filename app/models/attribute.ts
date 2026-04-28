@@ -38,6 +38,12 @@ export default class Attribute extends BaseModel {
   declare options: string | null;
 
   @column()
+  declare isMultiple: boolean;
+
+  @column()
+  declare maxSelections: number | null;
+
+  @column()
   declare type: string;
 
   @column()

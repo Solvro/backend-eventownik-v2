@@ -72,7 +72,7 @@ export class BlockService {
       "attributes",
       (query) => {
         void query.where("attributes.id", attributeId);
-        void query.where("participant_attributes.value", "like", blockId);
+        void query.where("participant_attributes.value", String(blockId));
       },
     );
 
@@ -86,7 +86,7 @@ export class BlockService {
     const blockParticipantsCount = await Participant.query()
       .whereHas("attributes", (query) => {
         void query.where("attributes.id", attributeId);
-        void query.where("participant_attributes.value", "like", blockId);
+        void query.where("participant_attributes.value", String(blockId));
       })
       .count("*");
 

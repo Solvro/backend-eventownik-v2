@@ -289,8 +289,9 @@ export default class FormsController {
     const form = await Form.query()
       .where("id", formId)
       .andWhere("event_id", event.id)
-      .preload("attributes", async (query) => {
-        await query.pivotColumns(["is_required"]);
+      .preload("attributes", (query) => {
+        void query.select("attributes.*");
+        void query.pivotColumns(["is_required"]);
       })
       .firstOrFail();
 
@@ -302,7 +303,11 @@ export default class FormsController {
     // Transform attributes so that files work properly
     const transformedAttributes = Object.fromEntries(
       Object.entries(attributes).map(([key, value]) => {
-        if ((value as { isMultipartFile?: boolean }).isMultipartFile ?? false) {
+        if (
+          value !== null &&
+          typeof value === "object" &&
+          (value as { isMultipartFile?: boolean }).isMultipartFile === true
+        ) {
           return [key, request.file(key)];
         }
 
