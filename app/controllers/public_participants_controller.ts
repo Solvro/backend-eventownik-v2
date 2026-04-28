@@ -1,6 +1,37 @@
 import type { HttpContext } from "@adonisjs/core/http";
 
+import Attribute from "#models/attribute";
+
 export default class PublicParticipantsController {
+  private formatAttributes(attributes: Attribute[]) {
+    const grouped = new Map<number, Attribute>();
+
+    for (const attr of attributes) {
+      const pivotValue = attr.$extras.pivot_value as string;
+
+      const existing = grouped.get(attr.id);
+      if (existing !== undefined) {
+        const existingPivotValue = existing.$extras.pivot_value as
+          | string
+          | string[];
+
+        if (Array.isArray(existingPivotValue)) {
+          existing.$extras.pivot_value = [...existingPivotValue, pivotValue];
+        } else {
+          existing.$extras.pivot_value = [existingPivotValue, pivotValue];
+        }
+      } else {
+        if (attr.isMultiple === true && attr.type === "block") {
+          attr.$extras.pivot_value = [pivotValue];
+        }
+
+        grouped.set(attr.id, attr);
+      }
+    }
+
+    return Array.from(grouped.values());
+  }
+
   /**
    * @index
    * @tag public_participants
@@ -18,6 +49,15 @@ export default class PublicParticipantsController {
         .pivotColumns(["value", "created_at"])
         .whereIn("attributes.id", request.input("attributes", []) as number[]),
     );
-    return participant;
+
+    const serializedParticipant = participant.toJSON() as Record<
+      string,
+      unknown
+    >;
+    serializedParticipant.attributes = this.formatAttributes(
+      participant.attributes,
+    ).map((attribute) => attribute.toJSON());
+
+    return serializedParticipant;
   }
 }
