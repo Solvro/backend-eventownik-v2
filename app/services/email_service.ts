@@ -13,10 +13,10 @@ import env from "#start/env";
 import { EmailTriggerType } from "../types/trigger_types.js";
 
 export class EmailService {
-  private static readonly EMAILS_TIMEZONE = "Europe/Warsaw";
+  private static readonly emailsTimezone = "Europe/Warsaw";
 
   private static formatDateToTimezone(date: DateTime): string {
-    return date.setZone(this.EMAILS_TIMEZONE).toFormat("yyyy-MM-dd HH:mm");
+    return date.setZone(this.emailsTimezone).toFormat("yyyy-MM-dd HH:mm");
   }
 
   private static async getBlockDisplayValue(
