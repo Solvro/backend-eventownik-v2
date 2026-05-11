@@ -13,6 +13,12 @@ import env from "#start/env";
 import { EmailTriggerType } from "../types/trigger_types.js";
 
 export class EmailService {
+  private static readonly emailsTimezone = "Europe/Warsaw";
+
+  private static formatDateToTimezone(date: DateTime): string {
+    return date.setZone(this.emailsTimezone).toFormat("yyyy-MM-dd HH:mm");
+  }
+
   private static async getBlockDisplayValue(
     raw: string | number | null | undefined,
   ): Promise<string> {
@@ -127,9 +133,9 @@ export class EmailService {
             case "/event_name":
               return event.name;
             case "/event_start_date":
-              return event.startDate.toFormat("yyyy-MM-dd HH:mm");
+              return this.formatDateToTimezone(event.startDate);
             case "/event_end_date":
-              return event.endDate.toFormat("yyyy-MM-dd HH:mm");
+              return this.formatDateToTimezone(event.endDate);
             case "/event_slug":
               return event.slug;
             case "/event_primary_color":
@@ -139,9 +145,9 @@ export class EmailService {
             case "/participant_id":
               return String(participant.id);
             case "/participant_created_at":
-              return participant.createdAt.toFormat("yyyy-MM-dd HH:mm");
+              return this.formatDateToTimezone(participant.createdAt);
             case "/participant_updated_at":
-              return participant.updatedAt.toFormat("yyyy-MM-dd HH:mm");
+              return this.formatDateToTimezone(participant.updatedAt);
             case "/participant_email":
               return participant.email;
             case "/participant_slug":
