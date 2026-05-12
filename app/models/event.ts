@@ -19,6 +19,7 @@ import type {
 import Email from "#models/email";
 import Form from "#models/form";
 
+import { EventCategory } from "../types/event_types.js";
 import Admin from "./admin.js";
 import Attribute from "./attribute.js";
 import Participant from "./participant.js";
@@ -66,6 +67,20 @@ export default class Event extends BaseModel {
 
   @column()
   declare location: string | null;
+
+  @column({
+    prepare: (value: EventCategory[] | null) =>
+      value !== null ? JSON.stringify(value) : null,
+    consume: (value: string | EventCategory[] | null) => {
+      if (value === null) {
+        return [];
+      }
+      const parsed =
+        typeof value === "string" ? (JSON.parse(value) as unknown) : value;
+      return Array.isArray(parsed) ? (parsed as EventCategory[]) : [];
+    },
+  })
+  declare categories: EventCategory[];
 
   @column()
   declare isActive: boolean;

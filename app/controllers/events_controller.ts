@@ -62,6 +62,7 @@ export default class EventController {
     }
     const event = await Event.create({
       ...eventData,
+      categories: eventData.categories ?? [],
       photoUrl,
       organizerId: auth.user?.id,
     });
@@ -144,6 +145,7 @@ export default class EventController {
         "participants_count",
         "photo_url",
         "location",
+        "categories",
       );
 
     return events;
@@ -194,7 +196,11 @@ export default class EventController {
       photoUrl = null;
     }
 
-    event.merge({ ...eventData, photoUrl });
+    event.merge({
+      ...eventData,
+      categories: eventData.categories === null ? [] : eventData.categories,
+      photoUrl,
+    });
 
     await event.save();
 
