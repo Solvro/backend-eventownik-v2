@@ -295,7 +295,7 @@ export default class FormsController {
       })
       .firstOrFail();
 
-    const { email, participantSlug, ...attributes } =
+    const { email, participantSlug, gdprConsent, ...attributes } =
       await request.validateUsing(formSubmitValidator, {
         meta: { eventId: event.id },
       });
@@ -318,6 +318,7 @@ export default class FormsController {
     const errorObject = await this.formService.submitForm(eventSlug, form, {
       email,
       participantSlug,
+      gdprConsent,
       ...transformedAttributes,
     });
 
