@@ -122,6 +122,9 @@ export default class Event extends BaseModel {
   @column()
   declare termsLink: string | null;
 
+  @column()
+  declare dataRecipients: string | null;
+
   @beforeCreate()
   static deactivateNewEvent(event: Event) {
     event.isActive = false;
