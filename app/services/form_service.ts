@@ -55,6 +55,7 @@ export class FormService {
       email: participantEmail,
       participantSlug,
       gdprConsent,
+      termsAccepted,
       ...attributes
     } = formSubmitDTO;
 
@@ -86,6 +87,15 @@ export class FormService {
       return {
         status: 400,
         error: { missingRequiredFields: { name: "gdprConsent" } },
+      };
+    } else if (
+      form.isFirstForm &&
+      event.termsLink !== null &&
+      termsAccepted !== true
+    ) {
+      return {
+        status: 400,
+        error: { missingRequiredFields: { name: "termsAccepted" } },
       };
     } else if (!form.isFirstForm && participantSlug === undefined) {
       return {

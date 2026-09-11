@@ -85,6 +85,7 @@ export const formSubmitValidator = vine.compile(
         .requiredIfMissing("participantSlug"),
       participantSlug: vine.string().optional().requiredIfMissing("email"),
       gdprConsent: vine.boolean().optional(),
+      termsAccepted: vine.boolean().optional(),
     })
     .allowUnknownProperties(),
 );

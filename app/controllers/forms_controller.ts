@@ -295,10 +295,15 @@ export default class FormsController {
       })
       .firstOrFail();
 
-    const { email, participantSlug, gdprConsent, ...attributes } =
-      await request.validateUsing(formSubmitValidator, {
-        meta: { eventId: event.id },
-      });
+    const {
+      email,
+      participantSlug,
+      gdprConsent,
+      termsAccepted,
+      ...attributes
+    } = await request.validateUsing(formSubmitValidator, {
+      meta: { eventId: event.id },
+    });
 
     // Transform attributes so that files work properly
     const transformedAttributes = Object.fromEntries(
@@ -319,6 +324,7 @@ export default class FormsController {
       email,
       participantSlug,
       gdprConsent,
+      termsAccepted,
       ...transformedAttributes,
     });
 
