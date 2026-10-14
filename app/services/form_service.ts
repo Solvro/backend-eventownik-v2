@@ -12,6 +12,25 @@ import { EmailService } from "./email_service.js";
 import { FileService } from "./file_service.js";
 import { ParticipantService } from "./participant_service.js";
 
+// Splits a comma-joined multiselect value, keeping options that contain commas intact.
+export function splitByOptions(value: string, options: string[]): string[] {
+  const parts = value.split(",");
+  const result: string[] = [];
+  let i = 0;
+  while (i < parts.length) {
+    let end = i + 1;
+    for (let j = parts.length; j > i; j--) {
+      if (options.includes(parts.slice(i, j).join(","))) {
+        end = j;
+        break;
+      }
+    }
+    result.push(parts.slice(i, end).join(","));
+    i = end;
+  }
+  return result;
+}
+
 @inject()
 export class FormService {
   // eslint-disable-next-line no-useless-constructor
@@ -292,11 +311,7 @@ export class FormService {
                     selectedValues = [String(valStr)];
                   }
                 } catch {
-                  if (valStr.includes(",")) {
-                    selectedValues = valStr.split(",");
-                  } else {
-                    selectedValues = [valStr];
-                  }
+                  selectedValues = splitByOptions(valStr, parsedOptions);
                 }
               }
 
